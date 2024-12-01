@@ -33,7 +33,7 @@ export class BinanceCollector extends ExchangeCollectorBase {
 
     private ws: WebSocket | null = null;
     private wsUrl: string;
-    private restUrl: string;
+    public restUrl: string;
     private maxSymbolsPerGroup: number;
     private requestId: number = 1;
     private pingTimer: NodeJS.Timeout | null = null;
@@ -43,6 +43,8 @@ export class BinanceCollector extends ExchangeCollectorBase {
         maxDelay: 30000,
         maxAttempts: 5,
     };
+    private retryAttempts: number = 0;
+    private retryTimer: NodeJS.Timeout | null = null; // retryConnection 타이머를 관리하기 위한 변수 추가
 
     private activeStreams: Set<string> = new Set();
 
@@ -81,7 +83,9 @@ export class BinanceCollector extends ExchangeCollectorBase {
 
     public async start(): Promise<void> {
         if (this.getState().type === StateType.RUNNING) {
-            throw new Error("Collector is already running.");
+            // throw new Error("Collector is already running.");
+            console.warn("Collector is already running.");
+            return;
         }
         this.setState(StateType.RUNNING);
         console.log(`[${this.id}] Collector started.`);
@@ -90,14 +94,62 @@ export class BinanceCollector extends ExchangeCollectorBase {
 
     public async stop(): Promise<void> {
         if (this.getState().type !== StateType.RUNNING) {
-            throw new Error("Collector is not running.");
+            console.warn("Collector is not running.");
+            return;
         }
         this.disconnect();
         this.setState(StateType.STOPPED);
         console.log(`[${this.id}] Collector stopped.`);
+        this.clearAllTimers();
     }
 
-    public connect(): void {
+    private disconnect(): void {
+        if (this.ws) {
+            console.log("Disconnecting Binance WebSocket...");
+            this.ws.close();
+            this.ws = null;
+        }
+        this.stopPingPong();
+        this.clearConnectionTimeout();
+        this.clearRetryTimer(); // retryConnection 타이머 클리어
+    }
+
+    private retryConnection(): void {
+        if (this.retryAttempts < this.retryConfig.maxAttempts) {
+            const delay = Math.min(
+                this.retryConfig.initialDelay * 2 ** this.retryAttempts,
+                this.retryConfig.maxDelay
+            );
+            console.log(
+                `Attempting to reconnect in ${delay / 1000} seconds...`
+            );
+            this.retryTimer = setTimeout(() => {
+                this.retryAttempts++;
+                this.connect(); // 새로운 WebSocket 인스턴스 생성
+            }, delay);
+        } else {
+            console.error("Max retry attempts reached. Could not reconnect.");
+
+            // Collector의 상태를 STOPPED로 변경
+            this.setState(StateType.STOPPED);
+        }
+    }
+
+    private clearRetryTimer(): void {
+        if (this.retryTimer) {
+            clearTimeout(this.retryTimer);
+            this.retryTimer = null;
+            console.log("Retry timer cleared.");
+        }
+    }
+
+    private clearAllTimers(): void {
+        this.stopPingPong();
+        this.clearConnectionTimeout();
+        this.clearRetryTimer();
+    }
+
+    private connect(): void {
         if (this.ws) {
             console.log(
                 "Closing existing WebSocket connection before reconnecting."
@@ -111,16 +163,8 @@ export class BinanceCollector extends ExchangeCollectorBase {
         this.ws.on("message", (data) => this.handleMessage(data));
         this.ws.on("error", (error) => this.handleError(error));
         this.ws.on("close", () => this.handleClose());
-    }
 
-    public disconnect(): void {
-        if (this.ws) {
-            console.log("Disconnecting Binance WebSocket...");
-            this.ws.close();
-            this.ws = null;
-        }
-        this.stopPingPong();
-        this.clearConnectionTimeout();
+        this.retryAttempts = 0; // 재연결 시도 횟수 초기화
     }
 
     public async subscribe(symbols: string[]): Promise<void> {
@@ -181,6 +225,9 @@ export class BinanceCollector extends ExchangeCollectorBase {
                 });
                 console.log("Unsubscribed from all streams.");
             }
+
+            // 모든 구독이 해제되었으므로 WebSocket 연결 종료
+            this.disconnect();
         }
 
         this.updateMetrics({
@@ -286,6 +333,12 @@ export class BinanceCollector extends ExchangeCollectorBase {
         this.updateMetrics({
             connection: { status: "ERROR", latency: 0 },
         });
+
+        // REST API를 사용하여 데이터 수집 시도
+        this.fetchDataFromRestApi();
+
+        // 재연결 로직 추가
+        this.retryConnection();
     }
 
     private handleClose(): void {
@@ -297,12 +350,36 @@ export class BinanceCollector extends ExchangeCollectorBase {
         this.clearConnectionTimeout();
 
         // 재연결 로직 추가
-        setTimeout(() => {
-            if (this.getState().type === StateType.RUNNING) {
-                console.log("Reconnecting WebSocket...");
-                this.connect();
+        if (this.getState().type === StateType.RUNNING) {
+            this.retryConnection();
+        }
+    }
+
+    private async fetchDataFromRestApi(): Promise<void> {
+        try {
+            const symbols = Array.from(this.activeStreams).map((stream) =>
+                stream.split("@")[0].toUpperCase()
+            );
+            for (const symbol of symbols) {
+                const response = await axios.get(
+                    `${this.restUrl}/api/v3/depth`,
+                    {
+                        params: {
+                            symbol: symbol,
+                            limit: 5, // 필요한 깊이로 설정
+                        },
+                    }
+                );
+                // 데이터를 처리하고 이벤트를 발생시킵니다.
+                const standardizedData =
+                    BinanceDataTransformer.transformToStandardFormat(
+                        response.data
+                    );
+                this.emit("data", standardizedData);
             }
-        }, this.retryConfig.initialDelay);
+        } catch (error) {
+            console.error("Failed to fetch data from REST API:", error);
+        }
     }
 
     private startPingPong(): void {
@@ -349,5 +426,14 @@ export class BinanceCollector extends ExchangeCollectorBase {
 
     private getNextRequestId(): number {
         return this.requestId++;
+    }
+
+    // 접근 제한자를 protected로 변경하여 테스트에서 접근 가능하도록 수정
+    protected groupSymbols(symbols: string[]): string[][] {
+        const groups: string[][] = [];
+        for (let i = 0; i < symbols.length; i += this.maxSymbolsPerGroup) {
+            groups.push(symbols.slice(i, i + this.maxSymbolsPerGroup));
+        }
+        return groups;
     }
 }
