@@ -108,33 +108,19 @@ class Application {
         const status = this.systemManager.getSystemStatus()
         const metrics = await MetricManager.getInstance().getSystemMetrics()
 
-        if (!metrics) {
-            logger.warn("No metrics available")
-            return
-        }
-
-        // SystemMetrics 타입으로 명시적 타입 지정
-        const systemMetrics: SystemMetrics = {
-            totalProcessedEvents: metrics.totalProcessedEvents,
-            errorRate: metrics.errorRate,
-            memoryUsage: metrics.memoryUsage,
-            uptime: metrics.uptime,
-            componentMetrics: metrics.componentMetrics,
-        }
-
         // 시스템 상태 로깅
         logger.info("System Health Check", {
             status,
             metrics: {
-                processedEvents: systemMetrics.totalProcessedEvents,
-                errorRate: systemMetrics.errorRate,
-                memoryUsage: systemMetrics.memoryUsage,
-                uptime: systemMetrics.uptime,
+                processedEvents: metrics.totalProcessedEvents,
+                errorRate: metrics.errorRate,
+                memoryUsage: metrics.memoryUsage,
+                uptime: metrics.uptime,
             },
         })
 
         // 임계값 체크 및 경고
-        this.checkThresholds(systemMetrics)
+        this.checkThresholds(metrics)
     }
 
     private checkThresholds(metrics: SystemMetrics): void {

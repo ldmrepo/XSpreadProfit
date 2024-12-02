@@ -159,8 +159,7 @@ export class SystemManager {
             managers,
             wsConfig: this.config!.collector.wsConfig,
             bufferConfig: this.config!.collector.bufferConfig,
-            bufferSize: this.config!.collector.bufferSize,
-            flushInterval: this.config!.collector.flushInterval,
+            retryPolicy: this.config!.collector.retryPolicy,
         })
 
         const processor = new Processor({
@@ -171,8 +170,6 @@ export class SystemManager {
             batchConfig: this.config!.processor.batchConfig,
             memoryConfig: this.config!.processor.memoryConfig,
             memoryLimit: this.config!.processor.memoryLimit,
-            batchSize: this.config!.processor.batchSize,
-            batchTimeout: this.config!.processor.batchTimeout,
         })
 
         this.collectors.set(exchange.id, collector)

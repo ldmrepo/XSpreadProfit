@@ -17,7 +17,7 @@ export interface MarketData {
     collectorId: string
     sequence?: number
 }
-export interface standardData {
+export interface StandardData {
     exchange: string // 거래소 이름
     symbol: string // 심볼, 예: BTC/USDT
     exchangeType: string // 선물, 현물

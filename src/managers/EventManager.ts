@@ -157,6 +157,8 @@ class EventManager {
             "MARKET_DATA.ORDERBOOK",
             "SYSTEM.STATUS",
             "ERROR",
+            "BUFFER.FLUSHED", // 추가
+            "BUFFER.ERROR", // 추가
         ]
 
         defaultTypes.forEach((type) => {

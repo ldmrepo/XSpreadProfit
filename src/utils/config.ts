@@ -43,7 +43,7 @@ export class ConfigLoader {
             this.validateConfig(this.config)
 
             return this.config
-        } catch (error) {
+        } catch (error: any) {
             throw new Error(`Failed to load config: ${error.message}`)
         }
     }
@@ -78,13 +78,14 @@ export class ConfigLoader {
     }
 
     private validateConfig(config: SystemConfig): void {
-        const requiredFields = ["name", "version", "redis", "exchanges"]
-
-        for (const field of requiredFields) {
-            if (!config[field]) {
-                throw new Error(`Missing required config field: ${field}`)
-            }
-        }
+        // 필수 필드 검증
+        if (!config.name) throw new Error("Missing required config field: name")
+        if (!config.version)
+            throw new Error("Missing required config field: version")
+        if (!config.redis)
+            throw new Error("Missing required config field: redis")
+        if (!config.exchanges)
+            throw new Error("Missing required config field: exchanges")
 
         // Redis 설정 검증
         if (!config.redis.host || !config.redis.port) {

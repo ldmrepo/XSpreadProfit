@@ -9,7 +9,6 @@
  */
 
 import WebSocket from "ws"
-import axios from "axios"
 import { Logger } from "../utils/logger"
 import { SharedBuffer } from "../utils/SharedBuffer"
 import EventManager from "../managers/EventManager"
@@ -46,11 +45,6 @@ class Collector {
     private dataBuffer: SharedBuffer<RawMarketData>
     private subscriptions: Set<string>
 
-    // REST API 대체 수집
-    private restFallbackInterval!: NodeJS.Timeout | null
-    maxRestBackoff: number
-    restInterval: number
-
     constructor(config: CollectorConfig) {
         this.id = config.id
         this.exchangeId = config.exchangeId
@@ -81,11 +75,6 @@ class Collector {
         )
 
         this.subscriptions = new Set()
-
-        this.restFallbackInterval = null
-        // Configurable settings
-        this.maxRestBackoff = config.retryPolicy?.maxRetries || 30000 // 최대 백오프 시간
-        this.restInterval = config.retryPolicy?.retryInterval || 5000 // REST 호출 주기
     }
 
     async start(): Promise<void> {
@@ -212,16 +201,12 @@ class Collector {
 
     private async handleBufferFlush(items: RawMarketData[]): Promise<void> {
         try {
-            await Promise.all(
-                items.map(async (item) => {
-                    await this.eventManager.publish({
-                        type: "MARKET_DATA",
-                        payload: item,
-                        timestamp: Date.now(),
-                        source: this.id,
-                    })
-                })
-            )
+            await this.eventManager.publish({
+                type: "MARKET_DATA",
+                payload: items,
+                timestamp: Date.now(),
+                source: this.id,
+            })
         } catch (error: any) {
             await this.handleBufferFlushError(error)
         }
@@ -251,131 +236,16 @@ class Collector {
             await this.resubscribe()
         }
     }
-    private stopRestFallback(): void {
-        if (this.restFallbackInterval) {
-            clearInterval(this.restFallbackInterval)
-            this.restFallbackInterval = null
-            this.logger.info("REST API fallback stopped")
-        }
-    }
 
     private async handleConnectionClose(): Promise<void> {
         this.cleanup()
 
-        for (
-            let attempt = 0;
-            this.maxReconnectAttempts === Infinity ||
-            attempt < this.maxReconnectAttempts;
-            attempt++
-        ) {
-            const backoffTime = Math.min(
-                this.reconnectInterval * 2 ** attempt,
-                30000
-            )
-            try {
-                await new Promise((resolve) => setTimeout(resolve, backoffTime))
-                await this.connect()
-                this.stopRestFallback() // REST API 대체 중단
-                this.logger.info(
-                    `WebSocket reconnected successfully after ${
-                        attempt + 1
-                    } attempts`
-                )
-                this.metricManager.collect({
-                    type: MetricType.COUNTER,
-                    module: this.id,
-                    name: "websocket_reconnections",
-                    value: 1,
-                    timestamp: Date.now(),
-                    tags: { attempt: `${attempt + 1}` },
-                })
-                return
-            } catch (error: any) {
-                this.logger.warn(
-                    `Reconnection attempt ${attempt + 1} failed: ${
-                        error.message
-                    }`
-                )
-                this.metricManager.collect({
-                    type: MetricType.COUNTER,
-                    module: this.id,
-                    name: "websocket_reconnection_failures",
-                    value: 1,
-                    timestamp: Date.now(),
-                    tags: { attempt: `${attempt + 1}` },
-                })
-            }
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++
+            setTimeout(() => this.connect(), this.reconnectInterval)
+        } else {
+            await this.handleMaxReconnectError()
         }
-
-        if (!this.restFallbackInterval) {
-            this.startRestFallback()
-        }
-        this.logger.error(
-            `WebSocket connection failed after ${this.maxReconnectAttempts} attempts`
-        )
-    }
-
-    private startRestFallback(): void {
-        if (this.restFallbackInterval) return
-
-        let restAttempt = 0
-
-        this.restFallbackInterval = setInterval(async () => {
-            try {
-                const data = await this.fetchMarketDataViaRest()
-                for (const item of data) {
-                    await this.dataBuffer.push(item)
-                }
-                restAttempt = 0 // 성공 시 복구
-                this.metricManager.collect({
-                    type: MetricType.COUNTER,
-                    module: this.id,
-                    name: "rest_fallback_successes",
-                    value: 1,
-                    timestamp: Date.now(),
-                })
-            } catch (error: any) {
-                restAttempt++
-                const statusCode = error.response?.status || "UNKNOWN"
-                const errorMessage = error.message || "No error message"
-                this.logger.error(
-                    `REST API fallback failed (Attempt ${restAttempt}, Status: ${statusCode}): ${errorMessage}`
-                )
-                this.metricManager.collect({
-                    type: MetricType.COUNTER,
-                    module: this.id,
-                    name: "rest_fallback_failures",
-                    value: 1,
-                    timestamp: Date.now(),
-                    tags: { attempt: `${restAttempt}` },
-                })
-
-                const nextBackoff = Math.min(
-                    this.restInterval * 2 ** restAttempt,
-                    this.maxRestBackoff
-                )
-                clearInterval(this.restFallbackInterval!)
-                this.logger.warn(
-                    `Retrying REST API fallback in ${
-                        nextBackoff / 1000
-                    } seconds`
-                )
-                setTimeout(() => this.startRestFallback(), nextBackoff)
-            }
-        }, this.restInterval)
-    }
-
-    getRecoveryStatus(): Record<string, any> {
-        return {
-            websocketConnected: this.ws?.readyState === WebSocket.OPEN,
-            restFallbackActive: !!this.restFallbackInterval,
-            reconnectAttempts: this.reconnectAttempts,
-        }
-    }
-
-    private async fetchMarketDataViaRest(): Promise<RawMarketData[]> {
-        const response = await axios.get(`${this.wsUrl}/api/market-data`)
-        return response.data
     }
 
     private async handleConnectionError(error: Error): Promise<void> {
@@ -398,14 +268,7 @@ class Collector {
 
     private async resubscribe(): Promise<void> {
         const symbols = Array.from(this.subscriptions)
-        if (symbols.length > 0) {
-            const message = JSON.stringify({
-                method: "SUBSCRIBE",
-                params: symbols,
-                id: Date.now(),
-            })
-            this.ws?.send(message)
-        }
+        await this.subscribe(symbols)
     }
 
     private createSubscriptionMessage(symbols: string[]): string {

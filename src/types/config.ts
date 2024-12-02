@@ -49,11 +49,10 @@ export interface CollectorConfig {
     id: string
     exchangeId: string
     websocketUrl: string
-    bufferSize: number
-    flushInterval: number
     managers: ManagerDependencies
     wsConfig?: WebSocketConfig
-    bufferConfig?: BufferConfig
+    bufferConfig?: SharedBufferConfig
+    retryPolicy: RetryPolicy
 }
 
 // 등록기 설정
@@ -61,11 +60,9 @@ export interface ProcessorConfig {
     id: string
     exchangeId: string
     memoryLimit: number
-    batchSize: number
-    batchTimeout: number
     redisConfig: RedisConfig
     managers: ManagerDependencies
-    batchConfig?: BatchConfig
+    batchConfig?: SharedBufferConfig
     memoryConfig?: MemoryConfig
 }
 // 이벤트 관리자 설정
@@ -131,10 +128,10 @@ export interface BufferConfig {
 }
 
 // 배치 설정
-export interface BatchConfig {
-    size: number
-    timeout: number
-}
+// export interface BatchConfig {
+//     size: number
+//     timeout: number
+// }
 
 // 메모리 설정
 export interface MemoryConfig {
@@ -152,4 +149,12 @@ export interface RetryPolicy {
     maxRetries: number // 최대 재시도 횟수
     retryInterval: number // 재시도 간격 (ms)
     backoffRate: number // 재시도 간격 증가율
+}
+
+export interface SharedBufferConfig {
+    maxSize: number
+    flushThreshold: number
+    flushInterval: number
+    retryAttempts?: number
+    retryDelay?: number
 }

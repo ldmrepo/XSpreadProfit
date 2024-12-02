@@ -18,12 +18,14 @@ import {
     MetricValue,
     MetricQuery,
     AggregateResult,
+    SystemMetrics,
+    ComponentMetrics,
 } from "../types/metrics"
 import { MetricManagerConfig } from "../types/config"
 
 class MetricManager {
     private static instance: MetricManager
-    private metrics: Map<string, MetricValue[]>
+    private metrics: Map<string, Metric[]> // Map<string, MetricValue[]>에서 Map<string, Metric[]>로 변경
     private aggregates: Map<string, AggregateResult>
     private redis?: Redis
     private eventManager: EventManager
@@ -32,7 +34,7 @@ class MetricManager {
     private retentionPeriod: number
 
     private constructor() {
-        this.metrics = new Map()
+        this.metrics = new Map<string, Metric[]>()
         this.aggregates = new Map()
         this.eventManager = EventManager.getInstance()
         this.logger = Logger.getInstance("MetricManager")
@@ -65,25 +67,11 @@ class MetricManager {
     }
 
     async collect(metric: Metric): Promise<void> {
-        try {
-            const key = this.getMetricKey(metric)
-            if (!this.metrics.has(key)) {
-                this.metrics.set(key, [])
-            }
-
-            const values = this.metrics.get(key)!
-            values.push({
-                value: metric.value,
-                timestamp: Date.now(),
-            })
-
-            await this.updateAggregates(key, metric)
-
-            this.logger.debug(`Collected metric: ${key}`)
-        } catch (error) {
-            this.logger.error("Failed to collect metric", error)
-            throw error
+        const key = `${metric.module}:${metric.name}`
+        if (!this.metrics.has(key)) {
+            this.metrics.set(key, [])
         }
+        this.metrics.get(key)!.push(metric)
     }
 
     async collectBatch(metrics: Metric[]): Promise<void> {
@@ -199,23 +187,152 @@ class MetricManager {
     }
 
     private async collectSystemMetrics(): Promise<void> {
-        // CPU, 메모리, 처리량 등 시스템 메트릭 수집
-        const metrics = await this.getSystemMetrics()
-        await this.collectBatch(metrics)
-    }
+        // SystemMetrics를 Metric 배열로 변환
+        const systemMetrics = await this.getSystemMetrics()
 
-    public async getSystemMetrics(): Promise<Metric[]> {
-        // 시스템 메트릭 수집 로직
-        return [
+        const metricsArray: Metric[] = [
+            {
+                type: MetricType.COUNTER,
+                module: "system",
+                name: "processed_events",
+                value: systemMetrics.totalProcessedEvents,
+                timestamp: Date.now(),
+            },
+            {
+                type: MetricType.GAUGE,
+                module: "system",
+                name: "error_rate",
+                value: systemMetrics.errorRate,
+                timestamp: Date.now(),
+            },
             {
                 type: MetricType.GAUGE,
                 module: "system",
                 name: "memory_usage",
-                value: process.memoryUsage().heapUsed,
+                value: systemMetrics.memoryUsage,
                 timestamp: Date.now(),
             },
-            // 추가 시스템 메트릭
+            {
+                type: MetricType.GAUGE,
+                module: "system",
+                name: "uptime",
+                value: systemMetrics.uptime,
+                timestamp: Date.now(),
+            },
         ]
+
+        // 컴포넌트별 메트릭 추가
+        Object.entries(systemMetrics.componentMetrics).forEach(
+            ([component, metrics]) => {
+                metricsArray.push(
+                    {
+                        type: MetricType.COUNTER,
+                        module: component,
+                        name: "processed_count",
+                        value: metrics.processedCount,
+                        timestamp: Date.now(),
+                    },
+                    {
+                        type: MetricType.COUNTER,
+                        module: component,
+                        name: "error_count",
+                        value: metrics.errorCount,
+                        timestamp: Date.now(),
+                    },
+                    {
+                        type: MetricType.GAUGE,
+                        module: component,
+                        name: "latency",
+                        value: metrics.latency,
+                        timestamp: Date.now(),
+                    }
+                )
+            }
+        )
+
+        await this.collectBatch(metricsArray)
+    }
+
+    async getSystemMetrics(): Promise<SystemMetrics> {
+        // 모든 메트릭을 하나의 배열로 변환
+        const allMetrics: Metric[] = Array.from(this.metrics.values()).reduce(
+            (acc, metrics) => acc.concat(metrics),
+            []
+        )
+
+        const systemMetrics: SystemMetrics = {
+            totalProcessedEvents:
+                this.calculateTotalProcessedEvents(allMetrics),
+            errorRate: this.calculateErrorRate(allMetrics),
+            memoryUsage: process.memoryUsage().heapUsed,
+            uptime: process.uptime(),
+            componentMetrics: this.aggregateComponentMetrics(allMetrics),
+        }
+
+        return systemMetrics
+    }
+    private calculateTotalProcessedEvents(metrics: Metric[]): number {
+        return metrics
+            .filter(
+                (m) =>
+                    m.name === "processed_messages" &&
+                    m.type === MetricType.COUNTER
+            )
+            .reduce((sum, m) => sum + m.value, 0)
+    }
+
+    private calculateErrorRate(metrics: Metric[]): number {
+        const errors = metrics
+            .filter((m) => m.name === "errors" && m.type === MetricType.COUNTER)
+            .reduce((sum, m) => sum + m.value, 0)
+
+        const total = metrics
+            .filter(
+                (m) =>
+                    m.name === "processed_messages" &&
+                    m.type === MetricType.COUNTER
+            )
+            .reduce((sum, m) => sum + m.value, 0)
+
+        return total > 0 ? errors / total : 0
+    }
+
+    private aggregateComponentMetrics(
+        metrics: Metric[]
+    ): Record<string, ComponentMetrics> {
+        const componentMetrics: Record<string, ComponentMetrics> = {}
+
+        // 모듈별로 메트릭 집계
+        for (const metric of metrics) {
+            if (!componentMetrics[metric.module]) {
+                componentMetrics[metric.module] = {
+                    processedCount: 0,
+                    errorCount: 0,
+                    latency: 0,
+                    lastProcessedTime: 0,
+                }
+            }
+
+            // 메트릭 타입별 처리
+            switch (metric.name) {
+                case "processed_messages":
+                    componentMetrics[metric.module].processedCount +=
+                        metric.value
+                    break
+                case "errors":
+                    componentMetrics[metric.module].errorCount += metric.value
+                    break
+                case "processing_time":
+                    componentMetrics[metric.module].latency = metric.value
+                    break
+                case "last_processed":
+                    componentMetrics[metric.module].lastProcessedTime =
+                        metric.value
+                    break
+            }
+        }
+
+        return componentMetrics
     }
 }
 

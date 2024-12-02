@@ -4,23 +4,19 @@
  *
  * 수집된 시장 데이터를 처리하고 저장하는 컴포넌트
  * - 데이터 검증 및 정규화
- * - 메모리 관리
+ * - SharedBuffer를 통한 메모리 관리
  * - Redis 저장
  * - 배치 처리
  */
 
 import { Redis } from "ioredis"
 import { Logger } from "../utils/logger"
+import { SharedBuffer } from "../utils/SharedBuffer"
 import EventManager from "../managers/EventManager"
 import StateManager from "../managers/StateManager"
 import MetricManager from "../managers/MetricManager"
 import ErrorManager from "../managers/ErrorManager"
-import {
-    ProcessorConfig,
-    ManagerDependencies,
-    MemoryConfig,
-    BatchConfig,
-} from "../types/config"
+import { ProcessorConfig, ManagerDependencies } from "../types/config"
 import { MarketData, ProcessedData } from "../types/data"
 import { MetricType } from "../types/metrics"
 
@@ -34,12 +30,8 @@ class Processor {
     private errorManager: ErrorManager
     private logger: Logger
 
-    // 메모리 관리
-    private memoryPool: Map<string, Buffer>
-    private processingQueue: ProcessedData[]
-    private batchSize: number
-    private batchTimeout: number
-    private batchTimer: NodeJS.Timeout | null
+    // 데이터 관리
+    private processingBuffer: SharedBuffer<ProcessedData>
 
     constructor(config: ProcessorConfig) {
         this.id = config.id
@@ -50,12 +42,16 @@ class Processor {
         this.errorManager = config.managers.errorManager
         this.logger = Logger.getInstance(`Processor:${this.id}`)
 
-        // 초기화
-        this.memoryPool = new Map()
-        this.processingQueue = []
-        this.batchSize = config.batchConfig?.size || 100
-        this.batchTimeout = config.batchConfig?.timeout || 1000
-        this.batchTimer = null
+        // SharedBuffer 초기화
+        this.processingBuffer = new SharedBuffer<ProcessedData>(
+            `${this.id}_buffer`,
+            {
+                maxSize: config.batchConfig?.maxSize || 1000, // size 대신 maxSize 사용
+                flushThreshold: 70,
+                flushInterval: config.batchConfig?.flushInterval || 1000,
+            },
+            async (items) => this.processBatch(items)
+        )
     }
 
     async start(): Promise<void> {
@@ -67,12 +63,6 @@ class Processor {
 
             // 이벤트 구독 설정
             this.setupEventSubscriptions()
-
-            // 메모리 풀 초기화
-            this.initializeMemoryPool()
-
-            // 배치 처리 시작
-            this.startBatchProcessing()
 
             await this.stateManager.changeState(this.id, "RUNNING")
             this.logger.info(`Processor ${this.id} started successfully`)
@@ -87,10 +77,8 @@ class Processor {
             await this.stateManager.changeState(this.id, "STOPPING")
 
             // 진행 중인 처리 완료
-            await this.flushQueue()
-
-            // 리소스 정리
-            this.cleanup()
+            await this.processingBuffer.flush()
+            this.processingBuffer.dispose()
 
             await this.stateManager.changeState(this.id, "STOPPED")
             this.logger.info(`Processor ${this.id} stopped successfully`)
@@ -123,17 +111,7 @@ class Processor {
             { field: "exchangeId", operator: "eq", value: this.exchangeId }
         )
     }
-    private async handleStopError(error: Error): Promise<void> {
-        await this.errorManager.handleError({
-            code: "PROCESS",
-            type: "RECOVERABLE",
-            module: this.id,
-            message: "Error during processor shutdown",
-            timestamp: Date.now(),
-            error,
-            retryable: false,
-        })
-    }
+
     private async handleMarketData(data: MarketData): Promise<void> {
         const startTime = Date.now()
         try {
@@ -143,8 +121,8 @@ class Processor {
             // 데이터 정규화
             const normalizedData = await this.normalizeData(data)
 
-            // 큐에 추가
-            this.addToProcessingQueue(normalizedData)
+            // 처리 큐에 추가
+            await this.processingBuffer.push(normalizedData)
 
             // 메트릭 업데이트
             await this.updateProcessingMetrics(startTime)
@@ -154,14 +132,12 @@ class Processor {
     }
 
     private validateData(data: MarketData): void {
-        // 데이터 유효성 검사
         if (!data.symbol || !data.timestamp || !data.exchangeId) {
             throw new Error("Invalid market data format")
         }
     }
 
     private async normalizeData(data: MarketData): Promise<ProcessedData> {
-        // 데이터 정규화 로직
         return {
             ...data,
             processedAt: Date.now(),
@@ -169,18 +145,9 @@ class Processor {
         }
     }
 
-    private addToProcessingQueue(data: ProcessedData): void {
-        this.processingQueue.push(data)
+    private async processBatch(batch: ProcessedData[]): Promise<void> {
+        if (batch.length === 0) return
 
-        if (this.processingQueue.length >= this.batchSize) {
-            this.processBatch()
-        }
-    }
-
-    private async processBatch(): Promise<void> {
-        if (this.processingQueue.length === 0) return
-
-        const batch = this.processingQueue.splice(0, this.batchSize)
         const pipeline = this.redis!.pipeline()
 
         for (const data of batch) {
@@ -192,43 +159,19 @@ class Processor {
         try {
             await pipeline.exec()
             await this.updateBatchMetrics(batch.length)
-        } catch (error: any) {
+        } catch (error) {
             await this.handleBatchError(error, batch)
         }
-    }
-
-    private startBatchProcessing(): void {
-        this.batchTimer = setInterval(
-            () => this.processBatch(),
-            this.batchTimeout
-        )
-    }
-
-    private async flushQueue(): Promise<void> {
-        if (this.batchTimer) {
-            clearInterval(this.batchTimer)
-        }
-        await this.processBatch()
     }
 
     private getRedisKey(data: ProcessedData): string {
         return `market:${data.exchangeId}:${data.symbol}:${data.timestamp}`
     }
 
-    private initializeMemoryPool(): void {
-        // 고정 크기 메모리 풀 초기화
-        const poolSize = 1000 // 설정 가능
-        const bufferSize = 1024 // 1KB
-
-        for (let i = 0; i < poolSize; i++) {
-            this.memoryPool.set(`buffer_${i}`, Buffer.alloc(bufferSize))
-        }
-    }
-
     private async updateProcessingMetrics(startTime: number): Promise<void> {
         const processingTime = Date.now() - startTime
         await this.metricManager.collect({
-            type: MetricType.HISTOGRAM, // PROCESSING -> HISTOGRAM
+            type: MetricType.HISTOGRAM,
             module: this.id,
             name: "processing_time",
             value: processingTime,
@@ -238,7 +181,7 @@ class Processor {
 
     private async updateBatchMetrics(batchSize: number): Promise<void> {
         await this.metricManager.collect({
-            type: MetricType.COUNTER, // BATCH -> COUNTER
+            type: MetricType.COUNTER,
             module: this.id,
             name: "batch_size",
             value: batchSize,
@@ -276,30 +219,6 @@ class Processor {
         })
     }
 
-    private cleanup(): void {
-        // 리소스 정리
-        this.memoryPool.clear()
-        this.processingQueue = []
-        if (this.batchTimer) {
-            clearInterval(this.batchTimer)
-        }
-    }
-
-    getMemoryStatus(): Record<string, number> {
-        return {
-            poolSize: this.memoryPool.size,
-            queueSize: this.processingQueue.length,
-            memoryUsage: process.memoryUsage().heapUsed,
-        }
-    }
-
-    getProcessingStatus(): Record<string, any> {
-        return {
-            queueLength: this.processingQueue.length,
-            batchSize: this.batchSize,
-            batchTimeout: this.batchTimeout,
-        }
-    }
     private async handleStartupError(error: Error): Promise<void> {
         await this.errorManager.handleError({
             code: "PROCESS",
@@ -311,10 +230,8 @@ class Processor {
             retryable: false,
         })
 
-        // 상태를 ERROR로 변경
         await this.stateManager.changeState(this.id, "ERROR")
 
-        // 이벤트 발행
         await this.eventManager.publish({
             type: "SYSTEM.STARTUP_FAILED",
             payload: {
@@ -327,6 +244,32 @@ class Processor {
         })
 
         this.logger.error(`Processor ${this.id} startup failed:`, error)
+    }
+
+    private async handleStopError(error: Error): Promise<void> {
+        await this.errorManager.handleError({
+            code: "PROCESS",
+            type: "RECOVERABLE",
+            module: this.id,
+            message: "Error during processor shutdown",
+            timestamp: Date.now(),
+            error,
+            retryable: false,
+        })
+    }
+
+    getProcessingStatus(): Record<string, any> {
+        return {
+            bufferMetrics: this.processingBuffer.getMetrics(),
+            redisConnected: this.redis?.status === "ready",
+        }
+    }
+
+    getMemoryStatus(): Record<string, any> {
+        return {
+            memoryUsage: process.memoryUsage().heapUsed,
+            bufferMetrics: this.processingBuffer.getMetrics(),
+        }
     }
 }
 
