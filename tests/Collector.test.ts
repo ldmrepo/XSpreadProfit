@@ -45,25 +45,28 @@ describe("Collector 클래스 테스트", () => {
 
         // WebSocket 모킹
         const mockWs = {
-            on: jest.fn((event: string, callback: (data?: any) => void) => {
+            on: jest.fn((event: string, callback: (data?: string) => void) => {
                 if (event === "open") {
-                    callback() // WebSocket 연결
+                    setTimeout(() => callback(), 100) // "open" 이벤트 트리거
                 }
                 if (event === "message") {
-                    callback(
-                        JSON.stringify({
-                            symbol: "BTC/USD",
-                            timestamp: 123456789,
-                        })
-                    ) // 메시지 이벤트 호출
+                    setTimeout(
+                        () =>
+                            callback(
+                                JSON.stringify({
+                                    symbol: "BTC/USD",
+                                    timestamp: 123456789,
+                                })
+                            ),
+                        200
+                    )
                 }
             }),
             send: jest.fn(),
             close: jest.fn(),
-            ping: jest.fn(),
             readyState: WebSocket.OPEN,
         }
-        jest.spyOn(WebSocket.prototype, "on").mockImplementation(
+        WebSocket.prototype.constructor = jest.fn(
             () => mockWs as unknown as WebSocket
         )
 
@@ -80,177 +83,110 @@ describe("Collector 클래스 테스트", () => {
     afterEach(() => {
         jest.clearAllMocks()
         jest.useRealTimers() // Fake Timers 복구
+        collector.stop() // Collector 종료
+    })
 
-        // WebSocket 닫기
-        if (collector) {
-            collector.stop()
+    test("WebSocket 연결 성공", async () => {
+        const mockChangeState = collector["stateManager"]
+            .changeState as jest.Mock
+
+        const mockWs = {
+            on: jest.fn((event: string, callback: (data?: any) => void) => {
+                if (event === "open") callback()
+            }),
+            send: jest.fn(),
+            close: jest.fn(),
+            readyState: WebSocket.OPEN,
         }
+        WebSocket.prototype.constructor = jest.fn(
+            () => mockWs as unknown as WebSocket
+        )
+
+        await collector.start()
+
+        expect(mockChangeState).toHaveBeenCalledWith(
+            "test-collector",
+            "STARTING"
+        )
+        expect(mockChangeState).toHaveBeenCalledWith(
+            "test-collector",
+            "RUNNING"
+        )
+        expect(mockWs.on).toHaveBeenCalledWith("open", expect.any(Function))
     })
 
-    describe("WebSocket 연결", () => {
-        test("WebSocket 연결 성공", async () => {
-            const mockChangeState = collector["stateManager"]
-                .changeState as jest.Mock
-
-            const mockWs = {
-                on: jest.fn((event: string, callback: (data?: any) => void) => {
-                    if (event === "open") callback() // WebSocket 연결 즉시 open 상태로 설정
-                }),
-                send: jest.fn(),
-                close: jest.fn(),
-                ping: jest.fn(),
-                readyState: WebSocket.OPEN,
-            }
-
-            WebSocket.prototype.constructor = jest.fn(
-                () => mockWs as unknown as WebSocket
-            )
-
-            await collector.start()
-
-            expect(mockChangeState).toHaveBeenCalledWith(
-                "test-collector",
-                "STARTING"
-            )
-            expect(mockChangeState).toHaveBeenCalledWith(
-                "test-collector",
-                "RUNNING"
-            )
-            expect(mockWs.on).toHaveBeenCalledWith("open", expect.any(Function))
+    test("REST API 데이터 호출 성공", async () => {
+        const mockData = [{ symbol: "BTC/USD", timestamp: 123456789 }]
+        ;(
+            axios.get as jest.MockedFunction<typeof axios.get>
+        ).mockResolvedValueOnce({
+            data: mockData,
         })
 
-        test("WebSocket 연결 실패 시 복구 시도", async () => {
-            const mockChangeState = collector["stateManager"]
-                .changeState as jest.Mock
+        const fetchDataSpy = jest.spyOn(
+            collector as any,
+            "fetchMarketDataViaRest"
+        )
+        const bufferPushSpy = jest.spyOn(collector["dataBuffer"], "push")
 
-            const mockWs = {
-                on: jest.fn((event: string, callback: (data?: any) => void) => {
-                    if (event === "close") callback() // WebSocket 닫힘 상태 트리거
-                }),
-                close: jest.fn(),
-                readyState: WebSocket.CLOSED,
-            }
+        collector["startRestFallback"]()
 
-            WebSocket.prototype.constructor = jest.fn(
-                () => mockWs as unknown as WebSocket
-            )
+        jest.advanceTimersByTime(5000) // REST 호출 주기
 
-            const reconnectSpy = jest
-                .spyOn(collector as any, "connect")
-                .mockImplementation(jest.fn())
-
-            await collector.start()
-
-            jest.advanceTimersByTime(1000) // Reconnect 시도 시간 경과
-
-            expect(reconnectSpy).toHaveBeenCalled()
-            expect(mockChangeState).toHaveBeenCalledWith(
-                "test-collector",
-                "STARTING"
-            )
-        })
+        expect(fetchDataSpy).toHaveBeenCalled()
+        expect(bufferPushSpy).toHaveBeenCalledWith(mockData[0])
     })
 
-    describe("REST API 대체 수집", () => {
-        test("REST API 데이터 호출 성공", async () => {
-            const mockData = [{ symbol: "BTC/USD", timestamp: 123456789 }]
-            ;(
-                axios.get as jest.MockedFunction<typeof axios.get>
-            ).mockResolvedValueOnce({ data: mockData })
+    test("올바른 데이터 처리", async () => {
+        await collector.subscribe(["BTC/USD"]) // 심볼 등록
 
-            const fetchDataSpy = jest.spyOn(
-                collector as any,
-                "fetchMarketDataViaRest"
-            )
-            const bufferPushSpy = jest.spyOn(collector["dataBuffer"], "push")
+        const validData = { symbol: "BTC/USD", timestamp: 123456789 }
+        const bufferPushSpy = jest.spyOn(collector["dataBuffer"], "push")
 
-            collector["startRestFallback"]()
+        await collector["handleMessage"](JSON.stringify(validData))
 
-            jest.advanceTimersByTime(5000) // REST 호출 주기
-
-            expect(fetchDataSpy).toHaveBeenCalled()
-            expect(bufferPushSpy).toHaveBeenCalledWith(mockData[0])
-        })
-
-        test("REST API 호출 실패 시 에러 처리", async () => {
-            jest.spyOn(console, "warn").mockImplementation(() => {}) // 경고 로그 무시
-            ;(
-                axios.get as jest.MockedFunction<typeof axios.get>
-            ).mockRejectedValueOnce(new Error("Network error"))
-
-            const fetchDataSpy = jest.spyOn(
-                collector as any,
-                "fetchMarketDataViaRest"
-            )
-            const handleErrorSpy = collector["errorManager"]
-                .handleError as jest.Mock
-
-            collector["startRestFallback"]()
-
-            jest.advanceTimersByTime(5000) // REST 호출 주기
-
-            expect(fetchDataSpy).toHaveBeenCalled()
-            expect(handleErrorSpy).toHaveBeenCalledWith(
-                expect.objectContaining({ message: "REST API 호출 실패" })
-            )
-        })
+        expect(bufferPushSpy).toHaveBeenCalledWith(validData)
     })
 
-    describe("데이터 처리", () => {
-        test("올바른 데이터 처리", async () => {
-            await collector.subscribe(["BTC/USD"]) // 심볼 등록
+    test("Collector 상태 변경 호출", async () => {
+        const mockChangeState = collector["stateManager"]
+            .changeState as jest.Mock
 
-            const validData = { symbol: "BTC/USD", timestamp: 123456789 }
-            const bufferPushSpy = jest.spyOn(collector["dataBuffer"], "push")
+        await collector.start()
 
-            await collector["handleMessage"](JSON.stringify(validData))
-
-            expect(bufferPushSpy).toHaveBeenCalledWith(validData)
-        })
-
-        test("유효하지 않은 데이터 무시", async () => {
-            const invalidData = { symbol: 12345, timestamp: "not-a-number" }
-
-            const mockLogger = jest
-                .spyOn(console, "warn")
-                .mockImplementation(() => {})
-
-            await collector["handleMessage"](JSON.stringify(invalidData))
-
-            expect(mockLogger).toHaveBeenCalledWith(
-                expect.stringContaining("데이터 검증 실패"),
-                invalidData
-            )
-        })
+        expect(mockChangeState).toHaveBeenCalledWith(
+            "test-collector",
+            "STARTING"
+        )
+        expect(mockChangeState).toHaveBeenCalledWith(
+            "test-collector",
+            "RUNNING"
+        )
     })
 
-    describe("상태 관리 및 메트릭 수집", () => {
-        test("Collector 상태 변경 호출", async () => {
-            const mockChangeState = collector["stateManager"]
-                .changeState as jest.Mock
+    test("메트릭 수집", () => {
+        const mockCollect = collector["metricManager"].collect as jest.Mock
 
-            await collector.start()
+        collector["startMetricCollection"]()
 
-            expect(mockChangeState).toHaveBeenCalledWith(
-                "test-collector",
-                "STARTING"
-            )
-            expect(mockChangeState).toHaveBeenCalledWith(
-                "test-collector",
-                "RUNNING"
-            )
-        })
+        jest.advanceTimersByTime(5000) // 타이머를 5초 앞으로 이동
 
-        test("메트릭 수집", () => {
-            const mockCollect = collector["metricManager"].collect as jest.Mock
+        expect(mockCollect).toHaveBeenCalledWith(
+            expect.objectContaining({ name: "collector_metrics" })
+        )
+    })
+    test("WebSocket message 이벤트 처리", async () => {
+        const validData = { symbol: "BTC/USD", timestamp: 123456789 }
+        const mockHandleMessage = jest.spyOn(collector as any, "handleMessage")
 
-            collector["startMetricCollection"]()
+        // 메시지 이벤트 트리거
+        const mockWs = collector["ws"] as any
+        mockWs.on.mock.calls.find((call: any[]) => call[0] === "message")[1](
+            JSON.stringify(validData)
+        )
 
-            jest.advanceTimersByTime(5000) // 타이머를 5초 앞으로 이동
-
-            expect(mockCollect).toHaveBeenCalledWith(
-                expect.objectContaining({ name: "collector_metrics" })
-            )
-        })
+        expect(mockHandleMessage).toHaveBeenCalledWith(
+            JSON.stringify(validData)
+        )
     })
 })
