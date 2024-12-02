@@ -1,174 +1,205 @@
 import { jest } from "@jest/globals";
+import StateManager from "../src/managers/StateManager";
 import EventManager from "../src/managers/EventManager";
-import { Event, EventHandler } from "../src/types/events";
-import { EventManagerConfig } from "../src/types/config";
+import { State, ComponentState } from "../src/types/state";
+import { StateManagerConfig, EventManagerConfig } from "../src/types/config";
+import { Event, EventHandler, EventFilter } from "../src/types/events";
+import { Metrics } from "../src/types/metrics";
+import { Logger } from "../src/utils/logger";
 
-describe("EventManager", () => {
-    let eventManager: EventManager;
+describe("StateManager", () => {
+    let stateManager: StateManager;
+    let mockEventManager: EventManager;
 
     beforeEach(async () => {
-        eventManager = EventManager.getInstance();
-        const config: EventManagerConfig = {
+        // EventManager의 전체 구현을 mock으로 생성
+        const eventManagerImpl = {
+            // 공개 메서드
+            initialize: jest.fn().mockReturnValue(Promise.resolve()),
+            publish: jest.fn().mockReturnValue(Promise.resolve()),
+            subscribe: jest.fn(),
+            unsubscribe: jest.fn(),
+            getMetrics: jest.fn().mockReturnValue({
+                eventsProcessed: 0,
+                eventsFailed: 0,
+                averageProcessingTime: 0,
+            }),
+
+            // 내부 속성
+            subscribers: new Map(),
+            eventTypes: new Map(),
+            metrics: {
+                eventsProcessed: 0,
+                eventsFailed: 0,
+                averageProcessingTime: 0,
+            },
+            logger: {
+                debug: jest.fn(),
+                info: jest.fn(),
+                warn: jest.fn(),
+                error: jest.fn(),
+            } as unknown as Logger,
             retryPolicy: {
                 maxRetries: 3,
-                retryInterval: 100,
+                retryInterval: 1000,
                 backoffRate: 2,
             },
-            eventTypes: ["MARKET_DATA.TRADE", "SYSTEM.STATUS"],
-            subscriptionTimeout: 5000,
-            maxSubscribersPerEvent: 10,
         };
-        await eventManager.initialize(config);
+
+        mockEventManager = eventManagerImpl as unknown as EventManager;
+
+        jest.spyOn(EventManager, "getInstance").mockImplementation(
+            () => mockEventManager
+        );
+
+        stateManager = StateManager.getInstance();
+        const config: StateManagerConfig = {
+            stateHistoryLimit: 100,
+            validationEnabled: true,
+            stateChangeTimeout: 5000,
+        };
+
+        await stateManager.initialize(config);
     });
 
     afterEach(() => {
         jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
+    describe("상태 변경", () => {
+        test("유효한 상태 전이를 허용해야 함", async () => {
+            const componentId = "test-component";
 
-    describe("이벤트 발행/구독", () => {
-        test("구독한 핸들러가 이벤트를 수신해야 함", async () => {
-            const handler = jest.fn();
-            const event: Event = {
-                type: "MARKET_DATA.TRADE",
-                payload: { price: 100 },
-                timestamp: Date.now(),
-                source: "test",
-            };
+            await stateManager.changeState(componentId, "STARTING");
+            let state = stateManager.getState(componentId);
+            expect(state?.state).toBe("STARTING");
 
-            eventManager.subscribe("MARKET_DATA.TRADE", handler);
-            await eventManager.publish(event);
+            await stateManager.changeState(componentId, "RUNNING");
+            state = stateManager.getState(componentId);
+            expect(state?.state).toBe("RUNNING");
 
-            expect(handler).toHaveBeenCalledWith(event);
+            expect(mockEventManager.publish).toHaveBeenCalledTimes(2);
         });
 
-        test("구독 취소 후에는 이벤트를 수신하지 않아야 함", async () => {
-            const handler = jest.fn();
-            const event: Event = {
-                type: "MARKET_DATA.TRADE",
-                payload: { price: 100 },
-                timestamp: Date.now(),
-                source: "test",
-            };
+        test("잘못된 상태 전이를 거부해야 함", async () => {
+            const componentId = "test-component";
 
-            eventManager.subscribe("MARKET_DATA.TRADE", handler);
-            eventManager.unsubscribe("MARKET_DATA.TRADE", handler);
-            await eventManager.publish(event);
+            await stateManager.changeState(componentId, "STARTING");
 
-            expect(handler).not.toHaveBeenCalled();
+            await expect(
+                stateManager.changeState(componentId, "STOPPED")
+            ).rejects.toThrow("Invalid state transition");
         });
 
-        test("여러 구독자가 같은 이벤트를 수신할 수 있어야 함", async () => {
-            const handler1 = jest.fn();
-            const handler2 = jest.fn();
-            const event: Event = {
-                type: "MARKET_DATA.TRADE",
-                payload: { price: 100 },
-                timestamp: Date.now(),
-                source: "test",
-            };
+        test("상태 변경 시 이벤트를 발행해야 함", async () => {
+            const componentId = "test-component";
+            await stateManager.changeState(componentId, "STARTING");
 
-            eventManager.subscribe("MARKET_DATA.TRADE", handler1);
-            eventManager.subscribe("MARKET_DATA.TRADE", handler2);
-            await eventManager.publish(event);
-
-            expect(handler1).toHaveBeenCalledWith(event);
-            expect(handler2).toHaveBeenCalledWith(event);
-        });
-    });
-
-    describe("이벤트 유효성 검사", () => {
-        test("유효하지 않은 이벤트 타입을 발행하면 에러가 발생해야 함", async () => {
-            const event: Event = {
-                type: "INVALID_TYPE",
-                payload: {},
-                timestamp: Date.now(),
-                source: "test",
-            };
-
-            await expect(eventManager.publish(event)).rejects.toThrow(
-                "Invalid event type"
+            expect(mockEventManager.publish).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: "SYSTEM.STATE_CHANGE",
+                    payload: expect.objectContaining({
+                        componentId,
+                        state: "STARTING",
+                    }),
+                })
             );
         });
     });
 
-    describe("재시도 정책", () => {
-        test("핸들러 실패 시 지정된 횟수만큼 재시도해야 함", async () => {
-            const failingHandler = jest
-                .fn()
-                .mockRejectedValueOnce(new Error("First failure"))
-                .mockRejectedValueOnce(new Error("Second failure"))
-                .mockResolvedValueOnce(undefined);
+    describe("상태 이력", () => {
+        test("상태 변경 이력을 기록해야 함", async () => {
+            const componentId = "test-component";
 
-            const event: Event = {
-                type: "MARKET_DATA.TRADE",
-                payload: { price: 100 },
-                timestamp: Date.now(),
-                source: "test",
-            };
+            await stateManager.changeState(componentId, "STARTING");
+            await stateManager.changeState(componentId, "RUNNING");
+            await stateManager.changeState(componentId, "PAUSED");
 
-            eventManager.subscribe("MARKET_DATA.TRADE", failingHandler);
-            await eventManager.publish(event);
-
-            expect(failingHandler).toHaveBeenCalledTimes(3);
+            const history = stateManager.getStateHistory(componentId);
+            expect(history).toHaveLength(3);
+            expect(history[0].state).toBe("STARTING");
+            expect(history[1].state).toBe("RUNNING");
+            expect(history[2].state).toBe("PAUSED");
         });
 
-        test("최대 재시도 횟수 초과 시 에러가 발생해야 함", async () => {
-            const failingHandler = jest
-                .fn()
-                .mockRejectedValue(new Error("Always fails"));
-            const event: Event = {
-                type: "MARKET_DATA.TRADE",
-                payload: { price: 100 },
-                timestamp: Date.now(),
-                source: "test",
-            };
+        test("이력이 제한 크기를 초과하지 않아야 함", async () => {
+            const componentId = "test-component";
 
-            eventManager.subscribe("MARKET_DATA.TRADE", failingHandler);
-            await expect(eventManager.publish(event)).rejects.toThrow();
-            expect(failingHandler).toHaveBeenCalledTimes(4); // 초기 시도 + 3번의 재시도
+            // 101개의 상태 변경 생성
+            for (let i = 0; i < 101; i++) {
+                await stateManager.changeState(componentId, "STARTING");
+                await stateManager.changeState(componentId, "RUNNING");
+            }
+
+            const history = stateManager.getStateHistory(componentId);
+            expect(history.length).toBeLessThanOrEqual(100);
         });
     });
 
-    describe("메트릭", () => {
-        test("이벤트 처리 성공 시 메트릭이 올바르게 업데이트되어야 함", async () => {
-            const handler = jest.fn();
-            const event: Event = {
-                type: "MARKET_DATA.TRADE",
-                payload: { price: 100 },
-                timestamp: Date.now(),
-                source: "test",
-            };
-
-            eventManager.subscribe("MARKET_DATA.TRADE", handler);
-            await eventManager.publish(event);
-
-            const metrics = eventManager.getMetrics();
-            expect(metrics.eventsProcessed).toBe(1);
-            expect(metrics.eventsFailed).toBe(0);
-            expect(metrics.averageProcessingTime).toBeGreaterThan(0);
+    describe("상태 전이 규칙", () => {
+        test("유효한 다음 상태 목록을 반환해야 함", () => {
+            const validTransitions =
+                stateManager.getValidTransitions("RUNNING");
+            expect(validTransitions).toContain("PAUSED");
+            expect(validTransitions).toContain("STOPPING");
+            expect(validTransitions).toContain("ERROR");
         });
 
-        test("이벤트 처리 실패 시 메트릭이 올바르게 업데이트되어야 함", async () => {
-            const failingHandler = jest
-                .fn()
-                .mockRejectedValue(new Error("Fail"));
-            const event: Event = {
-                type: "MARKET_DATA.TRADE",
-                payload: { price: 100 },
-                timestamp: Date.now(),
-                source: "test",
-            };
+        test("상태 전이 검증이 올바르게 동작해야 함", () => {
+            expect(() => {
+                stateManager.validateStateTransition("RUNNING", "PAUSED");
+            }).not.toThrow();
 
-            eventManager.subscribe("MARKET_DATA.TRADE", failingHandler);
-            try {
-                await eventManager.publish(event);
-            } catch (error) {
-                // 에러는 예상된 것
-            }
+            expect(() => {
+                stateManager.validateStateTransition("RUNNING", "STARTING");
+            }).toThrow("Invalid state transition");
+        });
+    });
 
-            const metrics = eventManager.getMetrics();
-            expect(metrics.eventsProcessed).toBe(0);
-            expect(metrics.eventsFailed).toBe(1);
+    describe("시스템 상태 조회", () => {
+        test("모든 컴포넌트의 현재 상태를 반환해야 함", async () => {
+            await stateManager.changeState("component1", "RUNNING");
+            await stateManager.changeState("component2", "PAUSED");
+
+            const allStates = stateManager.getAllComponentStates();
+            expect(allStates.get("component1")?.state).toBe("RUNNING");
+            expect(allStates.get("component2")?.state).toBe("PAUSED");
+        });
+
+        test("존재하지 않는 컴포넌트의 상태는 undefined를 반환해야 함", () => {
+            const state = stateManager.getState("non-existent");
+            expect(state).toBeUndefined();
+        });
+    });
+
+    describe("에러 복구", () => {
+        test("ERROR 상태에서 복구가 가능해야 함", async () => {
+            const componentId = "test-component";
+
+            await stateManager.changeState(componentId, "STARTING");
+            await stateManager.changeState(componentId, "ERROR");
+            await stateManager.changeState(componentId, "STARTING");
+
+            const state = stateManager.getState(componentId);
+            expect(state?.state).toBe("STARTING");
+        });
+
+        test("ERROR 상태에서 잘못된 상태로의 전이를 방지해야 함", async () => {
+            const componentId = "test-component";
+
+            await stateManager.changeState(componentId, "ERROR");
+
+            await expect(
+                stateManager.changeState(componentId, "RUNNING")
+            ).rejects.toThrow("Invalid state transition");
+        });
+    });
+
+    describe("초기화", () => {
+        test("초기화 후 기본 전이 규칙이 설정되어야 함", () => {
+            const transitions = stateManager.getValidTransitions("INIT");
+            expect(transitions).toBeDefined();
+            expect(transitions.has("STARTING")).toBe(true);
         });
     });
 });
