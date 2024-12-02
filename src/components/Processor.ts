@@ -9,38 +9,38 @@
  * - 배치 처리
  */
 
-import { Redis } from "ioredis"
-import { Logger } from "../utils/logger"
-import { SharedBuffer } from "../utils/SharedBuffer"
-import EventManager from "../managers/EventManager"
-import StateManager from "../managers/StateManager"
-import MetricManager from "../managers/MetricManager"
-import ErrorManager from "../managers/ErrorManager"
-import { ProcessorConfig, ManagerDependencies } from "../types/config"
-import { MarketData, ProcessedData } from "../types/data"
-import { MetricType } from "../types/metrics"
+import { Redis } from "ioredis";
+import { Logger } from "../utils/logger";
+import { SharedBuffer } from "../utils/SharedBuffer";
+import EventManager from "../managers/EventManager";
+import StateManager from "../managers/StateManager";
+import MetricManager from "../managers/MetricManager";
+import ErrorManager from "../managers/ErrorManager";
+import { ProcessorConfig, ManagerDependencies } from "../types/config";
+import { MarketData, ProcessedData } from "../types/data";
+import { MetricType } from "../types/metrics";
 
 class Processor {
-    private id: string
-    private exchangeId: string
-    private redis?: Redis
-    private eventManager: EventManager
-    private stateManager: StateManager
-    private metricManager: MetricManager
-    private errorManager: ErrorManager
-    private logger: Logger
+    private id: string;
+    private exchangeId: string;
+    private redis?: Redis;
+    private eventManager: EventManager;
+    private stateManager: StateManager;
+    private metricManager: MetricManager;
+    private errorManager: ErrorManager;
+    private logger: Logger;
 
     // 데이터 관리
-    private processingBuffer: SharedBuffer<ProcessedData>
+    private processingBuffer: SharedBuffer<ProcessedData>;
 
     constructor(config: ProcessorConfig) {
-        this.id = config.id
-        this.exchangeId = config.exchangeId
-        this.eventManager = config.managers.eventManager
-        this.stateManager = config.managers.stateManager
-        this.metricManager = config.managers.metricManager
-        this.errorManager = config.managers.errorManager
-        this.logger = Logger.getInstance(`Processor:${this.id}`)
+        this.id = config.id;
+        this.exchangeId = config.exchangeId;
+        this.eventManager = config.managers.eventManager;
+        this.stateManager = config.managers.stateManager;
+        this.metricManager = config.managers.metricManager;
+        this.errorManager = config.managers.errorManager;
+        this.logger = Logger.getInstance(`Processor:${this.id}`);
 
         // SharedBuffer 초기화
         this.processingBuffer = new SharedBuffer<ProcessedData>(
@@ -51,40 +51,40 @@ class Processor {
                 flushInterval: config.batchConfig?.flushInterval || 1000,
             },
             async (items) => this.processBatch(items)
-        )
+        );
     }
 
     async start(): Promise<void> {
         try {
-            await this.stateManager.changeState(this.id, "STARTING")
+            await this.stateManager.changeState(this.id, "STARTING");
 
             // Redis 연결 초기화
-            await this.initializeRedis()
+            await this.initializeRedis();
 
             // 이벤트 구독 설정
-            this.setupEventSubscriptions()
+            this.setupEventSubscriptions();
 
-            await this.stateManager.changeState(this.id, "RUNNING")
-            this.logger.info(`Processor ${this.id} started successfully`)
+            await this.stateManager.changeState(this.id, "RUNNING");
+            this.logger.info(`Processor ${this.id} started successfully`);
         } catch (error: any) {
-            await this.handleStartupError(error)
-            throw error
+            await this.handleStartupError(error);
+            throw error;
         }
     }
 
     async stop(): Promise<void> {
         try {
-            await this.stateManager.changeState(this.id, "STOPPING")
+            await this.stateManager.changeState(this.id, "STOPPING");
 
             // 진행 중인 처리 완료
-            await this.processingBuffer.flush()
-            this.processingBuffer.dispose()
+            await this.processingBuffer.flush();
+            this.processingBuffer.dispose();
 
-            await this.stateManager.changeState(this.id, "STOPPED")
-            this.logger.info(`Processor ${this.id} stopped successfully`)
+            await this.stateManager.changeState(this.id, "STOPPED");
+            this.logger.info(`Processor ${this.id} stopped successfully`);
         } catch (error: any) {
-            await this.handleStopError(error)
-            throw error
+            await this.handleStopError(error);
+            throw error;
         }
     }
 
@@ -94,13 +94,13 @@ class Processor {
                 host: process.env.REDIS_HOST,
                 port: parseInt(process.env.REDIS_PORT || "6379"),
                 password: process.env.REDIS_PASSWORD,
-            })
+            });
 
-            await this.redis.ping()
-            this.logger.info("Redis connection established")
+            await this.redis.ping();
+            this.logger.info("Redis connection established");
         } catch (error) {
-            this.logger.error("Failed to initialize Redis connection", error)
-            throw error
+            this.logger.error("Failed to initialize Redis connection", error);
+            throw error;
         }
     }
 
@@ -109,31 +109,31 @@ class Processor {
             "MARKET_DATA",
             async (event) => await this.handleMarketData(event.payload),
             { field: "exchangeId", operator: "eq", value: this.exchangeId }
-        )
+        );
     }
 
     private async handleMarketData(data: MarketData): Promise<void> {
-        const startTime = Date.now()
+        const startTime = Date.now();
         try {
             // 데이터 검증
-            this.validateData(data)
+            this.validateData(data);
 
             // 데이터 정규화
-            const normalizedData = await this.normalizeData(data)
+            const normalizedData = await this.normalizeData(data);
 
             // 처리 큐에 추가
-            await this.processingBuffer.push(normalizedData)
+            await this.processingBuffer.push(normalizedData);
 
             // 메트릭 업데이트
-            await this.updateProcessingMetrics(startTime)
+            await this.updateProcessingMetrics(startTime);
         } catch (error) {
-            await this.handleProcessingError(error, data)
+            await this.handleProcessingError(error, data);
         }
     }
 
     private validateData(data: MarketData): void {
         if (!data.symbol || !data.timestamp || !data.exchangeId) {
-            throw new Error("Invalid market data format")
+            throw new Error("Invalid market data format");
         }
     }
 
@@ -142,41 +142,41 @@ class Processor {
             ...data,
             processedAt: Date.now(),
             processorId: this.id,
-        }
+        };
     }
 
     private async processBatch(batch: ProcessedData[]): Promise<void> {
-        if (batch.length === 0) return
+        if (batch.length === 0) return;
 
-        const pipeline = this.redis!.pipeline()
+        const pipeline = this.redis!.pipeline();
 
         for (const data of batch) {
-            const key = this.getRedisKey(data)
-            pipeline.set(key, JSON.stringify(data))
-            pipeline.expire(key, 86400) // 24시간 유지
+            const key = this.getRedisKey(data);
+            pipeline.set(key, JSON.stringify(data));
+            pipeline.expire(key, 86400); // 24시간 유지
         }
 
         try {
-            await pipeline.exec()
-            await this.updateBatchMetrics(batch.length)
+            await pipeline.exec();
+            await this.updateBatchMetrics(batch.length);
         } catch (error) {
-            await this.handleBatchError(error, batch)
+            await this.handleBatchError(error, batch);
         }
     }
 
     private getRedisKey(data: ProcessedData): string {
-        return `market:${data.exchangeId}:${data.symbol}:${data.timestamp}`
+        return `market:${data.exchangeId}:${data.symbol}:${data.timestamp}`;
     }
 
     private async updateProcessingMetrics(startTime: number): Promise<void> {
-        const processingTime = Date.now() - startTime
+        const processingTime = Date.now() - startTime;
         await this.metricManager.collect({
             type: MetricType.HISTOGRAM,
             module: this.id,
             name: "processing_time",
             value: processingTime,
             timestamp: Date.now(),
-        })
+        });
     }
 
     private async updateBatchMetrics(batchSize: number): Promise<void> {
@@ -186,7 +186,7 @@ class Processor {
             name: "batch_size",
             value: batchSize,
             timestamp: Date.now(),
-        })
+        });
     }
 
     private async handleProcessingError(
@@ -201,7 +201,7 @@ class Processor {
             timestamp: Date.now(),
             data: data,
             error: error,
-        })
+        });
     }
 
     private async handleBatchError(
@@ -216,7 +216,7 @@ class Processor {
             timestamp: Date.now(),
             data: { batchSize: batch.length },
             error: error,
-        })
+        });
     }
 
     private async handleStartupError(error: Error): Promise<void> {
@@ -228,9 +228,9 @@ class Processor {
             timestamp: Date.now(),
             error,
             retryable: false,
-        })
+        });
 
-        await this.stateManager.changeState(this.id, "ERROR")
+        await this.stateManager.changeState(this.id, "ERROR");
 
         await this.eventManager.publish({
             type: "SYSTEM.STARTUP_FAILED",
@@ -241,9 +241,9 @@ class Processor {
             },
             timestamp: Date.now(),
             source: this.id,
-        })
+        });
 
-        this.logger.error(`Processor ${this.id} startup failed:`, error)
+        this.logger.error(`Processor ${this.id} startup failed:`, error);
     }
 
     private async handleStopError(error: Error): Promise<void> {
@@ -255,22 +255,22 @@ class Processor {
             timestamp: Date.now(),
             error,
             retryable: false,
-        })
+        });
     }
 
     getProcessingStatus(): Record<string, any> {
         return {
             bufferMetrics: this.processingBuffer.getMetrics(),
             redisConnected: this.redis?.status === "ready",
-        }
+        };
     }
 
     getMemoryStatus(): Record<string, any> {
         return {
             memoryUsage: process.memoryUsage().heapUsed,
             bufferMetrics: this.processingBuffer.getMetrics(),
-        }
+        };
     }
 }
 
-export default Processor
+export default Processor;
