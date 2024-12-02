@@ -1,69 +1,116 @@
-. 단, 코드의 시작은 파일경로명, 개요에 대한 코멘트, import 구분을 추가해주세요. 모든 기능을 생성하고 인터페이스 및 추상클래스를 제외하고 실제 구현 클래스는 기능만 나열하고 구현은 구현시 코멘트를 적어주세요. 클래스의 import 구문의 파일주 XSpreadProfit 시스템 클래스 설계서에 정의되지 않은 파일은 같이 생성해주세요. 이후 모든 코드생성은 동일한 규칙으로 일관성있게 작성합니다.
+전체 프로젝트의 폴더 구조를 설명드리겠습니다:
 
-XSpreadProfit 시스템 클래스 설계서를 참조하여 CollectorErrorHandler 클래스를 생성해주세요. 단, 코드의 시작은 파일경로명, 개요에 대한 코멘트, import 구분을 추가해주세요. 모든 기능을 생성하고 인터페이스 및 추상클래스를 제외하고 실제 구현 클래스는 기능만 나열하고 구현은 구현시 코멘트를 적어주세요. 클래스의 import 구문의 파일주 XSpreadProfit 시스템 클래스 설계서에 정의되지 않은 파일은 같이 생성해주세요. 이후 모든 코드생성은 동일한 규칙으로 일관성있게 작성합니다.
+```
+market-data-collector/
+├── src/
+│   ├── managers/              # 코어 매니저 클래스들
+│   │   ├── EventManager.ts
+│   │   ├── StateManager.ts
+│   │   ├── MetricManager.ts
+│   │   ├── ErrorManager.ts
+│   │   └── SystemManager.ts
+│   │
+│   ├── components/            # 핵심 컴포넌트
+│   │   ├── Collector.ts      # 수집기
+│   │   └── Processor.ts      # 등록기
+│   │
+│   ├── types/                # 타입 정의
+│   │   ├── config.ts         # 설정 관련 타입
+│   │   ├── events.ts         # 이벤트 관련 타입
+│   │   ├── metrics.ts        # 메트릭 관련 타입
+│   │   ├── errors.ts         # 에러 관련 타입
+│   │   └── data.ts           # 데이터 관련 타입
+│   │
+│   ├── utils/                # 유틸리티 함수들
+│   │   ├── config.ts         # 설정 로드
+│   │   ├── logger.ts         # 로깅
+│   │   └── validators.ts     # 검증
+│   │
+│   ├── adapters/             # 거래소별 어댑터
+│   │   ├── binance/
+│   │   │   ├── adapter.ts
+│   │   │   └── types.ts
+│   │   └── upbit/
+│   │       ├── adapter.ts
+│   │       └── types.ts
+│   │
+│   └── index.ts              # 진입점
+│
+├── config/                    # 설정 파일들
+│   ├── development.json
+│   ├── production.json
+│   └── test.json
+│
+├── tests/                    # 테스트 파일들
+│   ├── unit/                 # 단위 테스트
+│   │   ├── managers/
+│   │   └── components/
+│   │
+│   ├── integration/          # 통합 테스트
+│   │   ├── collectors/
+│   │   └── processors/
+│   │
+│   └── fixtures/             # 테스트 데이터
+│
+├── docs/                     # 문서
+│   ├── architecture.md       # 아키텍처 문서
+│   ├── api.md               # API 문서
+│   └── deployment.md        # 배포 가이드
+│
+├── scripts/                  # 유틸리티 스크립트
+│   ├── setup.sh
+│   └── deploy.sh
+│
+├── logs/                     # 로그 파일들
+│   ├── error.log
+│   └── access.log
+│
+├── .env                      # 환경 변수
+├── .env.example             # 환경 변수 예시
+├── .gitignore
+├── package.json
+├── tsconfig.json            # TypeScript 설정
+├── jest.config.js           # Jest 테스트 설정
+└── README.md
+```
 
-XSpreadProfit 시스템 클래스 설계서를 참조하여 CollectorErrorHandler 인터페이스를 생성해주세요. 단, 코드의 시작은 파일경로명, 개요에 대한 코멘트, import 구분을 추가해주세요. 모든 기능을 생성하고 인터페이스 및 추상클래스를 제외하고 실제 구현 클래스는 기능만 나열하고 구현은 구현시 코멘트를 적어주세요. 클래스의 import 구문의 파일주 XSpreadProfit 시스템 클래스 설계서에 정의되지 않은 파일은 같이 생성해주세요.
-클래스,인터페이스등은 반드시 분리되어 생성해야 합니다.
-새로운 기능을 추가하거나, 확장해선 안됨. 이후 모든 코드생성은 동일한 규칙으로 일관성있게 작성합니다.
+주요 디렉토리 설명:
 
-설계서에 정의된 클래스들을 인터페이스, 추상 클래스, 구현 클래스로 분류하여 정리하겠습니다:
+1. src/
 
-코드의 시작은 파일경로명, 개요에 대한 코멘트, import 구분을 추가해주세요.
-클래스,인터페이스등은 반드시 분리되어 생성해야 합니다.
-새로운 기능을 추가하거나, 확장해선 안됨. 이후 모든 코드생성은 동일한 규칙으로 일관성있게 작성합니다.
+-   managers/: 핵심 관리 컴포넌트
+-   components/: 주요 기능 컴포넌트
+-   types/: 타입 정의
+-   utils/: 유틸리티 함수
+-   adapters/: 거래소별 구현
 
-### 인터페이스
+2. config/
 
-1. MarketConnector
-2. DataProcessor
-3. DataStore
-4. PriceAnalyzer
+-   환경별 설정 파일
+-   시스템 구성 설정
 
-### 추상 클래스
+3. tests/
 
-1. BaseCollector
-2. BaseDataProcessor
+-   unit/: 단위 테스트
+-   integration/: 통합 테스트
+-   fixtures/: 테스트 데이터
 
-### 구현 클래스
+4. docs/
 
-1. ExchangeCollectorFactory
-2. CollectorErrorHandler
-3. CollectorStateManager
-4. BinanceCollector
-5. BybitCollector
-6. BinanceDataProcessor
-7. RedisStore
-8. PostgresStore
-9. InternalPriceAnalyzer
-10. CrossExchangePriceAnalyzer
-11. MetricsCollector
+-   시스템 문서
+-   API 문서
+-   배포 가이드
 
-### 부가 클래스 (다이어그램에 언급됨)
+5. scripts/
 
-1. DataValidator
-2. DataNormalizer
-3. DataSerializer
-4. QueryBuilder
-5. SpreadCalculator
-6. MetricsStore
-7. MetricsAggregator
-8. RedisClient
-9. PostgresClient
-10. Logger
+-   배포 스크립트
+-   유틸리티 스크립트
 
-### 타입 정의
+이러한 구조는:
 
-1. ConnectionStatus
-2. CollectorConfig
-3. CollectorState
-4. CollectorMetrics
-5. HealthStatus
-6. CollectorStatus
-7. ErrorType
-8. CollectorError
-9. ExchangeConfig
-10. RawMarketData
-11. ProcessedMarketData
-12. AnalysisInput
-13. AnalysisResult
-14. DataQuery
+-   명확한 관심사 분리
+-   쉬운 확장성
+-   효율적인 유지보수
+-   테스트 용이성
+
+을 제공합니다.

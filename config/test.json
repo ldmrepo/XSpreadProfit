@@ -1,0 +1,92 @@
+// config/test.json
+{
+    "system": {
+        "name": "Market Data Collection System",
+        "version": "1.0.0",
+        "env": "test"
+    },
+    "redis": {
+        "host": "localhost",
+        "port": 6379,
+        "password": null,
+        "db": 1,
+        "keyPrefix": "market:test:"
+    },
+    "exchanges": [
+        {
+            "id": "binance",
+            "name": "Binance",
+            "websocketUrl": "wss://testnet.binance.vision/ws",
+            "restUrl": "https://testnet.binance.vision",
+            "symbols": [
+                "BTC-USDT"
+            ],
+            "apiKey": "test",
+            "apiSecret": "test",
+            "options": {
+                "reconnectInterval": 1000,
+                "maxReconnectAttempts": 3
+            }
+        },
+        {
+            "id": "upbit",
+            "name": "Upbit",
+            "websocketUrl": "wss://api.upbit.com/websocket/v1",
+            "restUrl": "https://api.upbit.com/v1",
+            "symbols": [
+                "BTC-USDT"
+            ],
+            "apiKey": "test",
+            "apiSecret": "test",
+            "options": {
+                "reconnectInterval": 1000,
+                "maxReconnectAttempts": 3
+            }
+        }
+    ],
+    "collector": {
+        "bufferSize": 100,
+        "flushInterval": 1000,
+        "wsConfig": {
+            "maxReconnectAttempts": 3,
+            "reconnectInterval": 1000,
+            "pingInterval": 5000,
+            "pongTimeout": 1000
+        },
+        "bufferConfig": {
+            "size": 100,
+            "flushInterval": 1000
+        }
+    },
+    "processor": {
+        "batchSize": 10,
+        "batchTimeout": 1000,
+        "memoryLimit": 268435456,
+        "batchConfig": {
+            "size": 10,
+            "timeout": 1000
+        },
+        "memoryConfig": {
+            "poolSize": 100,
+            "bufferSize": 1024
+        }
+    },
+    "metrics": {
+        "enabled": true,
+        "flushInterval": 5000,
+        "retentionPeriod": 3600000,
+        "alertThresholds": {
+            "errorRate": 0.05,
+            "latency": 2000,
+            "memoryUsage": 0.9
+        }
+    },
+    "logging": {
+        "level": "debug",
+        "format": "json",
+        "files": {
+            "error": "logs/test-error.log",
+            "combined": "logs/test-combined.log"
+        }
+    }
+}

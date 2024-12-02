@@ -1,0 +1,95 @@
+{
+    "system": {
+        "name": "Market Data Collection System",
+        "version": "1.0.0",
+        "env": "production"
+    },
+    "redis": {
+        "host": "redis.production",
+        "port": 6379,
+        "password": null,
+        "db": 0,
+        "keyPrefix": "market:"
+    },
+    "exchanges": [
+        {
+            "id": "binance",
+            "name": "Binance",
+            "websocketUrl": "wss://stream.binance.com:9443/ws",
+            "restUrl": "https://api.binance.com",
+            "symbols": [
+                "BTC-USDT",
+                "ETH-USDT",
+                "XRP-USDT"
+            ],
+            "apiKey": "",
+            "apiSecret": "",
+            "options": {
+                "reconnectInterval": 3000,
+                "maxReconnectAttempts": 10
+            }
+        },
+        {
+            "id": "upbit",
+            "name": "Upbit",
+            "websocketUrl": "wss://api.upbit.com/websocket/v1",
+            "restUrl": "https://api.upbit.com/v1",
+            "symbols": [
+                "BTC-USDT",
+                "ETH-USDT",
+                "XRP-USDT"
+            ],
+            "apiKey": "",
+            "apiSecret": "",
+            "options": {
+                "reconnectInterval": 3000,
+                "maxReconnectAttempts": 10
+            }
+        }
+    ],
+    "collector": {
+        "bufferSize": 5000,
+        "flushInterval": 500,
+        "wsConfig": {
+            "maxReconnectAttempts": 10,
+            "reconnectInterval": 3000,
+            "pingInterval": 15000,
+            "pongTimeout": 3000
+        },
+        "bufferConfig": {
+            "size": 5000,
+            "flushInterval": 500
+        }
+    },
+    "processor": {
+        "batchSize": 500,
+        "batchTimeout": 500,
+        "memoryLimit": 2147483648,
+        "batchConfig": {
+            "size": 500,
+            "timeout": 500
+        },
+        "memoryConfig": {
+            "poolSize": 5000,
+            "bufferSize": 1024
+        }
+    },
+    "metrics": {
+        "enabled": true,
+        "flushInterval": 30000,
+        "retentionPeriod": 604800000,
+        "alertThresholds": {
+            "errorRate": 0.005,
+            "latency": 500,
+            "memoryUsage": 0.7
+        }
+    },
+    "logging": {
+        "level": "info",
+        "format": "json",
+        "files": {
+            "error": "/var/log/market-collector/error.log",
+            "combined": "/var/log/market-collector/combined.log"
+        }
+    }
+}
