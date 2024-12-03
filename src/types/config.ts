@@ -49,7 +49,7 @@ export interface CollectorConfig {
     id: string;
     exchangeId: string;
     websocketUrl: string;
-    managers: ManagerDependencies;
+    // managers: ManagerDependencies;
     wsConfig?: WebSocketConfig;
     bufferConfig?: SharedBufferConfig;
     retryPolicy: RetryPolicy;

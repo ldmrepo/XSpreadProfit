@@ -53,13 +53,13 @@ describe("바이낸스 어댑터 (BinanceAdapter)", () => {
         try {
             // Mock 서버 시작
             mockSpotWsServer = new BinanceSpotDepthStream(ports.SPOT_WS);
-            mockSpotRestServer = new MockBinanceSpotApiServer(ports.SPOT_REST);
+            mockSpotRestServer = new MockBinanceSpotApiServer();
+            mockSpotRestServer.listen(ports.SPOT_REST);
             mockFuturesWsServer = new BinanceFuturesDepthStream(
                 ports.FUTURES_WS
             );
-            mockFuturesRestServer = new MockBinanceFuturesApiServer(
-                ports.FUTURES_REST
-            );
+            mockFuturesRestServer = new MockBinanceFuturesApiServer();
+            mockFuturesRestServer.listen(ports.FUTURES_REST);
 
             adapter = new BinanceAdapter();
 

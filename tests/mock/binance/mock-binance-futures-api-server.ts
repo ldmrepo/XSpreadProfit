@@ -25,13 +25,13 @@ export class MockBinanceFuturesApiServer {
     private orderBooks: Map<string, FuturesOrderBookData>;
     private readonly VALID_LIMITS = [5, 10, 20, 50, 100, 500, 1000];
 
-    constructor(httpPort: number) {
+    constructor() {
         this.app = express();
         this.orderBooks = new Map();
-        this.setupRestServer(httpPort);
+        this.setupRestServer();
     }
 
-    private setupRestServer(port: number): void {
+    private setupRestServer(): void {
         this.app.get("/fapi/v1/depth", (req: any, res: any) => {
             try {
                 const symbol = req.query.symbol?.toString().toUpperCase();
@@ -63,12 +63,11 @@ export class MockBinanceFuturesApiServer {
                 });
             }
         });
-
-        this.server = this.app.listen(port, () => {
-            console.log(`Futures REST API server running on port ${port}`);
-        });
     }
-
+    public listen(port: number): Server {
+        this.server = this.app.listen(port);
+        return this.server;
+    }
     private calculateWeight(limit: number): number {
         if (limit <= 50) return 2;
         if (limit <= 100) return 5;

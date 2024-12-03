@@ -22,14 +22,14 @@ export class MockBinanceSpotApiServer {
     private server: Server | null = null;
     private orderBooks: Map<string, OrderBookData>;
 
-    constructor(httpPort: number) {
+    constructor() {
         // REST 서버 설정
         this.app = express();
         this.orderBooks = new Map();
-        this.setupRestServer(httpPort);
+        this.setupRestServer();
     }
 
-    private setupRestServer(port: number) {
+    private setupRestServer() {
         // Order Book 엔드포인트
         this.app.get("/api/v3/depth", (req: any, res: any) => {
             try {
@@ -67,12 +67,13 @@ export class MockBinanceSpotApiServer {
                 });
             }
         });
-
+    }
+    public listen(port: number): Server {
         this.server = this.app.listen(port, () => {
             console.log(`REST API server running on port ${port}`);
         });
+        return this.server!;
     }
-
     private calculateWeight(limit: number): number {
         if (limit <= 100) return 1;
         if (limit <= 500) return 5;
