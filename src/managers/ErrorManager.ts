@@ -22,8 +22,9 @@ import {
     ErrorMetrics,
 } from "../types/errors"
 import { ErrorManagerConfig } from "../types/config"
+import { ErrorManagerInterface } from "../interfaces/ErrorManagerInterface"
 
-class ErrorManager {
+class ErrorManager implements ErrorManagerInterface {
     private static instance: ErrorManager
     private errors: Map<string, SystemError[]>
     private policies: Map<ErrorType, ErrorPolicy>

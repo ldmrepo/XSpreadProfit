@@ -1,3 +1,4 @@
+// src/utils/SharedBuffer.ts
 /**
  * 공통 버퍼 관리 클래스
  * - 순환 버퍼 구현
@@ -19,7 +20,6 @@ export class SharedBuffer<T> {
     private count: number = 0
     private metrics: BufferMetrics
     private flushTimer: NodeJS.Timeout | null = null
-    private disposeActions: (() => void)[] = []
 
     private readonly logger: Logger
     private readonly eventManager: EventManager
@@ -30,15 +30,6 @@ export class SharedBuffer<T> {
         private readonly config: BufferConfig,
         private readonly onFlush: (items: T[]) => Promise<void>
     ) {
-        // Config 검증
-        if (
-            config.maxSize <= 0 ||
-            config.flushThreshold <= 0 ||
-            config.flushThreshold > 100
-        ) {
-            throw new Error("Invalid buffer configuration")
-        }
-
         this.buffer = new Array<T>(config.maxSize)
         this.logger = Logger.getInstance(`SharedBuffer:${id}`)
         this.eventManager = EventManager.getInstance()
@@ -84,29 +75,19 @@ export class SharedBuffer<T> {
     async flush(): Promise<void> {
         if (this.count === 0) return
 
-        const items = this.collectItems()
-        let retries = 0
+        try {
+            const items = this.collectItems()
+            await this.onFlush(items)
 
-        while (retries < 3) {
-            try {
-                await this.onFlush(items)
-                this.metrics.flushCount++
-                this.metrics.lastFlushTime = Date.now()
-                this.updateMetrics()
-                await this.emitBufferEvent("FLUSHED", { count: items.length })
-                return
-            } catch (error) {
-                retries++
-                this.logger.error(
-                    `Error flushing buffer (attempt ${retries})`,
-                    error
-                )
-            }
+            this.metrics.flushCount++
+            this.metrics.lastFlushTime = Date.now()
+            this.updateMetrics()
+
+            await this.emitBufferEvent("FLUSHED", { count: items.length })
+        } catch (error) {
+            this.logger.error("Error flushing buffer", error)
+            await this.emitBufferEvent("ERROR", { error })
         }
-
-        await this.emitBufferEvent("ERROR", {
-            error: "Flush failed after 3 attempts",
-        })
     }
 
     getMetrics(): BufferMetrics {
@@ -140,11 +121,6 @@ export class SharedBuffer<T> {
                 () => this.flush(),
                 this.config.flushInterval
             )
-            this.addDisposeAction(() => {
-                if (this.flushTimer) {
-                    clearInterval(this.flushTimer)
-                }
-            })
         }
     }
 
@@ -152,49 +128,38 @@ export class SharedBuffer<T> {
         this.metrics.size = this.count
         this.metrics.utilizationRate = (this.count / this.config.maxSize) * 100
 
-        try {
-            this.metricManager.collect({
-                type: MetricType.GAUGE,
-                module: this.id,
-                name: "buffer_utilization",
-                value: this.metrics.utilizationRate,
-                timestamp: Date.now(),
-                tags: {
-                    size: String(this.metrics.size),
-                    dropped: String(this.metrics.droppedItems),
-                },
-            })
-        } catch (error) {
-            this.logger.warn("Failed to collect buffer metrics", error)
-        }
+        this.metricManager.collect({
+            type: MetricType.GAUGE,
+            module: this.id,
+            name: "buffer_utilization",
+            value: this.metrics.utilizationRate,
+            timestamp: Date.now(),
+            tags: {
+                size: String(this.metrics.size),
+                dropped: String(this.metrics.droppedItems),
+            },
+        })
     }
 
     private async emitBufferEvent(
         type: BufferEventType,
         payload: any
     ): Promise<void> {
-        try {
-            await this.eventManager.publish({
-                type: `BUFFER.${type}`,
-                payload: {
-                    bufferId: this.id,
-                    metrics: this.getMetrics(),
-                    ...payload,
-                },
-                timestamp: Date.now(),
-                source: this.id,
-            })
-        } catch (error) {
-            this.logger.error("Failed to emit buffer event", error)
-        }
-    }
-
-    private addDisposeAction(action: () => void): void {
-        this.disposeActions.push(action)
+        await this.eventManager.publish({
+            type: `BUFFER.${type}`,
+            payload: {
+                bufferId: this.id,
+                metrics: this.getMetrics(),
+                ...payload,
+            },
+            timestamp: Date.now(),
+            source: this.id,
+        })
     }
 
     dispose(): void {
-        this.disposeActions.forEach((action) => action())
-        this.disposeActions = []
+        if (this.flushTimer) {
+            clearInterval(this.flushTimer)
+        }
     }
 }

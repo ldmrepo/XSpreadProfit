@@ -61,7 +61,7 @@ export interface ProcessorConfig {
     exchangeId: string
     memoryLimit: number
     redisConfig: RedisConfig
-    managers: ManagerDependencies
+    // managers: ManagerDependencies
     batchConfig?: SharedBufferConfig
     memoryConfig?: MemoryConfig
 }

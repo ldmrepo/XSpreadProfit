@@ -9,6 +9,7 @@
  */
 
 import WebSocket from "ws"
+import axios from "axios"
 import { Logger } from "../utils/logger"
 import { SharedBuffer } from "../utils/SharedBuffer"
 import EventManager from "../managers/EventManager"
@@ -44,6 +45,12 @@ class Collector {
     // 데이터 관리
     private dataBuffer: SharedBuffer<RawMarketData>
     private subscriptions: Set<string>
+    private seenDataSet: Set<string>
+
+    // REST API 대체 수집
+    private restFallbackInterval!: NodeJS.Timeout | null
+    maxRestBackoff: number
+    restInterval: number
 
     constructor(config: CollectorConfig) {
         this.id = config.id
@@ -75,21 +82,19 @@ class Collector {
         )
 
         this.subscriptions = new Set()
+        this.seenDataSet = new Set()
+
+        this.restFallbackInterval = null
+        // Configurable settings
+        this.maxRestBackoff = config.retryPolicy?.maxRetries || 30000 // 최대 백오프 시간
+        this.restInterval = config.retryPolicy?.retryInterval || 5000 // REST 호출 주기
     }
 
     async start(): Promise<void> {
         try {
             await this.stateManager.changeState(this.id, "STARTING")
-
-            // WebSocket 연결 수립
             await this.connect()
-
-            // 핑/퐁 모니터링 시작
             this.startHeartbeat()
-
-            // 메트릭 수집 시작
-            this.startMetricCollection()
-
             await this.stateManager.changeState(this.id, "RUNNING")
             this.logger.info(`Collector ${this.id} started successfully`)
         } catch (error: any) {
@@ -101,17 +106,10 @@ class Collector {
     async stop(): Promise<void> {
         try {
             await this.stateManager.changeState(this.id, "STOPPING")
-
-            // WebSocket 연결 종료
             this.disconnect()
-
-            // 리소스 정리
-            this.cleanup()
-
-            // 버퍼 정리
+            if (this.restFallbackInterval)
+                clearInterval(this.restFallbackInterval)
             await this.dataBuffer.flush()
-            this.dataBuffer.dispose()
-
             await this.stateManager.changeState(this.id, "STOPPED")
             this.logger.info(`Collector ${this.id} stopped successfully`)
         } catch (error: any) {
@@ -122,6 +120,13 @@ class Collector {
 
     async subscribe(symbols: string[]): Promise<void> {
         try {
+            const newSymbols = symbols.filter(
+                (symbol) => !this.subscriptions.has(symbol)
+            )
+            if (newSymbols.length === 0) {
+                this.logger.info("No new symbols to subscribe.")
+                return
+            }
             const message = this.createSubscriptionMessage(symbols)
             await this.sendMessage(message)
 
@@ -151,25 +156,50 @@ class Collector {
             this.ws = new WebSocket(this.wsUrl)
 
             this.ws.on("open", () => {
-                this.handleConnectionOpen()
+                this.logger.info("WebSocket connected.")
+                this.reconnectAttempts = 0
+                this.resubscribe()
                 resolve()
             })
 
-            this.ws.on("message", (data: WebSocket.Data) => {
-                this.handleMessage(data)
+            this.ws.on("message", async (data: WebSocket.Data) => {
+                try {
+                    const parsedData = JSON.parse(data.toString())
+                    if (this.isUniqueData(parsedData)) {
+                        await this.dataBuffer.push(parsedData)
+                        this.updateDataMetrics(parsedData)
+                    }
+                } catch (error) {
+                    this.logger.error(
+                        "Error processing WebSocket message",
+                        error
+                    )
+                }
             })
 
-            this.ws.on("close", () => {
-                this.handleConnectionClose()
+            this.ws.on("close", async () => {
+                this.logger.warn("WebSocket connection closed.")
+                await this.handleConnectionClose()
             })
 
             this.ws.on("error", (error) => {
-                this.handleConnectionError(error)
+                this.logger.error("WebSocket error", error)
                 reject(error)
             })
         })
     }
 
+    private isUniqueData(data: RawMarketData): boolean {
+        const dataSignature = `${data.symbol}-${data.timestamp}`
+        if (this.seenDataSet.has(dataSignature)) {
+            return false
+        }
+        this.seenDataSet.add(dataSignature)
+        if (this.seenDataSet.size > 10000) {
+            this.seenDataSet.clear() // Set 크기 제한
+        }
+        return true
+    }
     private disconnect(): void {
         if (this.ws) {
             this.ws.close()
@@ -200,15 +230,13 @@ class Collector {
     }
 
     private async handleBufferFlush(items: RawMarketData[]): Promise<void> {
-        try {
+        for (const item of items) {
             await this.eventManager.publish({
                 type: "MARKET_DATA",
-                payload: items,
+                payload: item,
                 timestamp: Date.now(),
                 source: this.id,
             })
-        } catch (error: any) {
-            await this.handleBufferFlushError(error)
         }
     }
 
@@ -236,16 +264,91 @@ class Collector {
             await this.resubscribe()
         }
     }
+    private stopRestFallback(): void {
+        if (this.restFallbackInterval) {
+            clearInterval(this.restFallbackInterval)
+            this.restFallbackInterval = null
+            this.logger.info("REST API fallback stopped")
+        }
+    }
 
     private async handleConnectionClose(): Promise<void> {
-        this.cleanup()
-
-        if (this.reconnectAttempts < this.maxReconnectAttempts) {
-            this.reconnectAttempts++
-            setTimeout(() => this.connect(), this.reconnectInterval)
+        if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+            this.logger.error(
+                `WebSocket connection failed after ${this.reconnectAttempts} attempts. Starting REST fallback.`
+            )
+            await this.startRestFallback() // REST API 대체 시작
         } else {
-            await this.handleMaxReconnectError()
+            this.reconnectAttempts++
+            this.logger.warn(
+                `WebSocket reconnection attempt ${this.reconnectAttempts} of ${this.maxReconnectAttempts}`
+            )
+            setTimeout(async () => {
+                try {
+                    await this.connect() // WebSocket 복구 시도
+                    this.logger.info("WebSocket reconnected successfully.")
+                    await this.stopRestFallback() // REST API 중단
+                    await this.resubscribe() // 구독 재개
+                } catch (error) {
+                    this.logger.error("WebSocket reconnection failed.", error)
+                }
+            }, this.reconnectInterval)
         }
+    }
+
+    private async startRestFallback(): Promise<void> {
+        if (this.restFallbackInterval) return // 이미 실행 중이면 중단
+
+        let restBackoffAttempts = 0
+
+        const restFallbackLogic = async () => {
+            try {
+                const data = await this.fetchMarketDataViaRest()
+                for (const item of data) {
+                    if (this.isUniqueData(item)) {
+                        await this.dataBuffer.push(item)
+                    }
+                }
+                restBackoffAttempts = 0 // 성공 시 백오프 초기화
+            } catch (error) {
+                restBackoffAttempts++
+                const backoffTime = Math.min(
+                    this.restInterval * 2 ** restBackoffAttempts,
+                    this.maxRestBackoff
+                )
+                this.logger.error(
+                    `REST API fallback failed (Attempt ${restBackoffAttempts}). Retrying in ${
+                        backoffTime / 1000
+                    } seconds.`,
+                    error
+                )
+                clearInterval(this.restFallbackInterval!)
+                setTimeout(() => {
+                    this.restFallbackInterval = setInterval(
+                        restFallbackLogic,
+                        this.restInterval
+                    )
+                }, backoffTime)
+            }
+        }
+
+        this.restFallbackInterval = setInterval(
+            restFallbackLogic,
+            this.restInterval
+        )
+    }
+
+    getRecoveryStatus(): Record<string, any> {
+        return {
+            websocketConnected: this.ws?.readyState === WebSocket.OPEN,
+            restFallbackActive: !!this.restFallbackInterval,
+            reconnectAttempts: this.reconnectAttempts,
+        }
+    }
+
+    private async fetchMarketDataViaRest(): Promise<RawMarketData[]> {
+        const response = await axios.get(`${this.wsUrl}/api/market-data`)
+        return response.data
     }
 
     private async handleConnectionError(error: Error): Promise<void> {
@@ -268,7 +371,11 @@ class Collector {
 
     private async resubscribe(): Promise<void> {
         const symbols = Array.from(this.subscriptions)
-        await this.subscribe(symbols)
+        if (symbols.length > 0) {
+            const message = this.createSubscriptionMessage(symbols)
+            await this.sendMessage(message)
+            this.logger.info(`Resubscribed to symbols: ${symbols.join(", ")}`)
+        }
     }
 
     private createSubscriptionMessage(symbols: string[]): string {
@@ -302,28 +409,6 @@ class Collector {
             reconnectAttempts: this.reconnectAttempts,
         }
     }
-
-    private startMetricCollection(): void {
-        setInterval(() => {
-            const metrics: Record<string, string> = {
-                connectionStatus: String(
-                    this.ws?.readyState === WebSocket.OPEN
-                ),
-                subscriptionCount: String(this.subscriptions.size),
-                reconnectAttempts: String(this.reconnectAttempts),
-            }
-
-            this.metricManager.collect({
-                type: MetricType.GAUGE,
-                module: this.id,
-                name: "collector_metrics",
-                value: 1,
-                timestamp: Date.now(),
-                tags: metrics,
-            })
-        }, 5000)
-    }
-
     private async handleStartupError(error: Error): Promise<void> {
         await this.errorManager.handleError({
             code: "PROCESS",
@@ -366,42 +451,38 @@ class Collector {
         })
     }
 
-    private async updateDataMetrics(marketData: RawMarketData): Promise<void> {
-        await this.metricManager.collect({
+    private updateDataMetrics(data: RawMarketData): void {
+        const symbol = data.symbol
+
+        // 심볼별 메트릭: 처리 건수 증가
+        this.metricManager.collect({
             type: MetricType.COUNTER,
             module: this.id,
-            name: "processed_messages",
+            name: `processed_messages.${symbol}`,
             value: 1,
             timestamp: Date.now(),
-            tags: {
-                symbol: marketData.symbol,
-                dataType: "unknown",
-            },
+            tags: { symbol },
         })
-    }
 
-    private async handleMessageError(error: Error, data: any): Promise<void> {
-        await this.errorManager.handleError({
-            code: "PROCESS",
-            type: "RECOVERABLE",
+        // 심볼별 처리 시간 계산 및 기록
+        const processingTime = Date.now() - data.timestamp // 예: 처리 시작과 현재 시간 차이
+        this.metricManager.collect({
+            type: MetricType.HISTOGRAM,
             module: this.id,
-            message: "Message processing error",
+            name: `processing_time.${symbol}`,
+            value: processingTime,
             timestamp: Date.now(),
-            error,
-            data: { rawData: data },
-            retryable: true,
+            tags: { symbol },
         })
-    }
 
-    private async handleBufferFlushError(error: Error): Promise<void> {
-        await this.errorManager.handleError({
-            code: "STORAGE",
-            type: "RECOVERABLE",
+        // 심볼별 평균 처리 시간 업데이트
+        this.metricManager.collect({
+            type: MetricType.GAUGE,
             module: this.id,
-            message: "Buffer flush error",
+            name: `avg_processing_time.${symbol}`,
+            value: processingTime, // 심볼별 평균 계산은 MetricManager가 처리
             timestamp: Date.now(),
-            error,
-            retryable: true,
+            tags: { symbol },
         })
     }
 
@@ -454,6 +535,27 @@ class Collector {
         this.logger.error(
             `Connection permanently failed after ${this.reconnectAttempts} attempts`
         )
+    }
+
+    private startMetricCollection(): void {
+        setInterval(() => {
+            const metrics: Record<string, string> = {
+                connectionStatus: String(
+                    this.ws?.readyState === WebSocket.OPEN
+                ),
+                subscriptionCount: String(this.subscriptions.size),
+                reconnectAttempts: String(this.reconnectAttempts),
+            }
+
+            this.metricManager.collect({
+                type: MetricType.GAUGE,
+                module: this.id,
+                name: "collector_metrics",
+                value: 1,
+                timestamp: Date.now(),
+                tags: metrics,
+            })
+        }, 5000)
     }
 }
 

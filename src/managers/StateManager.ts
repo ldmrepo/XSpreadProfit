@@ -18,8 +18,9 @@ import {
     ComponentState,
 } from "../types/state"
 import { StateManagerConfig } from "../types/config"
+import { StateManagerInterface } from "../interfaces/StateManagerInterface"
 
-class StateManager {
+class StateManager implements StateManagerInterface {
     private static instance: StateManager
     private componentStates: Map<string, ComponentState>
     private stateHistory: Map<string, StateHistory[]>

@@ -13,8 +13,9 @@ import { Logger } from "../utils/logger"
 import { Metrics } from "../types/metrics"
 import { Event, EventType, EventHandler, EventFilter } from "../types/events"
 import { RetryPolicy, EventManagerConfig } from "../types/config"
+import { EventManagerInterface } from "../interfaces/EventManagerInterface"
 
-class EventManager {
+class EventManager implements EventManagerInterface {
     private static instance: EventManager
     private subscribers: Map<string, Set<EventHandler>>
     private eventTypes: Map<string, EventType>
@@ -51,7 +52,7 @@ class EventManager {
         }
     }
 
-    async publish(event: Event): Promise<void> {
+    async publish(event: any): Promise<void> {
         const startTime = Date.now()
         try {
             this.validateEvent(event)

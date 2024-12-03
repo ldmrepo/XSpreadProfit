@@ -22,8 +22,9 @@ import {
     ComponentMetrics,
 } from "../types/metrics"
 import { MetricManagerConfig } from "../types/config"
+import { MetricManagerInterface } from "../interfaces/MetricManagerInterface"
 
-class MetricManager {
+class MetricManager implements MetricManagerInterface {
     private static instance: MetricManager
     private metrics: Map<string, Metric[]> // Map<string, MetricValue[]>에서 Map<string, Metric[]>로 변경
     private aggregates: Map<string, AggregateResult>

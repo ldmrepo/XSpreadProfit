@@ -1,4 +1,3 @@
-// config/development.json
 {
     "system": {
         "name": "Market Data Collection System",
@@ -49,17 +48,23 @@
         }
     ],
     "collector": {
-        "bufferSize": 1000,
-        "flushInterval": 1000,
+        "id": "test-collector",
+        "exchangeId": "test-exchange",
+        "websocketUrl": "ws://mockurl",
         "wsConfig": {
             "maxReconnectAttempts": 5,
-            "reconnectInterval": 5000,
-            "pingInterval": 30000,
-            "pongTimeout": 5000
+            "reconnectInterval": 1000,
+            "pingInterval": 5000
         },
         "bufferConfig": {
-            "size": 1000,
+            "maxSize": 1000,
+            "flushThreshold": 80,
             "flushInterval": 1000
+        },
+        "retryPolicy": {
+            "maxRetries": 3,
+            "retryInterval": 5000,
+            "backoffRate": 2
         }
     },
     "processor": {

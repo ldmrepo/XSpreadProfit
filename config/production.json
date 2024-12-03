@@ -48,17 +48,23 @@
         }
     ],
     "collector": {
-        "bufferSize": 5000,
-        "flushInterval": 500,
+        "id": "test-collector",
+        "exchangeId": "test-exchange",
+        "websocketUrl": "ws://mockurl",
         "wsConfig": {
-            "maxReconnectAttempts": 10,
-            "reconnectInterval": 3000,
-            "pingInterval": 15000,
-            "pongTimeout": 3000
+            "maxReconnectAttempts": 5,
+            "reconnectInterval": 1000,
+            "pingInterval": 5000
         },
         "bufferConfig": {
-            "size": 5000,
-            "flushInterval": 500
+            "maxSize": 1000,
+            "flushThreshold": 80,
+            "flushInterval": 1000
+        },
+        "retryPolicy": {
+            "maxRetries": 3,
+            "retryInterval": 5000,
+            "backoffRate": 2
         }
     },
     "processor": {
