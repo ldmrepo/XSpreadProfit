@@ -1,34 +1,104 @@
-// src/mock-server.ts
-import { WebSocketServer, WebSocket } from "ws"
+// mock-server.ts
+import WebSocket, { WebSocketServer } from "ws";
 
-const PORT = 8080
+interface Subscription {
+    client: WebSocket;
+    symbol: string;
+}
 
-// WebSocket 서버 생성
-const wss = new WebSocketServer({ port: PORT })
+class MockBinanceWebSocketServer {
+    private wss: WebSocketServer;
+    private subscriptions: Subscription[] = [];
 
-console.log(`WebSocket 서버가 ${PORT} 포트에서 실행 중입니다.`)
+    constructor(port: number) {
+        this.wss = new WebSocketServer({ port });
 
-wss.on("connection", (ws: WebSocket) => {
-    console.log("클라이언트 연결됨")
+        this.wss.on("connection", (ws) => {
+            console.log("Client connected");
 
-    // 메시지 수신 처리
-    ws.on("message", (message: string) => {
-        console.log(`수신한 메시지: ${message}`)
+            ws.on("message", (message) => {
+                this.handleMessage(ws, message.toString());
+            });
 
-        // Echo 메시지 전송
-        ws.send(`서버에서 수신: ${message}`)
-    })
+            ws.on("close", () => {
+                this.handleDisconnection(ws);
+            });
+        });
 
-    // 연결 종료 처리
-    ws.on("close", () => {
-        console.log("클라이언트 연결 종료")
-    })
+        console.log(
+            `Mock Binance WebSocket Server running on ws://localhost:${port}`
+        );
+    }
 
-    // 에러 처리
-    ws.on("error", (error: Error) => {
-        console.error(`WebSocket 에러: ${error.message}`)
-    })
+    private handleMessage(ws: WebSocket, message: string) {
+        try {
+            const parsedMessage = JSON.parse(message);
 
-    // 초기 메시지 전송
-    // ws.send("서버에 연결되었습니다.")
-})
+            if (parsedMessage.method === "SUBSCRIBE") {
+                this.handleSubscription(ws, parsedMessage.params);
+            } else if (parsedMessage.method === "UNSUBSCRIBE") {
+                this.handleUnsubscription(ws, parsedMessage.params);
+            } else {
+                ws.send(JSON.stringify({ error: "Unknown method" }));
+            }
+        } catch (error) {
+            ws.send(JSON.stringify({ error: "Invalid JSON" }));
+        }
+    }
+
+    private handleSubscription(ws: WebSocket, symbols: string[]) {
+        symbols.forEach((symbol) => {
+            this.subscriptions.push({ client: ws, symbol });
+            console.log(`Subscribed to ${symbol}`);
+        });
+
+        ws.send(
+            JSON.stringify({
+                result: "Subscribed successfully",
+                symbols,
+            })
+        );
+
+        // Start sending mock data
+        this.startSendingData(ws, symbols);
+    }
+
+    private handleUnsubscription(ws: WebSocket, symbols: string[]) {
+        this.subscriptions = this.subscriptions.filter(
+            (sub) => sub.client !== ws || !symbols.includes(sub.symbol)
+        );
+        console.log(`Unsubscribed from ${symbols.join(", ")}`);
+        ws.send(
+            JSON.stringify({
+                result: "Unsubscribed successfully",
+                symbols,
+            })
+        );
+    }
+
+    private handleDisconnection(ws: WebSocket) {
+        this.subscriptions = this.subscriptions.filter(
+            (sub) => sub.client !== ws
+        );
+        console.log("Client disconnected");
+    }
+
+    private startSendingData(ws: WebSocket, symbols: string[]) {
+        setInterval(() => {
+            symbols.forEach((symbol) => {
+                const data = {
+                    u: Date.now(),
+                    s: symbol,
+                    b: (Math.random() * 10000).toFixed(2), // Mock bid price
+                    B: (Math.random() * 10).toFixed(3), // Mock bid quantity
+                    a: (Math.random() * 10000).toFixed(2), // Mock ask price
+                    A: (Math.random() * 10).toFixed(3), // Mock ask quantity
+                };
+                ws.send(JSON.stringify(data));
+            });
+        }, 1000);
+    }
+}
+
+// Start the Mock Server
+new MockBinanceWebSocketServer(8080);
