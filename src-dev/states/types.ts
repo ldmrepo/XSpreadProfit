@@ -53,40 +53,6 @@ export const validStateTransitions: Record<ConnectorState, ConnectorState[]> = {
     [ConnectorState.DISCONNECTED]: [ConnectorState.CONNECTING],
 };
 
-export const isValidStateTransition = (
-    from: ConnectorState,
-    to: ConnectorState
-): boolean => {
-    const validTransitions: Record<ConnectorState, ConnectorState[]> = {
-        [ConnectorState.INITIAL]: [ConnectorState.CONNECTING],
-        [ConnectorState.CONNECTING]: [
-            ConnectorState.CONNECTED,
-            ConnectorState.ERROR,
-            ConnectorState.DISCONNECTED,
-        ],
-        [ConnectorState.CONNECTED]: [
-            ConnectorState.SUBSCRIBING,
-            ConnectorState.ERROR,
-            ConnectorState.DISCONNECTING,
-        ],
-        [ConnectorState.SUBSCRIBING]: [
-            ConnectorState.SUBSCRIBED,
-            ConnectorState.ERROR,
-        ],
-        [ConnectorState.SUBSCRIBED]: [
-            ConnectorState.ERROR,
-            ConnectorState.DISCONNECTING,
-        ],
-        [ConnectorState.ERROR]: [
-            ConnectorState.CONNECTING,
-            ConnectorState.DISCONNECTED,
-        ],
-        [ConnectorState.DISCONNECTING]: [ConnectorState.DISCONNECTED],
-        [ConnectorState.DISCONNECTED]: [ConnectorState.CONNECTING],
-    };
-
-    return validTransitions[from]?.includes(to) ?? false;
-};
 export interface StateTransitionEvent {
     id: string;
     previousState: ConnectorState;
