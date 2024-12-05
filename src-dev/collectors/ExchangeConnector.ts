@@ -10,9 +10,11 @@ import {
     ConnectorState,
     StateChangeEvent,
     StateTransitionEvent,
+    validStateTransitions, // validStateTransitions 추가
 } from "../states/types";
-import { ConnectorMetrics, Metrics, SymbolGroup } from "./types";
+import { Metrics, SymbolGroup } from "./types";
 import { WebSocketConfig, WebSocketMessage } from "../websocket/types";
+import { ConnectorMetrics } from "../types/metrics";
 
 interface ConnectorEvents {
     stateChange: (event: StateTransitionEvent) => void;
@@ -51,12 +53,16 @@ export class ExchangeConnector extends EventEmitter {
         this.setupEventHandlers();
     }
 
-    private initializeMetrics(): Metrics {
+    private initializeMetrics(): ConnectorMetrics {
+        // Metrics -> ConnectorMetrics
         return {
             timestamp: Date.now(),
             status: this.state,
             messageCount: 0,
             errorCount: 0,
+            id: this.id, // 추가
+            symbols: this.symbols, // 추가
+            state: this.state, // 추가
         };
     }
 
@@ -113,8 +119,8 @@ export class ExchangeConnector extends EventEmitter {
     }
 
     protected updateState(newState: ConnectorState): void {
-        const previousState = this.currentState;
-        this.currentState = newState;
+        const previousState = this.state; // currentState -> state
+        this.state = newState; // currentState -> state
         this.stateTimestamp = Date.now();
         this.metrics.state = newState;
 
@@ -143,7 +149,8 @@ export class ExchangeConnector extends EventEmitter {
         this.state = newState;
         this.stateTimestamp = Date.now();
 
-        const event: StateChangeEvent = {
+        const event: StateTransitionEvent = {
+            id: this.getId(), // id 추가
             previousState,
             currentState: newState,
             timestamp: this.stateTimestamp,
@@ -156,10 +163,26 @@ export class ExchangeConnector extends EventEmitter {
     private handleMessage(data: unknown): void {
         try {
             this.metrics.messageCount++;
-            this.emit("message", data);
+            if (this.isValidMessage(data)) {
+                this.emit("message", data);
+            } else {
+                throw new WebSocketError(
+                    ErrorCode.MESSAGE_PARSE_ERROR,
+                    "Invalid message format"
+                );
+            }
         } catch (error) {
             this.handleError(error);
         }
+    }
+
+    private isValidMessage(data: unknown): data is WebSocketMessage {
+        return (
+            typeof data === "object" &&
+            data !== null &&
+            "type" in data &&
+            typeof (data as WebSocketMessage).type === "string"
+        );
     }
 
     private handleError(error: unknown): void {

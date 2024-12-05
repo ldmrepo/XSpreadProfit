@@ -3,13 +3,15 @@
  * 심볼 그룹별 커넥터 관리자
  */
 
-import { IExchangeConnector, ManagerMetrics } from "./types";
+import { EventEmitter } from "events";
+import { IExchangeConnector } from "./types";
 import { ExchangeConnector } from "./ExchangeConnector";
 import { ConnectorState, StateTransitionEvent } from "../states/types";
 import { WebSocketError } from "../errors/types";
 import { WebSocketConfig, WebSocketMessage } from "../websocket/types";
+import { ManagerMetrics, ConnectorMetrics } from "../types/metrics";
 
-export class ConnectorManager {
+export class ConnectorManager extends EventEmitter {
     private metrics: ManagerMetrics;
     private connectors = new Map<string, IExchangeConnector>();
     private readonly groupSize = 100;
@@ -17,7 +19,9 @@ export class ConnectorManager {
     constructor(
         private readonly exchangeName: string,
         private readonly config: WebSocketConfig
-    ) {}
+    ) {
+        super();
+    }
 
     async initialize(symbols: string[]): Promise<void> {
         const groups = this.groupSymbols(symbols);
@@ -112,6 +116,12 @@ export class ConnectorManager {
         return this.connectors.get(id);
     }
 
+    private getManagerStatus(): string {
+        const allConnected = Array.from(this.connectors.values()).every(
+            (c) => c.getState() === ConnectorState.SUBSCRIBED
+        );
+        return allConnected ? "Healthy" : "Degraded";
+    }
     getMetrics(): ManagerMetrics {
         const connectorMetrics = Array.from(this.connectors.values()).map((c) =>
             c.getMetrics()
@@ -122,22 +132,21 @@ export class ConnectorManager {
             status: this.getManagerStatus(),
             totalConnectors: this.connectors.size,
             activeConnectors: this.getActiveConnectorCount(),
-            totalMessages: this.getTotalMessages(connectorMetrics),
-            totalErrors: this.getTotalErrors(connectorMetrics),
+            totalMessages: this.getTotalMessageCount(connectorMetrics), // 메서드명 수정
+            totalErrors: this.getTotalErrorCount(connectorMetrics), // 메서드명 수정
             connectorMetrics,
         };
+    }
+    private getTotalMessageCount(metrics: ConnectorMetrics[]): number {
+        return metrics.reduce((sum, m) => sum + m.messageCount, 0);
+    }
+
+    private getTotalErrorCount(metrics: ConnectorMetrics[]): number {
+        return metrics.reduce((sum, m) => sum + m.errorCount, 0);
     }
     private getActiveConnectorCount(): number {
         return Array.from(this.connectors.values()).filter(
             (c) => c.getState() === ConnectorState.SUBSCRIBED
         ).length;
-    }
-
-    private getTotalMessageCount(metrics: any[]): number {
-        return metrics.reduce((sum, m) => sum + m.messageCount, 0);
-    }
-
-    private getTotalErrorCount(metrics: any[]): number {
-        return metrics.reduce((sum, m) => sum + m.errorCount, 0);
     }
 }

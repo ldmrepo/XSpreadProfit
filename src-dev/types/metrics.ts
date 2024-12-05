@@ -3,6 +3,8 @@
  * 전체 메트릭스 타입 통합 정의
  */
 
+import { ConnectorState } from "../states/types";
+
 interface BaseMetrics {
     timestamp: number;
     status: string;

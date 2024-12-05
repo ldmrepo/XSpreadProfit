@@ -3,13 +3,20 @@
  * 수집기 관련 공통 타입 정의
  */
 
+import {
+    CollectorMetrics,
+    ConnectorMetrics,
+    ManagerMetrics,
+} from "../types/metrics";
+import { EventEmitter } from "events";
+
 export type SymbolGroup = string[];
 export type ConnectorId = string;
 
 export interface ICollector {
     start(symbols: string[]): Promise<void>;
     stop(): Promise<void>;
-    getMetrics(): Promise<Metrics>;
+    getMetrics(): Promise<CollectorMetrics>; // Metrics -> CollectorMetrics
 }
 
 export interface IConnectorManager {
@@ -18,7 +25,7 @@ export interface IConnectorManager {
     getMetrics(): ManagerMetrics;
 }
 
-export interface IExchangeConnector {
+export interface IExchangeConnector extends EventEmitter {
     start(): Promise<void>;
     stop(): Promise<void>;
     getId(): string;
@@ -33,14 +40,4 @@ export interface Metrics {
     errorCount: number;
     uptime?: number;
     isRunning?: boolean;
-}
-
-export interface ManagerMetrics extends Metrics {
-    totalConnectors: number;
-    activeConnectors: number;
-}
-
-export interface ConnectorMetrics extends Metrics {
-    id: string;
-    symbols: string[];
 }
