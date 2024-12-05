@@ -127,10 +127,22 @@ export class ExchangeConnector implements IExchangeConnector {
                 resolve()
             })
 
-            this.ws.on("message", (data: WebSocket.Data) => {
-                console.log("[ExchangeConnector] 수신 데이터:", data)
+            this.ws.on("message", (data: any) => {
+                console.log("🚀 ~ ExchangeConnector ~ this.ws.on ~ data:", data)
                 try {
-                    this.exchange.parsingSocketMessage(data)
+                    // this.exchange.parsingSocketMessage(data)
+                    //   const parsedData = JSON.parse(data.toString())
+
+                    const parsedData = JSON.parse(data.toString())
+                    console.log(
+                        "🚀 ~ ExchangeConnector ~ this.ws.on ~ parsedData:",
+                        parsedData
+                    )
+                    if (this.exchange.isBookTicker(parsedData)) {
+                        this.updateRegistry(parsedData)
+                    } else if (this.exchange.isOrderBook(parsedData)) {
+                        this.updateRegistry(parsedData)
+                    }
                 } catch (error) {
                     console.error("WebSocket 데이터 파싱 중 오류 발생", error)
                 }
@@ -179,6 +191,44 @@ export class ExchangeConnector implements IExchangeConnector {
                 console.error("재연결 중 오류 발생", error)
             }
         }, Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000))
+    }
+    private updateRegistry(parsedData: any): void {
+        let orderBook = null
+        if (this.exchange.isBookTicker(parsedData)) {
+            orderBook = this.exchange.normalizeBookTicker(parsedData) // 정규화된 OrderBook 데이터
+        } else if (this.exchange.isOrderBook(parsedData)) {
+            this.exchange.normalizeOrderBook(parsedData) // 정규화된 OrderBook 데이터
+        } else {
+            console.log("Method not implemented.", parsedData)
+        }
+
+        const symbol = parsedData.s // 거래소 데이터의 심볼
+        console.log("🚀 ~ ExchangeConnector ~ updateRegistry ~ symbol:", symbol)
+        const type = "SPOT" // 기본적으로 SPOT 타입 사용
+
+        const coinInfo = this.exchangeCoinRegistry.getCoin(symbol, type)
+
+        if (coinInfo) {
+            const success = this.exchangeCoinRegistry.updateOrderBook(
+                symbol,
+                type,
+                orderBook!
+            )
+
+            if (!success) {
+                console.warn(
+                    `[${this.exchange.getExchangeName()}] ${symbol} OrderBook 업데이트 실패`
+                )
+            } else {
+                console.log(
+                    `[${this.exchange.getExchangeName()}] ${symbol} OrderBook 업데이트 성공`
+                )
+            }
+        } else {
+            console.warn(
+                `[${this.exchange.getExchangeName()}] ${symbol} 정보 없음`
+            )
+        }
     }
 
     public getMetrics(): ExchangeConnectorMetrics {

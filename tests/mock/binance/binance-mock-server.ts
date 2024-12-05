@@ -198,7 +198,8 @@ export class BinanceMockServer {
                 if (sub.stream === "bookTicker") {
                     this.sendBookTickerUpdate(sub)
                 } else if (sub.stream.startsWith("depth")) {
-                    const levels = parseInt(sub.stream.replace("depth", ""))
+                    const levels =
+                        parseInt(sub.stream.replace("depth", "")) || 5
                     this.sendDepthUpdate(sub, levels)
                 }
             })
@@ -229,20 +230,26 @@ export class BinanceMockServer {
 
     private sendDepthUpdate(sub: Subscription, levels: number): void {
         const basePrice = Math.random() * 1000 + 1000
+
         const bids = Array.from({ length: levels }, (_, i) => [
-            (basePrice - i * 0.1).toFixed(2),
-            (Math.random() * 10).toFixed(2),
+            (basePrice - i * 0.1).toFixed(8), // 가격은 8자리 고정 소수점
+            (Math.random() * 100).toFixed(6), // 수량은 6자리 고정 소수점
         ])
         const asks = Array.from({ length: levels }, (_, i) => [
-            (basePrice + i * 0.1).toFixed(2),
-            (Math.random() * 10).toFixed(2),
+            (basePrice + i * 0.1).toFixed(8),
+            (Math.random() * 100).toFixed(6),
         ])
 
         const update = {
-            lastUpdateId: Date.now(),
-            bids,
-            asks,
+            e: "depthUpdate", // 이벤트 타입
+            E: Date.now(), // 이벤트 시간
+            s: sub.symbol, // 심볼
+            U: Math.floor(Math.random() * 100000000), // 임의의 첫 업데이트 ID
+            u: Math.floor(Math.random() * 100000000), // 임의의 마지막 업데이트 ID
+            b: bids, // 매수 데이터
+            a: asks, // 매도 데이터
         }
+
         console.log(
             "🚀 ~ BinanceMockServer ~ sendDepthUpdate ~ update:",
             update

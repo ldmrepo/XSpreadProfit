@@ -47,7 +47,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "78.24754554",
+          "maxQty": "81.28528750",
           "stepSize": "0.00000000"
         },
         {
@@ -372,7 +372,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2478.38586625",
+          "maxQty": "2677.99390000",
           "stepSize": "0.00000000"
         },
         {
@@ -697,7 +697,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "5487.09364583",
+          "maxQty": "5617.06427500",
           "stepSize": "0.00000000"
         },
         {
@@ -1022,7 +1022,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "12665.73112500",
+          "maxQty": "12586.35487500",
           "stepSize": "0.00000000"
         },
         {
@@ -1344,7 +1344,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "17133.53056666",
+          "maxQty": "18883.74272500",
           "stepSize": "0.00000000"
         },
         {
@@ -1669,7 +1669,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "24944.46916666",
+          "maxQty": "26447.28708333",
           "stepSize": "0.00000000"
         },
         {
@@ -1991,7 +1991,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3281245.97583333",
+          "maxQty": "3806969.19541666",
           "stepSize": "0.00000000"
         },
         {
@@ -2316,7 +2316,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3675120.70416666",
+          "maxQty": "3478840.00416666",
           "stepSize": "0.00000000"
         },
         {
@@ -2641,7 +2641,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "625439.09125000",
+          "maxQty": "626568.43708333",
           "stepSize": "0.00000000"
         },
         {
@@ -2966,7 +2966,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "91280.43333333",
+          "maxQty": "136430.96250000",
           "stepSize": "0.00000000"
         },
         {
@@ -3289,7 +3289,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "834936.55833333",
+          "maxQty": "872309.64583333",
           "stepSize": "0.00000000"
         },
         {
@@ -3613,7 +3613,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3593159.78750000",
+          "maxQty": "3429911.96666666",
           "stepSize": "0.00000000"
         },
         {
@@ -3938,7 +3938,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "407072.20000000",
+          "maxQty": "336582.04583333",
           "stepSize": "0.00000000"
         },
         {
@@ -4262,7 +4262,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "7245669.71958333",
+          "maxQty": "7090538.81041666",
           "stepSize": "0.00000000"
         },
         {
@@ -4587,7 +4587,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "35747.56412500",
+          "maxQty": "30766.79737500",
           "stepSize": "0.00000000"
         },
         {
@@ -4912,7 +4912,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "224130.29458333",
+          "maxQty": "257032.41375000",
           "stepSize": "0.00000000"
         },
         {
@@ -5235,7 +5235,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "161421.96666666",
+          "maxQty": "202137.27916666",
           "stepSize": "0.00000000"
         },
         {
@@ -5558,7 +5558,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "7483692.94541666",
+          "maxQty": "8332922.54083333",
           "stepSize": "0.00000000"
         },
         {
@@ -5883,7 +5883,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "17199971.78333333",
+          "maxQty": "16789740.65000000",
           "stepSize": "0.00000000"
         },
         {
@@ -6208,7 +6208,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "105799.36595833",
+          "maxQty": "113114.91895833",
           "stepSize": "0.00000000"
         },
         {
@@ -6533,7 +6533,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "196783.97916666",
+          "maxQty": "211275.44166666",
           "stepSize": "0.00000000"
         },
         {
@@ -6855,7 +6855,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "50728217.28333333",
+          "maxQty": "61057606.10416666",
           "stepSize": "0.00000000"
         },
         {
@@ -7179,7 +7179,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "8147012.86499999",
+          "maxQty": "8717217.85624999",
           "stepSize": "0.00000000"
         },
         {
@@ -7504,7 +7504,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "308711.61250000",
+          "maxQty": "327037.81666666",
           "stepSize": "0.00000000"
         },
         {
@@ -7829,7 +7829,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "569871.49625000",
+          "maxQty": "650613.71833333",
           "stepSize": "0.00000000"
         },
         {
@@ -8154,7 +8154,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "262704.55833333",
+          "maxQty": "298280.04583333",
           "stepSize": "0.00000000"
         },
         {
@@ -8479,7 +8479,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3028.54748333",
+          "maxQty": "3228.95659583",
           "stepSize": "0.00000000"
         },
         {
@@ -8789,7 +8789,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "9074587.52083333",
+          "maxQty": "8979880.32500000",
           "stepSize": "0.00000000"
         },
         {
@@ -9113,7 +9113,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "4296501.88916666",
+          "maxQty": "3733790.70291666",
           "stepSize": "0.00000000"
         },
         {
@@ -9437,7 +9437,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2746.67278333",
+          "maxQty": "2409.69722083",
           "stepSize": "0.00000000"
         },
         {
@@ -9759,7 +9759,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "186448.96541666",
+          "maxQty": "195331.13833333",
           "stepSize": "0.00000000"
         },
         {
@@ -10082,7 +10082,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "398613.57541666",
+          "maxQty": "432813.64250000",
           "stepSize": "0.00000000"
         },
         {
@@ -10406,7 +10406,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "68637.40587500",
+          "maxQty": "77027.62570833",
           "stepSize": "0.00000000"
         },
         {
@@ -10731,7 +10731,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "845836.58750000",
+          "maxQty": "948547.54166666",
           "stepSize": "0.00000000"
         },
         {
@@ -11054,7 +11054,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "5893175.42666666",
+          "maxQty": "6769057.41916666",
           "stepSize": "0.00000000"
         },
         {
@@ -11376,7 +11376,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1210779.85000000",
+          "maxQty": "1059191.26250000",
           "stepSize": "0.00000000"
         },
         {
@@ -12025,7 +12025,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "15123552.15416666",
+          "maxQty": "15524943.27500000",
           "stepSize": "0.00000000"
         },
         {
@@ -12349,7 +12349,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "223486.53750000",
+          "maxQty": "253267.82083333",
           "stepSize": "0.00000000"
         },
         {
@@ -12673,7 +12673,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2588297.04583333",
+          "maxQty": "2963102.61250000",
           "stepSize": "0.00000000"
         },
         {
@@ -13320,7 +13320,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "8894488.27458333",
+          "maxQty": "11052987.01958333",
           "stepSize": "0.00000000"
         },
         {
@@ -13643,7 +13643,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "54502.98041666",
+          "maxQty": "56762.30916666",
           "stepSize": "0.00000000"
         },
         {
@@ -13966,7 +13966,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "61642906.46250000",
+          "maxQty": "63747699.67083333",
           "stepSize": "0.00000000"
         },
         {
@@ -14290,7 +14290,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "12180713.79583333",
+          "maxQty": "12691756.28750000",
           "stepSize": "0.00000000"
         },
         {
@@ -14613,7 +14613,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "270971.94166666",
+          "maxQty": "325011.46666666",
           "stepSize": "0.00000000"
         },
         {
@@ -14935,7 +14935,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "18491869.40416666",
+          "maxQty": "18378063.30833333",
           "stepSize": "0.00000000"
         },
         {
@@ -15259,7 +15259,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "754313.80416666",
+          "maxQty": "721888.40833333",
           "stepSize": "0.00000000"
         },
         {
@@ -15583,7 +15583,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3857360.36250000",
+          "maxQty": "3993675.44583333",
           "stepSize": "0.00000000"
         },
         {
@@ -15908,7 +15908,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "39693.75250000",
+          "maxQty": "43179.68208333",
           "stepSize": "0.00000000"
         },
         {
@@ -16233,7 +16233,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "235453.32416666",
+          "maxQty": "228412.91916666",
           "stepSize": "0.00000000"
         },
         {
@@ -16557,7 +16557,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "711122.42500000",
+          "maxQty": "587086.35000000",
           "stepSize": "0.00000000"
         },
         {
@@ -16880,7 +16880,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "4067618.44333333",
+          "maxQty": "4869821.69416666",
           "stepSize": "0.00000000"
         },
         {
@@ -17203,7 +17203,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "6734123.70000000",
+          "maxQty": "6235685.87083333",
           "stepSize": "0.00000000"
         },
         {
@@ -17527,7 +17527,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "609990.61250000",
+          "maxQty": "628901.10000000",
           "stepSize": "0.00000000"
         },
         {
@@ -17851,7 +17851,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "394095.96166666",
+          "maxQty": "381239.22458333",
           "stepSize": "0.00000000"
         },
         {
@@ -18174,7 +18174,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "372905.44791666",
+          "maxQty": "395883.84416666",
           "stepSize": "0.00000000"
         },
         {
@@ -18497,7 +18497,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1749344.62875000",
+          "maxQty": "1892830.07833333",
           "stepSize": "0.00000000"
         },
         {
@@ -18821,7 +18821,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3764311.66250000",
+          "maxQty": "3793408.02083333",
           "stepSize": "0.00000000"
         },
         {
@@ -19145,7 +19145,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "73902.66875000",
+          "maxQty": "76608.76000000",
           "stepSize": "0.00000000"
         },
         {
@@ -19469,7 +19469,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "100225.49583333",
+          "maxQty": "110756.94583333",
           "stepSize": "0.00000000"
         },
         {
@@ -19792,7 +19792,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2393.48570000",
+          "maxQty": "2617.44245833",
           "stepSize": "0.00000000"
         },
         {
@@ -20117,7 +20117,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "56605715.90000000",
+          "maxQty": "54145691.41250000",
           "stepSize": "0.00000000"
         },
         {
@@ -20440,7 +20440,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3624826.86791666",
+          "maxQty": "3992664.90750000",
           "stepSize": "0.00000000"
         },
         {
@@ -20762,7 +20762,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "100956.87183333",
+          "maxQty": "108225.24679166",
           "stepSize": "0.00000000"
         },
         {
@@ -21086,7 +21086,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "574514.06291666",
+          "maxQty": "608440.02041666",
           "stepSize": "0.00000000"
         },
         {
@@ -21409,7 +21409,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "673806.02916666",
+          "maxQty": "787137.60833333",
           "stepSize": "0.00000000"
         },
         {
@@ -21733,7 +21733,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "200122.20083333",
+          "maxQty": "211686.91291666",
           "stepSize": "0.00000000"
         },
         {
@@ -22056,7 +22056,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "59829.64375000",
+          "maxQty": "62225.84041666",
           "stepSize": "0.00000000"
         },
         {
@@ -22379,7 +22379,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "48938.52291666",
+          "maxQty": "56684.42875000",
           "stepSize": "0.00000000"
         },
         {
@@ -22703,7 +22703,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "371138.71250000",
+          "maxQty": "440397.11666666",
           "stepSize": "0.00000000"
         },
         {
@@ -23026,7 +23026,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "10933848.22083333",
+          "maxQty": "11706421.32083333",
           "stepSize": "0.00000000"
         },
         {
@@ -23349,7 +23349,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "877795.70416666",
+          "maxQty": "889462.47500000",
           "stepSize": "0.00000000"
         },
         {
@@ -23674,7 +23674,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "805018.53958333",
+          "maxQty": "818807.53916666",
           "stepSize": "0.00000000"
         },
         {
@@ -23998,7 +23998,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1125037.60416666",
+          "maxQty": "1204999.38041666",
           "stepSize": "0.00000000"
         },
         {
@@ -24322,7 +24322,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "48130.25018750",
+          "maxQty": "51039.71449583",
           "stepSize": "0.00000000"
         },
         {
@@ -24647,7 +24647,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "391395.51666666",
+          "maxQty": "401752.50833333",
           "stepSize": "0.00000000"
         },
         {
@@ -24971,7 +24971,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "152529.25000000",
+          "maxQty": "273171.88333333",
           "stepSize": "0.00000000"
         },
         {
@@ -25293,7 +25293,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "533654.92500000",
+          "maxQty": "559215.72500000",
           "stepSize": "0.00000000"
         },
         {
@@ -25617,7 +25617,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "429168.82916666",
+          "maxQty": "414427.92916666",
           "stepSize": "0.00000000"
         },
         {
@@ -25939,7 +25939,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1414977.23375000",
+          "maxQty": "1738015.40083333",
           "stepSize": "0.00000000"
         },
         {
@@ -26262,7 +26262,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "18745849.62083333",
+          "maxQty": "17605160.24583333",
           "stepSize": "0.00000000"
         },
         {
@@ -26586,7 +26586,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "105757.87750000",
+          "maxQty": "115179.63333333",
           "stepSize": "0.00000000"
         },
         {
@@ -26910,7 +26910,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "481683.38750000",
+          "maxQty": "771080.63750000",
           "stepSize": "0.00000000"
         },
         {
@@ -27235,7 +27235,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2545.11200000",
+          "maxQty": "2622.55226666",
           "stepSize": "0.00000000"
         },
         {
@@ -27560,7 +27560,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "23692061.17083333",
+          "maxQty": "20357290.49583333",
           "stepSize": "0.00000000"
         },
         {
@@ -27882,7 +27882,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "9210.28308333",
+          "maxQty": "9494.36791666",
           "stepSize": "0.00000000"
         },
         {
@@ -28204,7 +28204,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "71079.38958333",
+          "maxQty": "81054.49750000",
           "stepSize": "0.00000000"
         },
         {
@@ -28529,7 +28529,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "25917335.52916666",
+          "maxQty": "21648020.25833333",
           "stepSize": "0.00000000"
         },
         {
@@ -28851,7 +28851,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "6545081.23625000",
+          "maxQty": "8589292.67458333",
           "stepSize": "0.00000000"
         },
         {
@@ -29173,7 +29173,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "361074.36291666",
+          "maxQty": "393437.70166666",
           "stepSize": "0.00000000"
         },
         {
@@ -29496,7 +29496,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "144.92512541",
+          "maxQty": "141.05692750",
           "stepSize": "0.00000000"
         },
         {
@@ -29821,7 +29821,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2331.50789583",
+          "maxQty": "2562.60326666",
           "stepSize": "0.00000000"
         },
         {
@@ -30143,7 +30143,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "275105.87500000",
+          "maxQty": "252580.42500000",
           "stepSize": "0.00000000"
         },
         {
@@ -30467,7 +30467,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "495851.10000000",
+          "maxQty": "503169.79583333",
           "stepSize": "0.00000000"
         },
         {
@@ -30792,7 +30792,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "21.13260983",
+          "maxQty": "20.25498562",
           "stepSize": "0.00000000"
         },
         {
@@ -31117,7 +31117,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "52613.03733333",
+          "maxQty": "53024.89433333",
           "stepSize": "0.00000000"
         },
         {
@@ -31442,7 +31442,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "412660.26666666",
+          "maxQty": "421666.32916666",
           "stepSize": "0.00000000"
         },
         {
@@ -31766,7 +31766,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3202343.01458333",
+          "maxQty": "3704474.72916666",
           "stepSize": "0.00000000"
         },
         {
@@ -32087,7 +32087,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "147530.88750000",
+          "maxQty": "166128.05000000",
           "stepSize": "0.00000000"
         },
         {
@@ -32410,7 +32410,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "4992091.43416666",
+          "maxQty": "5065065.84833333",
           "stepSize": "0.00000000"
         },
         {
@@ -32733,7 +32733,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "551457.31833333",
+          "maxQty": "525332.05375000",
           "stepSize": "0.00000000"
         },
         {
@@ -33058,7 +33058,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "889657.12083333",
+          "maxQty": "1039167.90000000",
           "stepSize": "0.00000000"
         },
         {
@@ -33383,7 +33383,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2971.31087500",
+          "maxQty": "3338.33583333",
           "stepSize": "0.00000000"
         },
         {
@@ -33707,7 +33707,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "146380.54837500",
+          "maxQty": "155609.86745833",
           "stepSize": "0.00000000"
         },
         {
@@ -34031,7 +34031,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "552879.84745833",
+          "maxQty": "577597.80395833",
           "stepSize": "0.00000000"
         },
         {
@@ -34353,7 +34353,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "27733613.64583333",
+          "maxQty": "26966051.55416665",
           "stepSize": "0.00000000"
         },
         {
@@ -34677,7 +34677,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "280.51363416",
+          "maxQty": "262.11464625",
           "stepSize": "0.00000000"
         },
         {
@@ -35002,7 +35002,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3825.82870416",
+          "maxQty": "4306.52849583",
           "stepSize": "0.00000000"
         },
         {
@@ -35326,7 +35326,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "188035.02583333",
+          "maxQty": "188333.25916666",
           "stepSize": "0.00000000"
         },
         {
@@ -35650,7 +35650,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "5886.92473333",
+          "maxQty": "6507.36243750",
           "stepSize": "0.00000000"
         },
         {
@@ -35974,7 +35974,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "9573.93220833",
+          "maxQty": "11671.92875000",
           "stepSize": "0.00000000"
         },
         {
@@ -36299,7 +36299,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "116282.24833333",
+          "maxQty": "121776.83250000",
           "stepSize": "0.00000000"
         },
         {
@@ -36622,7 +36622,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "83863.38291666",
+          "maxQty": "92326.39541666",
           "stepSize": "0.00000000"
         },
         {
@@ -36945,7 +36945,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1663022.93333333",
+          "maxQty": "1971744.15833333",
           "stepSize": "0.00000000"
         },
         {
@@ -37267,7 +37267,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "29616.62375000",
+          "maxQty": "30744.56291666",
           "stepSize": "0.00000000"
         },
         {
@@ -37591,7 +37591,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "77499.91250000",
+          "maxQty": "93497.93333333",
           "stepSize": "0.00000000"
         },
         {
@@ -37915,7 +37915,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "19643.95933333",
+          "maxQty": "23355.39966666",
           "stepSize": "0.00000000"
         },
         {
@@ -38237,7 +38237,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "67817.02754166",
+          "maxQty": "67875.49466666",
           "stepSize": "0.00000000"
         },
         {
@@ -38562,7 +38562,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "661507.61250000",
+          "maxQty": "702578.75833333",
           "stepSize": "0.00000000"
         },
         {
@@ -38886,7 +38886,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "13585877.10833333",
+          "maxQty": "14063492.52916666",
           "stepSize": "0.00000000"
         },
         {
@@ -39209,7 +39209,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "53093.61425000",
+          "maxQty": "56210.02283333",
           "stepSize": "0.00000000"
         },
         {
@@ -39534,7 +39534,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1140577.11250000",
+          "maxQty": "1254844.06250000",
           "stepSize": "0.00000000"
         },
         {
@@ -39856,7 +39856,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "901611.47500000",
+          "maxQty": "902769.25000000",
           "stepSize": "0.00000000"
         },
         {
@@ -40180,7 +40180,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "12621.29595833",
+          "maxQty": "12668.24058333",
           "stepSize": "0.00000000"
         },
         {
@@ -40504,7 +40504,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1097979.79166666",
+          "maxQty": "1126155.83333333",
           "stepSize": "0.00000000"
         },
         {
@@ -40828,7 +40828,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3149.71540416",
+          "maxQty": "3086.89386250",
           "stepSize": "0.00000000"
         },
         {
@@ -41153,7 +41153,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "164000.95625000",
+          "maxQty": "163427.30833333",
           "stepSize": "0.00000000"
         },
         {
@@ -41478,7 +41478,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "234187.99375000",
+          "maxQty": "229560.72725000",
           "stepSize": "0.00000000"
         },
         {
@@ -41803,7 +41803,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "31753.36825000",
+          "maxQty": "32600.28950000",
           "stepSize": "0.00000000"
         },
         {
@@ -42128,7 +42128,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "402959.09541666",
+          "maxQty": "442877.41625000",
           "stepSize": "0.00000000"
         },
         {
@@ -42453,7 +42453,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "98679.11583333",
+          "maxQty": "131184.62541666",
           "stepSize": "0.00000000"
         },
         {
@@ -42776,7 +42776,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "12208700.93333333",
+          "maxQty": "14664159.28750000",
           "stepSize": "0.00000000"
         },
         {
@@ -43099,7 +43099,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "36772.83725000",
+          "maxQty": "41017.42925000",
           "stepSize": "0.00000000"
         },
         {
@@ -43424,7 +43424,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "370677.13333333",
+          "maxQty": "528224.25000000",
           "stepSize": "0.00000000"
         },
         {
@@ -43747,7 +43747,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "493255.87500000",
+          "maxQty": "503788.83750000",
           "stepSize": "0.00000000"
         },
         {
@@ -44069,7 +44069,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1909178.76833333",
+          "maxQty": "2339960.20666666",
           "stepSize": "0.00000000"
         },
         {
@@ -44391,7 +44391,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "63764.20125000",
+          "maxQty": "64584.91750000",
           "stepSize": "0.00000000"
         },
         {
@@ -44714,7 +44714,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1566023.17500000",
+          "maxQty": "1588539.17916666",
           "stepSize": "0.00000000"
         },
         {
@@ -45039,7 +45039,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1520721.35833333",
+          "maxQty": "1308888.63750000",
           "stepSize": "0.00000000"
         },
         {
@@ -45364,7 +45364,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "33882.20166666",
+          "maxQty": "31947.13958333",
           "stepSize": "0.00000000"
         },
         {
@@ -45686,7 +45686,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "31675.94854166",
+          "maxQty": "33933.51895833",
           "stepSize": "0.00000000"
         },
         {
@@ -46008,7 +46008,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "560066.50916666",
+          "maxQty": "571760.29208333",
           "stepSize": "0.00000000"
         },
         {
@@ -46333,7 +46333,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "26242.51833333",
+          "maxQty": "30282.97541666",
           "stepSize": "0.00000000"
         },
         {
@@ -46655,7 +46655,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "33826.57558333",
+          "maxQty": "30032.49866666",
           "stepSize": "0.00000000"
         },
         {
@@ -46977,7 +46977,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "47590.21333333",
+          "maxQty": "48190.72875000",
           "stepSize": "0.00000000"
         },
         {
@@ -47299,7 +47299,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "280975.75958333",
+          "maxQty": "283379.25500000",
           "stepSize": "0.00000000"
         },
         {
@@ -47624,7 +47624,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1052641.55000000",
+          "maxQty": "1114236.41666666",
           "stepSize": "0.00000000"
         },
         {
@@ -47946,7 +47946,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1415620.65416666",
+          "maxQty": "1482141.37083333",
           "stepSize": "0.00000000"
         },
         {
@@ -48270,7 +48270,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "20500091.69166666",
+          "maxQty": "22554749.41250000",
           "stepSize": "0.00000000"
         },
         {
@@ -48592,7 +48592,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "165557.23750000",
+          "maxQty": "178446.35833333",
           "stepSize": "0.00000000"
         },
         {
@@ -48917,7 +48917,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "71170.32083333",
+          "maxQty": "72423.11250000",
           "stepSize": "0.00000000"
         },
         {
@@ -49239,7 +49239,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "85426.61875000",
+          "maxQty": "95766.72250000",
           "stepSize": "0.00000000"
         },
         {
@@ -49562,7 +49562,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "93067.48333333",
+          "maxQty": "122313.93333333",
           "stepSize": "0.00000000"
         },
         {
@@ -49886,7 +49886,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "593038.54708333",
+          "maxQty": "572865.45208333",
           "stepSize": "0.00000000"
         },
         {
@@ -50210,7 +50210,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "87370.78962500",
+          "maxQty": "97345.34483333",
           "stepSize": "0.00000000"
         },
         {
@@ -50535,7 +50535,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "23192.80541666",
+          "maxQty": "25560.82583333",
           "stepSize": "0.00000000"
         },
         {
@@ -50857,7 +50857,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "29177.84583333",
+          "maxQty": "31446.13062500",
           "stepSize": "0.00000000"
         },
         {
@@ -51180,7 +51180,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "112572.01250000",
+          "maxQty": "116856.85416666",
           "stepSize": "0.00000000"
         },
         {
@@ -51503,7 +51503,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "130119.02500000",
+          "maxQty": "131275.15416666",
           "stepSize": "0.00000000"
         },
         {
@@ -51827,7 +51827,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "6062076.82908333",
+          "maxQty": "7632659.87658333",
           "stepSize": "0.00000000"
         },
         {
@@ -52150,7 +52150,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "27515.62533333",
+          "maxQty": "32428.56204166",
           "stepSize": "0.00000000"
         },
         {
@@ -52473,7 +52473,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "138502.63408333",
+          "maxQty": "154646.74475000",
           "stepSize": "0.00000000"
         },
         {
@@ -53121,7 +53121,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "63120.78062500",
+          "maxQty": "61640.13083333",
           "stepSize": "0.00000000"
         },
         {
@@ -53445,7 +53445,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "139246.58750000",
+          "maxQty": "170685.68333333",
           "stepSize": "0.00000000"
         },
         {
@@ -53769,7 +53769,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1569586.85833333",
+          "maxQty": "1577255.33333333",
           "stepSize": "0.00000000"
         },
         {
@@ -54094,7 +54094,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "195194.72750000",
+          "maxQty": "188931.70041666",
           "stepSize": "0.00000000"
         },
         {
@@ -54417,7 +54417,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "139640.94083333",
+          "maxQty": "135533.35958333",
           "stepSize": "0.00000000"
         },
         {
@@ -54741,7 +54741,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "7183384.74583333",
+          "maxQty": "9615062.40416666",
           "stepSize": "0.00000000"
         },
         {
@@ -55065,7 +55065,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "26464.24066666",
+          "maxQty": "25897.15041666",
           "stepSize": "0.00000000"
         },
         {
@@ -55387,7 +55387,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "21608.98412500",
+          "maxQty": "26846.90370833",
           "stepSize": "0.00000000"
         },
         {
@@ -55711,7 +55711,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "518561.33125000",
+          "maxQty": "526655.85541666",
           "stepSize": "0.00000000"
         },
         {
@@ -56035,7 +56035,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "281263.33291666",
+          "maxQty": "222662.55500000",
           "stepSize": "0.00000000"
         },
         {
@@ -56358,7 +56358,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "28530270.37916666",
+          "maxQty": "28820828.29583333",
           "stepSize": "0.00000000"
         },
         {
@@ -57006,7 +57006,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "33474.20425000",
+          "maxQty": "37713.19091666",
           "stepSize": "0.00000000"
         },
         {
@@ -57329,7 +57329,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "17299.99670833",
+          "maxQty": "17754.11437500",
           "stepSize": "0.00000000"
         },
         {
@@ -57651,7 +57651,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "94566.51500000",
+          "maxQty": "93266.10708333",
           "stepSize": "0.00000000"
         },
         {
@@ -57976,7 +57976,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "11813.96270833",
+          "maxQty": "13051.91995833",
           "stepSize": "0.00000000"
         },
         {
@@ -58623,7 +58623,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "660081.78750000",
+          "maxQty": "835183.00416666",
           "stepSize": "0.00000000"
         },
         {
@@ -58946,7 +58946,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "54124.08958333",
+          "maxQty": "62177.04750000",
           "stepSize": "0.00000000"
         },
         {
@@ -59270,7 +59270,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "24879.84833333",
+          "maxQty": "34973.61291666",
           "stepSize": "0.00000000"
         },
         {
@@ -59593,7 +59593,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "518759.71666666",
+          "maxQty": "568375.62500000",
           "stepSize": "0.00000000"
         },
         {
@@ -59916,7 +59916,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3063.07594166",
+          "maxQty": "3182.68904166",
           "stepSize": "0.00000000"
         },
         {
@@ -60240,7 +60240,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "5074.07158333",
+          "maxQty": "4711.62620833",
           "stepSize": "0.00000000"
         },
         {
@@ -60563,7 +60563,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "619809.63166666",
+          "maxQty": "684740.34458333",
           "stepSize": "0.00000000"
         },
         {
@@ -60887,7 +60887,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2319358.41916666",
+          "maxQty": "2471643.05708333",
           "stepSize": "0.00000000"
         },
         {
@@ -61211,7 +61211,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1497.05725000",
+          "maxQty": "1659.94252083",
           "stepSize": "0.00000000"
         },
         {
@@ -61536,7 +61536,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "363601.97262500",
+          "maxQty": "373410.70512500",
           "stepSize": "0.00000000"
         },
         {
@@ -61860,7 +61860,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "327276.77666666",
+          "maxQty": "313256.69625000",
           "stepSize": "0.00000000"
         },
         {
@@ -62182,7 +62182,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "56614.57250000",
+          "maxQty": "70606.29833333",
           "stepSize": "0.00000000"
         },
         {
@@ -62506,7 +62506,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1003.77305000",
+          "maxQty": "1007.36414166",
           "stepSize": "0.00000000"
         },
         {
@@ -62830,7 +62830,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "373891.07208333",
+          "maxQty": "423138.56333333",
           "stepSize": "0.00000000"
         },
         {
@@ -63153,7 +63153,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1096222.17083333",
+          "maxQty": "1095553.63750000",
           "stepSize": "0.00000000"
         },
         {
@@ -63476,7 +63476,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "508220.85750000",
+          "maxQty": "544478.72875000",
           "stepSize": "0.00000000"
         },
         {
@@ -63799,7 +63799,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "359544.03333333",
+          "maxQty": "322134.00833333",
           "stepSize": "0.00000000"
         },
         {
@@ -64123,7 +64123,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "99754.53583333",
+          "maxQty": "163343.02125000",
           "stepSize": "0.00000000"
         },
         {
@@ -64447,7 +64447,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1858591.31666666",
+          "maxQty": "1959036.25416666",
           "stepSize": "0.00000000"
         },
         {
@@ -64772,7 +64772,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "194.57547916",
+          "maxQty": "188.01392916",
           "stepSize": "0.00000000"
         },
         {
@@ -65420,7 +65420,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "121261.98125000",
+          "maxQty": "119423.22125000",
           "stepSize": "0.00000000"
         },
         {
@@ -65743,7 +65743,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "358222.50512500",
+          "maxQty": "327996.51179166",
           "stepSize": "0.00000000"
         },
         {
@@ -66068,7 +66068,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1051764.80541666",
+          "maxQty": "1222934.80708333",
           "stepSize": "0.00000000"
         },
         {
@@ -66392,7 +66392,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1841875.19166666",
+          "maxQty": "1908997.50000000",
           "stepSize": "0.00000000"
         },
         {
@@ -66715,7 +66715,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "489979.70416666",
+          "maxQty": "802260.01250000",
           "stepSize": "0.00000000"
         },
         {
@@ -67038,7 +67038,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "11691278.70000000",
+          "maxQty": "13555295.15000000",
           "stepSize": "0.00000000"
         },
         {
@@ -67363,7 +67363,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1858.30789166",
+          "maxQty": "2042.14753333",
           "stepSize": "0.00000000"
         },
         {
@@ -67687,7 +67687,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "424847.10291666",
+          "maxQty": "398466.32791666",
           "stepSize": "0.00000000"
         },
         {
@@ -68011,7 +68011,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "608733.64583333",
+          "maxQty": "790909.05000000",
           "stepSize": "0.00000000"
         },
         {
@@ -68333,7 +68333,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2657341.95000000",
+          "maxQty": "2293494.69166666",
           "stepSize": "0.00000000"
         },
         {
@@ -68655,7 +68655,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "579073.26083333",
+          "maxQty": "600307.35500000",
           "stepSize": "0.00000000"
         },
         {
@@ -68979,7 +68979,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "114289.61125000",
+          "maxQty": "125235.67250000",
           "stepSize": "0.00000000"
         },
         {
@@ -69303,7 +69303,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "71220.45458333",
+          "maxQty": "70245.02375000",
           "stepSize": "0.00000000"
         },
         {
@@ -69627,7 +69627,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1166726.66666666",
+          "maxQty": "1214833.88750000",
           "stepSize": "0.00000000"
         },
         {
@@ -69950,7 +69950,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1245438.66125000",
+          "maxQty": "1291842.21583333",
           "stepSize": "0.00000000"
         },
         {
@@ -70274,7 +70274,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "70395.23500000",
+          "maxQty": "51935.44337500",
           "stepSize": "0.00000000"
         },
         {
@@ -70596,7 +70596,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "606014.86708333",
+          "maxQty": "635305.52791666",
           "stepSize": "0.00000000"
         },
         {
@@ -70919,7 +70919,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "340535.17083333",
+          "maxQty": "406447.22916666",
           "stepSize": "0.00000000"
         },
         {
@@ -71242,7 +71242,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "13006.36066666",
+          "maxQty": "11976.35304166",
           "stepSize": "0.00000000"
         },
         {
@@ -71566,7 +71566,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "536460.42083333",
+          "maxQty": "582892.54583333",
           "stepSize": "0.00000000"
         },
         {
@@ -71890,7 +71890,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "214688.86833333",
+          "maxQty": "235576.18250000",
           "stepSize": "0.00000000"
         },
         {
@@ -72214,7 +72214,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "7725.91178750",
+          "maxQty": "8917.82910000",
           "stepSize": "0.00000000"
         },
         {
@@ -72536,7 +72536,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "42980.08308333",
+          "maxQty": "40226.28558333",
           "stepSize": "0.00000000"
         },
         {
@@ -72858,7 +72858,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "13276.39604166",
+          "maxQty": "13495.98250000",
           "stepSize": "0.00000000"
         },
         {
@@ -73183,7 +73183,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3617681.78750000",
+          "maxQty": "3732214.41250000",
           "stepSize": "0.00000000"
         },
         {
@@ -73507,7 +73507,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "27876.13825000",
+          "maxQty": "25648.69441666",
           "stepSize": "0.00000000"
         },
         {
@@ -73829,7 +73829,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "491326.13750000",
+          "maxQty": "452817.08750000",
           "stepSize": "0.00000000"
         },
         {
@@ -74153,7 +74153,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "10777102.06874999",
+          "maxQty": "13239139.35499999",
           "stepSize": "0.00000000"
         },
         {
@@ -74478,7 +74478,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "15216426.66250000",
+          "maxQty": "17569703.07083333",
           "stepSize": "0.00000000"
         },
         {
@@ -74802,7 +74802,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "28793.70658750",
+          "maxQty": "28357.42978750",
           "stepSize": "0.00000000"
         },
         {
@@ -75125,7 +75125,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "4966.57533750",
+          "maxQty": "4575.36290125",
           "stepSize": "0.00000000"
         },
         {
@@ -75449,7 +75449,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "30007.08025000",
+          "maxQty": "32033.46045833",
           "stepSize": "0.00000000"
         },
         {
@@ -75771,7 +75771,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "359734.34037500",
+          "maxQty": "419082.07895833",
           "stepSize": "0.00000000"
         },
         {
@@ -76095,7 +76095,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "135261.83275000",
+          "maxQty": "145357.63862500",
           "stepSize": "0.00000000"
         },
         {
@@ -76419,7 +76419,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "33356.47875000",
+          "maxQty": "31059.67166666",
           "stepSize": "0.00000000"
         },
         {
@@ -76744,7 +76744,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "352790.73125000",
+          "maxQty": "375896.86000000",
           "stepSize": "0.00000000"
         },
         {
@@ -77067,7 +77067,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "78060.18891666",
+          "maxQty": "74770.75515000",
           "stepSize": "0.00000000"
         },
         {
@@ -77391,7 +77391,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "14448.11122500",
+          "maxQty": "12267.33923333",
           "stepSize": "0.00000000"
         },
         {
@@ -77716,7 +77716,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "8836511.61625000",
+          "maxQty": "11011877.04208334",
           "stepSize": "0.00000000"
         },
         {
@@ -78039,7 +78039,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "79838928.03750000",
+          "maxQty": "82039738.17083333",
           "stepSize": "0.00000000"
         },
         {
@@ -78363,7 +78363,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "256149.18062500",
+          "maxQty": "248740.05145833",
           "stepSize": "0.00000000"
         },
         {
@@ -78687,7 +78687,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "4794860.07500000",
+          "maxQty": "4013529.72500000",
           "stepSize": "0.00000000"
         },
         {
@@ -79011,7 +79011,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "104141.34083333",
+          "maxQty": "115449.00858333",
           "stepSize": "0.00000000"
         },
         {
@@ -79336,7 +79336,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "329636.67833333",
+          "maxQty": "338934.55083333",
           "stepSize": "0.00000000"
         },
         {
@@ -79659,7 +79659,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "323281.44375000",
+          "maxQty": "338272.82583333",
           "stepSize": "0.00000000"
         },
         {
@@ -79982,7 +79982,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "164660.72666666",
+          "maxQty": "171122.80000000",
           "stepSize": "0.00000000"
         },
         {
@@ -80304,7 +80304,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "41919.15275000",
+          "maxQty": "42174.82504166",
           "stepSize": "0.00000000"
         },
         {
@@ -80951,7 +80951,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1395918.11783333",
+          "maxQty": "1580333.61362500",
           "stepSize": "0.00000000"
         },
         {
@@ -81273,7 +81273,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "38929.96416666",
+          "maxQty": "39907.21116666",
           "stepSize": "0.00000000"
         },
         {
@@ -81595,7 +81595,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "624144.69333333",
+          "maxQty": "644472.23958333",
           "stepSize": "0.00000000"
         },
         {
@@ -81919,7 +81919,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "41499.11566666",
+          "maxQty": "47321.87758333",
           "stepSize": "0.00000000"
         },
         {
@@ -82241,7 +82241,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3466161.57666666",
+          "maxQty": "3283717.69708333",
           "stepSize": "0.00000000"
         },
         {
@@ -82565,7 +82565,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "4472043.58541666",
+          "maxQty": "4803270.41541666",
           "stepSize": "0.00000000"
         },
         {
@@ -82887,7 +82887,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1246567.76625000",
+          "maxQty": "1390745.58916666",
           "stepSize": "0.00000000"
         },
         {
@@ -83212,7 +83212,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "150555.99029166",
+          "maxQty": "206967.87854166",
           "stepSize": "0.00000000"
         },
         {
@@ -83534,7 +83534,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "200181.06825000",
+          "maxQty": "211240.12691666",
           "stepSize": "0.00000000"
         },
         {
@@ -83859,7 +83859,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "892123.29458333",
+          "maxQty": "1656165.67625000",
           "stepSize": "0.00000000"
         },
         {
@@ -84182,7 +84182,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "114.29056666",
+          "maxQty": "134.96851666",
           "stepSize": "0.00000000"
         },
         {
@@ -84503,7 +84503,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "675669.62250000",
+          "maxQty": "692116.83541666",
           "stepSize": "0.00000000"
         },
         {
@@ -84825,7 +84825,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "91280.65254166",
+          "maxQty": "95092.25045833",
           "stepSize": "0.00000000"
         },
         {
@@ -85150,7 +85150,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1577129.57125000",
+          "maxQty": "1700601.84666666",
           "stepSize": "0.00000000"
         },
         {
@@ -85472,7 +85472,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "352496.77041666",
+          "maxQty": "372391.86662500",
           "stepSize": "0.00000000"
         },
         {
@@ -85797,7 +85797,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "359546.63600000",
+          "maxQty": "442063.16258333",
           "stepSize": "0.00000000"
         },
         {
@@ -86122,7 +86122,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "29273726.72500000",
+          "maxQty": "35610934.60833333",
           "stepSize": "0.00000000"
         },
         {
@@ -86446,7 +86446,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "551058.67000000",
+          "maxQty": "733640.04500000",
           "stepSize": "0.00000000"
         },
         {
@@ -86770,7 +86770,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2428205189.18658416",
+          "maxQty": "2697738852.24654248",
           "stepSize": "0.00000000"
         },
         {
@@ -87092,7 +87092,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3291.72883333",
+          "maxQty": "3664.96644166",
           "stepSize": "0.00000000"
         },
         {
@@ -87417,7 +87417,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "323174.43458333",
+          "maxQty": "320007.28166666",
           "stepSize": "0.00000000"
         },
         {
@@ -87739,7 +87739,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "117623.11737500",
+          "maxQty": "108037.30533333",
           "stepSize": "0.00000000"
         },
         {
@@ -88063,7 +88063,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "342462.47320833",
+          "maxQty": "287887.62758333",
           "stepSize": "0.00000000"
         },
         {
@@ -88386,7 +88386,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "679403.90208333",
+          "maxQty": "683457.82958333",
           "stepSize": "0.00000000"
         },
         {
@@ -88710,7 +88710,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "78503.32958333",
+          "maxQty": "70223.92958333",
           "stepSize": "0.00000000"
         },
         {
@@ -89034,7 +89034,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "148531.06208333",
+          "maxQty": "183842.66791666",
           "stepSize": "0.00000000"
         },
         {
@@ -89359,7 +89359,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "163749.03166666",
+          "maxQty": "223141.46916666",
           "stepSize": "0.00000000"
         },
         {
@@ -89683,7 +89683,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "184292.71500000",
+          "maxQty": "203381.42875000",
           "stepSize": "0.00000000"
         },
         {
@@ -90007,7 +90007,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "6218.46508333",
+          "maxQty": "6437.41916666",
           "stepSize": "0.00000000"
         },
         {
@@ -90332,7 +90332,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "177317.93333333",
+          "maxQty": "200340.31250000",
           "stepSize": "0.00000000"
         },
         {
@@ -90655,7 +90655,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "14718.98079166",
+          "maxQty": "13601.64608333",
           "stepSize": "0.00000000"
         },
         {
@@ -90977,7 +90977,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "107859.72750000",
+          "maxQty": "104504.50125000",
           "stepSize": "0.00000000"
         },
         {
@@ -91301,7 +91301,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "644239.37500000",
+          "maxQty": "722776.89583333",
           "stepSize": "0.00000000"
         },
         {
@@ -91624,7 +91624,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "12663.68634166",
+          "maxQty": "13003.24067500",
           "stepSize": "0.00000000"
         },
         {
@@ -91948,7 +91948,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "101206.33500000",
+          "maxQty": "98699.08250000",
           "stepSize": "0.00000000"
         },
         {
@@ -92272,7 +92272,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "12525389.70833333",
+          "maxQty": "12933891.40416666",
           "stepSize": "0.00000000"
         },
         {
@@ -92594,7 +92594,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "5631936.68750000",
+          "maxQty": "7439027.37500000",
           "stepSize": "0.00000000"
         },
         {
@@ -92916,7 +92916,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "22131.87416666",
+          "maxQty": "21445.43000000",
           "stepSize": "0.00000000"
         },
         {
@@ -93238,7 +93238,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "254452.33708333",
+          "maxQty": "247530.79000000",
           "stepSize": "0.00000000"
         },
         {
@@ -93563,7 +93563,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "10225.55879166",
+          "maxQty": "11766.54079166",
           "stepSize": "0.00000000"
         },
         {
@@ -93886,7 +93886,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "4449485.56666666",
+          "maxQty": "4506417.32500000",
           "stepSize": "0.00000000"
         },
         {
@@ -94209,7 +94209,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "110491.96666666",
+          "maxQty": "108040.01250000",
           "stepSize": "0.00000000"
         },
         {
@@ -94532,7 +94532,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "288022.95416666",
+          "maxQty": "313475.64166666",
           "stepSize": "0.00000000"
         },
         {
@@ -94857,7 +94857,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1175360.23916666",
+          "maxQty": "909334.02875000",
           "stepSize": "0.00000000"
         },
         {
@@ -95182,7 +95182,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "341605.20000000",
+          "maxQty": "329421.57500000",
           "stepSize": "0.00000000"
         },
         {
@@ -95505,7 +95505,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1176778.79166666",
+          "maxQty": "1297478.55833333",
           "stepSize": "0.00000000"
         },
         {
@@ -95829,7 +95829,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "6.20277883",
+          "maxQty": "4.94484200",
           "stepSize": "0.00000000"
         },
         {
@@ -96154,7 +96154,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "175500.55416666",
+          "maxQty": "173066.07083333",
           "stepSize": "0.00000000"
         },
         {
@@ -96478,7 +96478,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "805777.46041666",
+          "maxQty": "795670.31166666",
           "stepSize": "0.00000000"
         },
         {
@@ -96801,7 +96801,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "585736.92916666",
+          "maxQty": "600985.62916666",
           "stepSize": "0.00000000"
         },
         {
@@ -97773,7 +97773,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "269607.94583333",
+          "maxQty": "253947.85000000",
           "stepSize": "0.00000000"
         },
         {
@@ -98097,7 +98097,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2424955.32916666",
+          "maxQty": "2462729.72500000",
           "stepSize": "0.00000000"
         },
         {
@@ -98421,7 +98421,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "82148.12291666",
+          "maxQty": "103264.53708333",
           "stepSize": "0.00000000"
         },
         {
@@ -98744,7 +98744,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "541352.04583333",
+          "maxQty": "581054.80833333",
           "stepSize": "0.00000000"
         },
         {
@@ -99068,7 +99068,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "111438.26708333",
+          "maxQty": "106778.95083333",
           "stepSize": "0.00000000"
         },
         {
@@ -99392,7 +99392,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "252682.82083333",
+          "maxQty": "233301.35583333",
           "stepSize": "0.00000000"
         },
         {
@@ -99716,7 +99716,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "29.17251875",
+          "maxQty": "30.58449375",
           "stepSize": "0.00000000"
         },
         {
@@ -100037,7 +100037,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "469831.71833333",
+          "maxQty": "464007.05541666",
           "stepSize": "0.00000000"
         },
         {
@@ -100361,7 +100361,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "24087210.54166666",
+          "maxQty": "17320715.44583333",
           "stepSize": "0.00000000"
         },
         {
@@ -100685,7 +100685,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1345189.63750000",
+          "maxQty": "1238276.31958333",
           "stepSize": "0.00000000"
         },
         {
@@ -101008,7 +101008,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "32889.95275000",
+          "maxQty": "34840.84337500",
           "stepSize": "0.00000000"
         },
         {
@@ -101332,7 +101332,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "157473.30416666",
+          "maxQty": "152256.73750000",
           "stepSize": "0.00000000"
         },
         {
@@ -101654,7 +101654,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3412.64435833",
+          "maxQty": "4585.41378750",
           "stepSize": "0.00000000"
         },
         {
@@ -101977,7 +101977,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "9666740.41250000",
+          "maxQty": "10436785.42916666",
           "stepSize": "0.00000000"
         },
         {
@@ -102300,7 +102300,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "380997.73916666",
+          "maxQty": "375472.40833333",
           "stepSize": "0.00000000"
         },
         {
@@ -102623,7 +102623,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "157646.09454166",
+          "maxQty": "173055.94591666",
           "stepSize": "0.00000000"
         },
         {
@@ -102945,7 +102945,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "33070041.99166666",
+          "maxQty": "33753734.72916666",
           "stepSize": "0.00000000"
         },
         {
@@ -103268,7 +103268,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "25133.87829166",
+          "maxQty": "27105.03691666",
           "stepSize": "0.00000000"
         },
         {
@@ -103590,7 +103590,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "13236468.28750000",
+          "maxQty": "14625274.39583333",
           "stepSize": "0.00000000"
         },
         {
@@ -103914,7 +103914,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "175360.14583333",
+          "maxQty": "165541.51250000",
           "stepSize": "0.00000000"
         },
         {
@@ -104236,7 +104236,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "77267.39637500",
+          "maxQty": "84938.92587500",
           "stepSize": "0.00000000"
         },
         {
@@ -104560,7 +104560,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "946919.82000000",
+          "maxQty": "847629.50791666",
           "stepSize": "0.00000000"
         },
         {
@@ -104883,7 +104883,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1103443.37916666",
+          "maxQty": "936036.89166666",
           "stepSize": "0.00000000"
         },
         {
@@ -105207,7 +105207,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "50261.68375000",
+          "maxQty": "70385.74458333",
           "stepSize": "0.00000000"
         },
         {
@@ -105528,7 +105528,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "111948.51500000",
+          "maxQty": "116629.87791666",
           "stepSize": "0.00000000"
         },
         {
@@ -105850,7 +105850,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00",
-          "maxQty": "1566227811.55",
+          "maxQty": "2331585925.80",
           "stepSize": "0.00"
         },
         {
@@ -106494,7 +106494,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "31145.35000000",
+          "maxQty": "32751.36791666",
           "stepSize": "0.00000000"
         },
         {
@@ -106817,7 +106817,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "452095.24166666",
+          "maxQty": "489221.57083333",
           "stepSize": "0.00000000"
         },
         {
@@ -107141,7 +107141,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "289816.17750000",
+          "maxQty": "251275.21583333",
           "stepSize": "0.00000000"
         },
         {
@@ -107464,7 +107464,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "677193.37500000",
+          "maxQty": "674215.88500000",
           "stepSize": "0.00000000"
         },
         {
@@ -107787,7 +107787,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "153382.39208333",
+          "maxQty": "162238.92916666",
           "stepSize": "0.00000000"
         },
         {
@@ -108109,7 +108109,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1431692.32916666",
+          "maxQty": "1690273.77916666",
           "stepSize": "0.00000000"
         },
         {
@@ -108432,7 +108432,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "544483.77500000",
+          "maxQty": "570009.23541666",
           "stepSize": "0.00000000"
         },
         {
@@ -108755,7 +108755,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1075050.94750000",
+          "maxQty": "1141262.67625000",
           "stepSize": "0.00000000"
         },
         {
@@ -109078,7 +109078,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "93557.98041666",
+          "maxQty": "91148.32525000",
           "stepSize": "0.00000000"
         },
         {
@@ -109399,7 +109399,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "123112.74375000",
+          "maxQty": "119906.89000000",
           "stepSize": "0.00000000"
         },
         {
@@ -109720,7 +109720,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1195276.81458333",
+          "maxQty": "1170088.47416666",
           "stepSize": "0.00000000"
         },
         {
@@ -110042,7 +110042,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1854195.20150000",
+          "maxQty": "1804717.00975000",
           "stepSize": "0.00000000"
         },
         {
@@ -110365,7 +110365,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "249036.40791666",
+          "maxQty": "297764.42750000",
           "stepSize": "0.00000000"
         },
         {
@@ -110687,7 +110687,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1133386.03458333",
+          "maxQty": "1280227.94291666",
           "stepSize": "0.00000000"
         },
         {
@@ -111009,7 +111009,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "232709.23608333",
+          "maxQty": "231547.57237500",
           "stepSize": "0.00000000"
         },
         {
@@ -111332,7 +111332,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "790919.30783333",
+          "maxQty": "813962.77262500",
           "stepSize": "0.00000000"
         },
         {
@@ -111655,7 +111655,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3973.06335833",
+          "maxQty": "3843.82899583",
           "stepSize": "0.00000000"
         },
         {
@@ -111978,7 +111978,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "709348.41987500",
+          "maxQty": "747230.63141666",
           "stepSize": "0.00000000"
         },
         {
@@ -112623,7 +112623,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "219228.77041666",
+          "maxQty": "231474.25500000",
           "stepSize": "0.00000000"
         },
         {
@@ -112946,7 +112946,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1023866.49508333",
+          "maxQty": "1105747.85962500",
           "stepSize": "0.00000000"
         },
         {
@@ -113269,7 +113269,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "2099267.33916666",
+          "maxQty": "2027970.63416666",
           "stepSize": "0.00000000"
         },
         {
@@ -113592,7 +113592,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "300046.20333333",
+          "maxQty": "304847.89291666",
           "stepSize": "0.00000000"
         },
         {
@@ -113915,7 +113915,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "93402.97583333",
+          "maxQty": "105610.47500000",
           "stepSize": "0.00000000"
         },
         {
@@ -114237,7 +114237,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1444.34365541",
+          "maxQty": "1622.90535875",
           "stepSize": "0.00000000"
         },
         {
@@ -114558,7 +114558,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "18253.81616666",
+          "maxQty": "31491.23966666",
           "stepSize": "0.00000000"
         },
         {
@@ -114881,7 +114881,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3096115.00458333",
+          "maxQty": "2976644.87166666",
           "stepSize": "0.00000000"
         },
         {
@@ -115204,7 +115204,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "497709.08041666",
+          "maxQty": "543351.08208333",
           "stepSize": "0.00000000"
         },
         {
@@ -115848,7 +115848,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "218081.09658333",
+          "maxQty": "207877.38575000",
           "stepSize": "0.00000000"
         },
         {
@@ -116171,7 +116171,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "3114798.78291666",
+          "maxQty": "2371944.06625000",
           "stepSize": "0.00000000"
         },
         {
@@ -116493,7 +116493,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "288464.20708333",
+          "maxQty": "311482.80000000",
           "stepSize": "0.00000000"
         },
         {
@@ -116816,7 +116816,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "208575.46929166",
+          "maxQty": "211484.89575000",
           "stepSize": "0.00000000"
         },
         {
@@ -117138,7 +117138,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "4326809.75833333",
+          "maxQty": "4526543.81666666",
           "stepSize": "0.00000000"
         },
         {
@@ -117463,7 +117463,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "4282.70955000",
+          "maxQty": "4788.67535416",
           "stepSize": "0.00000000"
         },
         {
@@ -117786,7 +117786,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "86302.39887500",
+          "maxQty": "79255.48912500",
           "stepSize": "0.00000000"
         },
         {
@@ -118111,7 +118111,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "266800.97725000",
+          "maxQty": "274702.75687500",
           "stepSize": "0.00000000"
         },
         {
@@ -118756,7 +118756,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "369028.03916666",
+          "maxQty": "473606.97166666",
           "stepSize": "0.00000000"
         },
         {
@@ -119077,7 +119077,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "159392.75125000",
+          "maxQty": "207714.25708333",
           "stepSize": "0.00000000"
         },
         {
@@ -119400,7 +119400,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1473728.75166666",
+          "maxQty": "1703090.81458333",
           "stepSize": "0.00000000"
         },
         {
@@ -120046,7 +120046,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "40647190.87083333",
+          "maxQty": "43813898.15833333",
           "stepSize": "0.00000000"
         },
         {
@@ -120367,7 +120367,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00",
-          "maxQty": "70683324.95",
+          "maxQty": "106136932.60",
           "stepSize": "0.00"
         },
         {
@@ -120688,7 +120688,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1673025.47791666",
+          "maxQty": "1708457.94500000",
           "stepSize": "0.00000000"
         },
         {
@@ -121332,7 +121332,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "101480.76429166",
+          "maxQty": "104088.21466666",
           "stepSize": "0.00000000"
         },
         {
@@ -121654,7 +121654,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "359962.58250000",
+          "maxQty": "380418.66125000",
           "stepSize": "0.00000000"
         },
         {
@@ -121976,7 +121976,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "476.93727083",
+          "maxQty": "561.70534166",
           "stepSize": "0.00000000"
         },
         {
@@ -122297,7 +122297,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "90889.81466666",
+          "maxQty": "96873.39766666",
           "stepSize": "0.00000000"
         },
         {
@@ -122620,7 +122620,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "737633.92083333",
+          "maxQty": "764338.29125000",
           "stepSize": "0.00000000"
         },
         {
@@ -122943,7 +122943,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "249760.99166666",
+          "maxQty": "235476.58500000",
           "stepSize": "0.00000000"
         },
         {
@@ -123265,7 +123265,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "750072.74250000",
+          "maxQty": "771502.49125000",
           "stepSize": "0.00000000"
         },
         {
@@ -123587,7 +123587,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1395378.90791666",
+          "maxQty": "1259032.55458333",
           "stepSize": "0.00000000"
         },
         {
@@ -123908,7 +123908,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "1545200.28833333",
+          "maxQty": "1617973.55166666",
           "stepSize": "0.00000000"
         },
         {
@@ -124229,7 +124229,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "605947.74166666",
+          "maxQty": "876447.79583333",
           "stepSize": "0.00000000"
         },
         {
@@ -124557,7 +124557,7 @@
         {
           "filterType": "MARKET_LOT_SIZE",
           "minQty": "0.00000000",
-          "maxQty": "267004.27083333",
+          "maxQty": "291283.01208333",
           "stepSize": "0.00000000"
         },
         {

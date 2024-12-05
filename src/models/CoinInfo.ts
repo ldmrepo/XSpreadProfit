@@ -104,6 +104,7 @@ export function createCoinInfo(baseInfo: CoinBaseInfo): CoinInfo {
         ...baseInfo,
         methodType: "bookTicker", // 디폴트로 bookTicker로 설정
         collectState: "READY",
+        type: "SPOT",
         lastStateChange: Date.now(),
         stateChangeCount: 0,
         tradeStateInfo: {

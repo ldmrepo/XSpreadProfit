@@ -12,7 +12,7 @@ describe("ExchangeCollector 테스트", () => {
     let binanceAdapter: BinanceAdapter
 
     beforeEach(() => {
-        const symbols = ["BTCUSDT", "ETHUSDT", "BCHUSDT", "XRPUSDT", "EOSUSDT"]
+        const symbols = ["btcusdt", "ethusdt", "bchusdt", "xrpusdt", "eosusdt"]
         binanceAdapter = new BinanceAdapter()
         exchangeCollector = new ExchangeCollector(binanceAdapter, symbols)
 
@@ -24,7 +24,7 @@ describe("ExchangeCollector 테스트", () => {
             streamLimitPerConnection: 2, // 제한 변경
             url: "http://localhost:8080",
             wsUrl: "ws://localhost:8081",
-            // url: "wss://stream.binance.com:9443/ws/",
+            // wsUrl: "wss://stream.binance.com:9443/ws",
         }
         jest.spyOn(binanceAdapter, "getWebSocketConfig").mockReturnValue(config)
     })
