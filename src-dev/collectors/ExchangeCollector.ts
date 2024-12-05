@@ -5,11 +5,21 @@
 
 import { ICollector, Metrics } from "./types";
 import { ConnectorManager } from "./ConnectorManager";
-import { WebSocketError } from "../errors/types";
-import { CollectorMetrics } from "../types/metrics";
+import { ErrorCode, WebSocketError } from "../errors/types";
+import { CollectorMetrics, ManagerMetrics } from "../types/metrics";
 import { WebSocketConfig } from "../websocket/types";
+import EventEmitter from "events";
 
-export class ExchangeCollector implements ICollector {
+interface CollectorEvents {
+    error: (error: WebSocketError) => void;
+    stateChange: (status: string) => void;
+    managerError: (data: {
+        connectorId: string;
+        error: WebSocketError;
+    }) => void;
+}
+
+export class ExchangeCollector extends EventEmitter implements ICollector {
     private manager: ConnectorManager;
     private isRunning = false;
     private startTime?: number;
@@ -18,8 +28,9 @@ export class ExchangeCollector implements ICollector {
         exchangeName: string,
         private readonly config: WebSocketConfig
     ) {
+        super();
         this.manager = new ConnectorManager(exchangeName, config);
-        this.setupErrorHandling();
+        this.setupEventHandlers();
     }
 
     private setupErrorHandling(): void {
@@ -27,15 +38,65 @@ export class ExchangeCollector implements ICollector {
         process.on("unhandledRejection", this.handleFatalError.bind(this));
     }
 
+    private setupEventHandlers(): void {
+        // ConnectorManager 이벤트 구독
+        this.manager.on("connectorError", (data) => {
+            this.handleManagerError(data);
+        });
+
+        this.manager.on("metricsUpdate", (metrics) => {
+            this.handleMetricsUpdate(metrics);
+        });
+
+        // 프로세스 레벨 에러 처리
+        process.on("uncaughtException", this.handleFatalError.bind(this));
+        process.on("unhandledRejection", this.handleFatalError.bind(this));
+    }
+
+    private handleMetricsUpdate(metrics: ManagerMetrics): void {
+        if (metrics.totalErrors > 0) {
+            this.emit("stateChange", "Degraded");
+        }
+    }
+    private handleManagerError(data: {
+        connectorId: string;
+        error: WebSocketError;
+    }): void {
+        this.emit("managerError", data);
+
+        // 심각한 에러인 경우 전체 시스템에 영향
+        if (this.isCriticalError(data.error)) {
+            this.handleCriticalError(data.error);
+        }
+    }
+
+    private isCriticalError(error: WebSocketError): boolean {
+        // 심각한 에러 조건 정의
+        return (
+            error.code === ErrorCode.CONNECTION_FAILED ||
+            error.code === ErrorCode.INVALID_STATE
+        );
+    }
+    private handleCriticalError(error: WebSocketError): void {
+        this.emit("error", error);
+        this.stop().catch((e) => {
+            console.error("Failed to stop after critical error:", e);
+        });
+    }
+
     async start(symbols: string[]): Promise<void> {
         if (this.isRunning) {
-            throw new Error("Collector is already running");
+            throw new WebSocketError(
+                ErrorCode.INVALID_STATE,
+                "Collector is already running"
+            );
         }
 
         try {
             await this.manager.initialize(symbols);
             this.isRunning = true;
             this.startTime = Date.now();
+            this.emit("stateChange", "Running");
         } catch (error) {
             this.handleStartupError(error);
             throw error;
@@ -68,7 +129,16 @@ export class ExchangeCollector implements ICollector {
     }
 
     private handleStartupError(error: unknown): void {
-        console.error("Failed to start collector:", error);
+        const wsError =
+            error instanceof WebSocketError
+                ? error
+                : new WebSocketError(
+                      ErrorCode.CONNECTION_FAILED,
+                      "Failed to start collector",
+                      error instanceof Error ? error : undefined
+                  );
+
+        this.emit("error", wsError);
         this.isRunning = false;
     }
 
@@ -77,7 +147,13 @@ export class ExchangeCollector implements ICollector {
     }
 
     private handleFatalError(error: Error): void {
-        console.error("Fatal error occurred:", error);
+        const wsError = new WebSocketError(
+            ErrorCode.CONNECTION_FAILED,
+            "Fatal error occurred",
+            error
+        );
+
+        this.emit("error", wsError);
         this.stop().catch(console.error);
     }
 }

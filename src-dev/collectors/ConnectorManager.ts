@@ -11,11 +11,40 @@ import { WebSocketError } from "../errors/types";
 import { WebSocketConfig, WebSocketMessage } from "../websocket/types";
 import { ManagerMetrics, ConnectorMetrics } from "../types/metrics";
 
+interface ManagerEvents {
+    connectorStateChange: (data: {
+        connectorId: string;
+        event: StateTransitionEvent;
+    }) => void;
+    connectorError: (data: {
+        connectorId: string;
+        error: WebSocketError;
+    }) => void;
+    connectorMessage: (data: {
+        connectorId: string;
+        message: WebSocketMessage;
+    }) => void;
+    metricsUpdate: (metrics: ManagerMetrics) => void; // 추가
+}
+
 export class ConnectorManager extends EventEmitter {
     private metrics: ManagerMetrics;
     private connectors = new Map<string, IExchangeConnector>();
     private readonly groupSize = 100;
 
+    emit<K extends keyof ManagerEvents>(
+        event: K,
+        ...args: Parameters<ManagerEvents[K]>
+    ): boolean {
+        return super.emit(event, ...args);
+    }
+
+    on<K extends keyof ManagerEvents>(
+        event: K,
+        listener: ManagerEvents[K]
+    ): this {
+        return super.on(event, listener);
+    }
     constructor(
         private readonly exchangeName: string,
         private readonly config: WebSocketConfig
@@ -40,33 +69,17 @@ export class ConnectorManager extends EventEmitter {
     }
 
     private setupConnectorHandlers(connector: IExchangeConnector): void {
-        connector.on("error", (error: WebSocketError) => {
-            this.handleConnectorError(connector.getId(), error);
-            this.emit("connectorError", {
-                connectorId: connector.getId(),
-                error,
-            });
-        });
-
         connector.on("stateChange", (event: StateTransitionEvent) => {
             this.handleConnectorStateChange(connector.getId(), event);
-            this.emit("connectorStateChange", {
-                connectorId: connector.getId(),
-                event,
-            });
+        });
+
+        connector.on("error", (error: WebSocketError) => {
+            this.handleConnectorError(connector.getId(), error);
         });
 
         connector.on("message", (message: WebSocketMessage) => {
-            this.handleMessage(connector.getId(), message);
+            this.handleConnectorMessage(connector.getId(), message);
         });
-    }
-
-    private handleMessage(
-        connectorId: string,
-        message: WebSocketMessage
-    ): void {
-        // 메시지 처리 및 상위로 전파
-        this.emit("message", { connectorId, message });
     }
 
     private async startAllConnectors(): Promise<void> {
@@ -100,14 +113,68 @@ export class ConnectorManager extends EventEmitter {
         }, []);
     }
 
-    private handleConnectorError(id: string, error: WebSocketError): void {
-        console.error(`Connector ${id} error:`, error);
+    protected handleConnectorStateChange(
+        connectorId: string,
+        event: StateTransitionEvent
+    ): void {
+        this.emit("connectorStateChange", { connectorId, event });
+        this.updateManagerMetrics(); // 상태 변경 시 메트릭 업데이트
     }
 
-    private handleConnectorStateChange(id: string, event: any): void {
-        console.log(`Connector ${id} state change:`, event);
+    protected handleConnectorError(
+        connectorId: string,
+        error: WebSocketError
+    ): void {
+        this.emit("connectorError", { connectorId, error });
+        this.updateManagerMetrics(); // 에러 발생 시 메트릭 업데이트
     }
 
+    private handleConnectorMessage(
+        connectorId: string,
+        message: WebSocketMessage
+    ): void {
+        this.emit("connectorMessage", { connectorId, message });
+        this.updateManagerMetrics();
+    }
+
+    private updateManagerMetrics(): void {
+        const currentMetrics = this.calculateMetrics();
+        this.emit("metricsUpdate", currentMetrics);
+    }
+    private calculateMetrics(): ManagerMetrics {
+        const connectorMetrics = Array.from(this.connectors.values()).map((c) =>
+            c.getMetrics()
+        );
+
+        return {
+            timestamp: Date.now(),
+            status: this.calculateManagerStatus(),
+            totalConnectors: this.connectors.size,
+            activeConnectors: this.countActiveConnectors(),
+            totalMessages: this.getTotalMessageCount(connectorMetrics), // 메서드명 수정
+            totalErrors: this.getTotalErrorCount(connectorMetrics), // 메서드명 수정
+            connectorMetrics,
+        };
+    }
+
+    private countActiveConnectors(): number {
+        return Array.from(this.connectors.values()).filter(
+            (c) => c.getState() === ConnectorState.SUBSCRIBED
+        ).length;
+    }
+    private calculateManagerStatus(): string {
+        const states = Array.from(this.connectors.values()).map((c) =>
+            c.getState()
+        );
+
+        if (states.every((state) => state === ConnectorState.SUBSCRIBED)) {
+            return "Healthy";
+        }
+        if (states.some((state) => state === ConnectorState.ERROR)) {
+            return "Degraded";
+        }
+        return "Partial";
+    }
     getConnectorIds(): string[] {
         return Array.from(this.connectors.keys());
     }
