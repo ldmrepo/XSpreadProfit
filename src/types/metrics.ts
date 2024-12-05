@@ -1,68 +1,27 @@
-// src/types/metrics.ts
-
-// 메트릭 기본 인터페이스
-export interface Metric {
-    type: MetricType
-    module: string
-    name: string
-    value: number
-    timestamp: number
-    tags?: Record<string, string>
-}
-export interface Metrics {
-    eventsProcessed: number
-    eventsFailed: number
-    averageProcessingTime: number
+// 수집기 메트릭스 타입 정의
+export interface CollectorMetrics {
+    timestamp: number // 매트릭스 측정 시간
+    totalSymbols: number // 전체 수집 대상 코인 수
+    connectorCount: number // 생성된 ExchangeConnector 개수
+    groupedSymbolCount: number // 그룹화된 심볼 배열 개수
+    currentState: string // 현재 수집기의 상태 (예: Ready, Running, Paused, Stopped)
+    activeConnectors: number // 현재 실행 중인 ExchangeConnector 개수
+    totalMessagesReceived: number // 총 수신된 메시지 개수
+    totalErrors: number // 발생한 에러 총 개수
+    averageMessageLatencyMs: number | null // 평균 메시지 지연 시간 (밀리초)
+    lastError?: string // 마지막 에러 메시지 (선택적)
 }
 
-// 메트릭 값
-export interface MetricValue {
-    value: number
-    timestamp: number
+// 교환소 커넥터 메트릭스 타입 정의
+export interface ExchangeConnectorMetrics {
+    timestamp: number // 메트릭스 측정 시간
+    totalSymbols: number // 관리 중인 총 코인 수
+    state: string // 현재 커넥터 상태 (Ready, Connecting, Connected, etc.)
+    activeSubscriptions: number // 활성 구독 개수
+    failedAttempts: number // 실패한 연결 시도 횟수
+    messagesReceived: number // 수신된 WebSocket 메시지 수
+    messagesProcessed: number // 처리된 메시지 수
+    reconnectAttempts: number // 재연결 시도 횟수
+    averageMessageLatencyMs?: number // 평균 메시지 지연 시간 (optional)
+    lastError?: string | null // 마지막으로 발생한 오류 메시지 (optional)
 }
-
-// 메트릭 쿼리
-export interface MetricQuery {
-    type: string
-    module: string
-    name: string
-    startTime?: number
-    endTime?: number
-    aggregation?: AggregationType
-}
-
-// 집계 결과
-export interface AggregateResult {
-    count: number
-    sum: number
-    avg: number
-    min: number
-    max: number
-}
-
-// 시스템 메트릭
-export interface SystemMetrics {
-    totalProcessedEvents: number
-    errorRate: number
-    memoryUsage: number
-    uptime: number
-    componentMetrics: Record<string, ComponentMetrics>
-}
-
-// 컴포넌트 메트릭
-export interface ComponentMetrics {
-    processedCount: number
-    errorCount: number
-    latency: number
-    lastProcessedTime: number
-}
-
-// 메트릭 타입
-export enum MetricType {
-    COUNTER = "COUNTER",
-    GAUGE = "GAUGE",
-    HISTOGRAM = "HISTOGRAM",
-}
-
-// 집계 타입
-export type AggregationType = "SUM" | "AVG" | "MIN" | "MAX" | "COUNT"
