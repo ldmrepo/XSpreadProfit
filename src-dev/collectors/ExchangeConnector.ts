@@ -12,7 +12,7 @@ import {
     StateTransitionEvent,
     validStateTransitions, // validStateTransitions 추가
 } from "../states/types"
-import { SymbolGroup } from "./types"
+import { IExchangeConnector, SymbolGroup } from "./types"
 import { WebSocketConfig, WebSocketMessage } from "../websocket/types"
 import { ConnectorMetrics } from "../types/metrics"
 import { ErrorHandler, IErrorHandler } from "../errors/ErrorHandler"
@@ -23,33 +23,21 @@ interface ConnectorEvents {
     message: (data: WebSocketMessage) => void
 }
 
-export class ExchangeConnector extends EventEmitter {
-    private errorHandler: IErrorHandler
-    private wsManager: WebSocketManager
-    private state: ConnectorState = ConnectorState.INITIAL
-    private metrics: ConnectorMetrics
-    private stateTimestamp: number
-    // EventEmitter 타입 지정
-    emit<K extends keyof ConnectorEvents>(
-        event: K,
-        ...args: Parameters<ConnectorEvents[K]>
-    ): boolean {
-        return super.emit(event, ...args)
-    }
+export class ExchangeConnector
+    extends EventEmitter
+    implements IExchangeConnector
+{
+    protected errorHandler: IErrorHandler
+    protected state: ConnectorState = ConnectorState.INITIAL
+    protected metrics: ConnectorMetrics
+    protected stateTimestamp: number
 
-    on<K extends keyof ConnectorEvents>(
-        event: K,
-        listener: ConnectorEvents[K]
-    ): this {
-        return super.on(event, listener)
-    }
     constructor(
-        private readonly id: string,
-        private readonly symbols: SymbolGroup,
-        config: WebSocketConfig
+        protected readonly id: string,
+        protected readonly symbols: SymbolGroup,
+        protected readonly wsManager: WebSocketManager // WebSocketManager를 외부에서 주입받도록 수정
     ) {
         super()
-        this.wsManager = new WebSocketManager(config)
         this.stateTimestamp = Date.now()
         this.errorHandler = new ErrorHandler(
             async () => this.handleFatalError(),
@@ -91,9 +79,16 @@ export class ExchangeConnector extends EventEmitter {
         }
 
         try {
+            this.setState(ConnectorState.CONNECTING)
             await this.wsManager.connect()
+
+            // 연결 후 CONNECTED 상태로 전환
+            this.setState(ConnectorState.CONNECTED)
+
             await this.subscribe()
         } catch (error) {
+            console.error("Error during start:", error) // 에러 로그 추가
+            this.setState(ConnectorState.ERROR) // 에러 발생 시 상태 전환
             throw this.errorHandler.handleError(error)
         }
     }
@@ -103,11 +98,12 @@ export class ExchangeConnector extends EventEmitter {
             await this.wsManager.disconnect()
             this.setState(ConnectorState.DISCONNECTED)
         } catch (error) {
+            this.setState(ConnectorState.ERROR)
             throw this.errorHandler.handleError(error)
         }
     }
 
-    private async subscribe(): Promise<void> {
+    protected async subscribe(): Promise<void> {
         this.setState(ConnectorState.SUBSCRIBING)
 
         try {
@@ -149,8 +145,12 @@ export class ExchangeConnector extends EventEmitter {
     ): boolean {
         return validStateTransitions[from]?.includes(to) ?? false
     }
-    private setState(newState: ConnectorState): void {
+    public setState(newState: ConnectorState): void {
         try {
+            // 같은 상태로의 전이는 무시
+            if (this.state === newState) {
+                return
+            }
             if (!this.isValidStateTransition(this.state, newState)) {
                 throw new WebSocketError(
                     ErrorCode.INVALID_STATE,
@@ -178,12 +178,13 @@ export class ExchangeConnector extends EventEmitter {
         }
     }
 
-    private handleMessage(data: unknown): void {
+    protected handleMessage(data: unknown): void {
         try {
             if (this.isValidMessage(data)) {
                 this.metrics.messageCount++
                 this.emit("message", data)
             } else {
+                console.warn("Invalid message detected:", data)
                 throw new WebSocketError(
                     ErrorCode.MESSAGE_PARSE_ERROR,
                     "Invalid message format",
@@ -192,11 +193,12 @@ export class ExchangeConnector extends EventEmitter {
                 )
             }
         } catch (error) {
-            this.handleError(error)
+            console.error("Error while handling message:", error)
+            this.handleError(error) // 에러 카운트 증가 확인
         }
     }
 
-    private isValidMessage(data: unknown): data is WebSocketMessage {
+    protected isValidMessage(data: unknown): data is WebSocketMessage {
         return (
             typeof data === "object" &&
             data !== null &&
@@ -205,13 +207,13 @@ export class ExchangeConnector extends EventEmitter {
         )
     }
 
-    private handleError(error: unknown): void {
+    protected handleError(error: unknown): void {
         this.metrics.errorCount++
         const wsError = this.errorHandler.handleWebSocketError(error)
         this.setState(ConnectorState.ERROR)
         this.emit("error", wsError)
     }
-    private async handleFatalError(): Promise<void> {
+    protected async handleFatalError(): Promise<void> {
         try {
             await this.stop()
         } catch (error) {

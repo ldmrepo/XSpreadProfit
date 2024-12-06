@@ -3,12 +3,13 @@ import { IWebSocketClient } from "../../src-dev/websocket/IWebSocketClient"
 
 export class MockWebSocketClient implements IWebSocketClient {
     private eventHandlers: { [key: string]: (...args: any[]) => void } = {}
+    private closeTimeout: NodeJS.Timeout | null = null
 
     connect(url: string): void {
         console.log(`Mock WebSocket connected to ${url}`)
-        if (this.eventHandlers["open"]) {
-            this.eventHandlers["open"]()
-        }
+        setTimeout(() => {
+            if (this.eventHandlers["open"]) this.eventHandlers["open"]()
+        }, 10) // 10ms 딜레이로 open 이벤트 호출
     }
 
     on(event: string, callback: (...args: any[]) => void): void {
@@ -18,14 +19,28 @@ export class MockWebSocketClient implements IWebSocketClient {
     send(data: unknown): void {
         console.log(`Mock WebSocket sent:`, data)
         if (this.eventHandlers["message"]) {
-            this.eventHandlers["message"](data)
+            setTimeout(() => this.eventHandlers["message"](data), 10) // 10ms 딜레이로 message 호출
         }
     }
 
     close(): void {
         console.log("Mock WebSocket closed")
-        if (this.eventHandlers["close"]) {
-            this.eventHandlers["close"]()
+        this.closeTimeout = setTimeout(() => {
+            if (this.eventHandlers["close"]) this.eventHandlers["close"]()
+        }, 10) // 10ms 딜레이로 close 이벤트 호출
+    }
+
+    emit(event: string, ...args: any[]): void {
+        if (this.eventHandlers[event]) {
+            this.eventHandlers[event](...args)
+        } else {
+            console.warn(`No handler registered for event: ${event}`)
+        }
+    }
+
+    cleanup(): void {
+        if (this.closeTimeout) {
+            clearTimeout(this.closeTimeout)
         }
     }
 }

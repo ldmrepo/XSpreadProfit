@@ -8,11 +8,13 @@ export interface WebSocketConfig {
     options?: {
         headers?: Record<string, string>
         timeout?: number
+        pingInterval?: number // ping 간격 (ms)
+        pongTimeout?: number // pong 응답 대기 시간 (ms)
     }
     reconnectOptions?: {
         maxAttempts: number
-        delay: number
-        maxDelay?: number
+        delay: number // 재연결 시도 간격 (ms)
+        maxDelay?: number // 최대 재연결 간격 (ms)
     }
 }
 

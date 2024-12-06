@@ -3,6 +3,7 @@
  * 수집기 관련 공통 타입 정의
  */
 
+import { ConnectorState } from "../../src-dev/states/types"
 import {
     CollectorMetrics,
     ConnectorMetrics,
@@ -29,6 +30,7 @@ export interface IExchangeConnector extends EventEmitter {
     start(): Promise<void>
     stop(): Promise<void>
     getId(): string
-    getState(): string
+    getState(): ConnectorState
     getMetrics(): ConnectorMetrics
+    setState(state: ConnectorState): void // 추가
 }

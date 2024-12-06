@@ -29,27 +29,19 @@ interface ManagerEvents {
 }
 
 export class ConnectorManager extends EventEmitter {
-    private metrics: ManagerMetrics
+    // private metrics: ManagerMetrics
     private errorHandler: IErrorHandler
     private connectors = new Map<string, IExchangeConnector>()
     private readonly groupSize = 100
 
-    emit<K extends keyof ManagerEvents>(
-        event: K,
-        ...args: Parameters<ManagerEvents[K]>
-    ): boolean {
-        return super.emit(event, ...args)
-    }
-
-    on<K extends keyof ManagerEvents>(
-        event: K,
-        listener: ManagerEvents[K]
-    ): this {
-        return super.on(event, listener)
-    }
     constructor(
         private readonly exchangeName: string,
-        private readonly config: WebSocketConfig
+        private readonly config: WebSocketConfig,
+        private readonly createConnector: (
+            id: string,
+            symbols: string[],
+            config: WebSocketConfig
+        ) => IExchangeConnector // 생성 함수 주입
     ) {
         super()
         this.errorHandler = new ErrorHandler(
@@ -73,7 +65,7 @@ export class ConnectorManager extends EventEmitter {
 
     private async initializeConnectors(groups: string[][]): Promise<void> {
         for (const [index, group] of groups.entries()) {
-            const connector = new ExchangeConnector(
+            const connector = this.createConnector(
                 `${this.exchangeName}-${index}`,
                 group,
                 this.config

@@ -86,7 +86,8 @@ export class WebSocketManager extends EventEmitter {
         }
 
         try {
-            this.client.send(JSON.stringify(data))
+            this.client.send(data)
+            // this.client.send(JSON.stringify(data))
         } catch (error) {
             this.handleError(error)
             throw error
@@ -95,10 +96,15 @@ export class WebSocketManager extends EventEmitter {
 
     private handleMessage(data: unknown): void {
         try {
-            const parsed = JSON.parse(data!.toString())
+            // 메시지 파싱 시도
+            const parsed = typeof data === "string" ? JSON.parse(data) : data
+
             this.emit("message", parsed)
         } catch (error) {
-            this.handleError(
+            console.error("Message parsing error:", data, error) // 추가 로그
+            // 에러를 throw하지 않고 emit만 함
+            this.emit(
+                "error",
                 new WebSocketError(
                     ErrorCode.MESSAGE_PARSE_ERROR,
                     "Failed to parse message",

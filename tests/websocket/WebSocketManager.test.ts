@@ -9,13 +9,25 @@ test("WebSocketManager handles connection and disconnection", async () => {
         reconnectOptions: { maxAttempts: 3, delay: 1000 },
     })
 
+    let disconnected = false
+
+    const onDisconnected = () => {
+        disconnected = true
+        console.log("Disconnected successfully")
+    }
+
+    manager.on("disconnected", onDisconnected)
+
     await manager.connect()
     expect(manager.getState()).toBe("CONNECTED")
 
-    manager.on("disconnected", () => {
-        console.log("Disconnected successfully")
-    })
-
     await manager.disconnect()
+    expect(disconnected).toBe(true)
     expect(manager.getState()).toBe("DISCONNECTED")
+
+    // 핸들러 정리
+    manager.off("disconnected", onDisconnected)
+
+    // MockWebSocketClient 정리
+    mockClient.cleanup()
 })

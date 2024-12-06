@@ -10,6 +10,7 @@ import { ErrorCode, ErrorSeverity, WebSocketError } from "../errors/types"
 import { CollectorMetrics, ManagerMetrics } from "../types/metrics"
 import { WebSocketConfig } from "../websocket/types"
 import { ErrorHandler, IErrorHandler } from "../errors/ErrorHandler"
+import { WebSocketManager } from "../websocket/WebSocketManager"
 
 interface CollectorEvents {
     error: (error: WebSocketError) => void
@@ -25,14 +26,19 @@ export class ExchangeCollector extends EventEmitter implements ICollector {
 
     constructor(
         exchangeName: string,
-        private readonly config: WebSocketConfig
+        private readonly config: WebSocketConfig,
+        protected readonly socketManager: WebSocketManager,
+        protected readonly createConnectorManager: (
+            exchangeName: string,
+            config: WebSocketConfig
+        ) => ConnectorManager // ConnectorManager 생성 함수 주입
     ) {
         super()
         this.errorHandler = new ErrorHandler(
             () => this.stop(),
             (error) => this.emit("error", error)
         )
-        this.manager = new ConnectorManager(exchangeName, config)
+        this.manager = this.createConnectorManager(exchangeName, config) // 생성 함수 호출
         this.setupEventHandlers()
     }
 

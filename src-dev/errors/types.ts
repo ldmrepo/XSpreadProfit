@@ -13,6 +13,7 @@ export enum ErrorCode {
     INTERNAL_ERROR = "INTERNAL_ERROR",
     SEND_FAILED = "SEND_FAILED",
     CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT",
+    MOCK_ERROR = "MOCK_ERROR", // 테스트용 에러 코드 추가
 }
 
 export enum ErrorSeverity {

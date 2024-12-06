@@ -15,48 +15,59 @@ export enum ConnectorState {
 }
 
 export type StateChangeEvent = {
-    previousState: ConnectorState;
-    currentState: ConnectorState;
-    timestamp: number;
-};
+    previousState: ConnectorState
+    currentState: ConnectorState
+    timestamp: number
+}
 
 export interface StateContext {
-    state: ConnectorState;
-    timestamp: number;
-    error?: Error;
+    state: ConnectorState
+    timestamp: number
+    error?: Error
 }
 export const validStateTransitions: Record<ConnectorState, ConnectorState[]> = {
-    [ConnectorState.INITIAL]: [ConnectorState.CONNECTING],
+    [ConnectorState.INITIAL]: [
+        ConnectorState.CONNECTING,
+        ConnectorState.ERROR, // 에러 허용
+    ],
     [ConnectorState.CONNECTING]: [
         ConnectorState.CONNECTED,
-        ConnectorState.ERROR,
-        ConnectorState.DISCONNECTED,
+        ConnectorState.SUBSCRIBING, // SUBSCRIBING 전환 허용
+        ConnectorState.ERROR, // 연결 중 에러 허용
+        ConnectorState.DISCONNECTED, // 연결 시도 중 종료 가능
     ],
     [ConnectorState.CONNECTED]: [
         ConnectorState.SUBSCRIBING,
-        ConnectorState.ERROR,
-        ConnectorState.DISCONNECTING,
+        ConnectorState.ERROR, // 연결 후 에러 허용
+        ConnectorState.DISCONNECTING, // 연결 해제 중 상태 추가
+        ConnectorState.DISCONNECTED, // 바로 종료 허용
     ],
     [ConnectorState.SUBSCRIBING]: [
         ConnectorState.SUBSCRIBED,
-        ConnectorState.ERROR,
+        ConnectorState.ERROR, // 구독 중 에러 허용
     ],
     [ConnectorState.SUBSCRIBED]: [
-        ConnectorState.ERROR,
         ConnectorState.DISCONNECTING,
+        ConnectorState.ERROR, // 구독 중 에러 허용
+        ConnectorState.DISCONNECTED, // 바로 종료 허용
     ],
     [ConnectorState.ERROR]: [
-        ConnectorState.CONNECTING,
-        ConnectorState.DISCONNECTED,
+        ConnectorState.CONNECTING, // 에러 후 재시도
+        ConnectorState.DISCONNECTED, // 에러 후 종료 허용
     ],
-    [ConnectorState.DISCONNECTING]: [ConnectorState.DISCONNECTED],
-    [ConnectorState.DISCONNECTED]: [ConnectorState.CONNECTING],
-};
+    [ConnectorState.DISCONNECTING]: [
+        ConnectorState.DISCONNECTED, // 해제 중 종료 허용
+        ConnectorState.ERROR, // 해제 중 에러 허용
+    ],
+    [ConnectorState.DISCONNECTED]: [
+        ConnectorState.CONNECTING, // 종료 후 재연결 허용
+    ],
+}
 
 export interface StateTransitionEvent {
-    id: string;
-    previousState: ConnectorState;
-    currentState: ConnectorState;
-    timestamp: number;
-    metadata?: Record<string, unknown>;
+    id: string
+    previousState: ConnectorState
+    currentState: ConnectorState
+    timestamp: number
+    metadata?: Record<string, unknown>
 }

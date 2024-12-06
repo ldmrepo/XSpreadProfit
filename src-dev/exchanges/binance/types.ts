@@ -13,7 +13,7 @@ export interface BinanceRawMessage {
 }
 
 export interface BinanceSubscription {
-    method: "SUBSCRIBE" | "UNSUBSCRIBE"
+    method: "SUBSCRIBE" | "UNSUBSCRIBE" | "LIST_SUBSCRIPTIONS" | "ticker.book"
     params: string[]
     id: number
 }

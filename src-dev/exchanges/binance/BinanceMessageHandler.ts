@@ -4,100 +4,81 @@
  */
 import { WebSocketError, ErrorCode } from "../../errors/types"
 import { WebSocketMessage } from "../../websocket/types"
+import { ExchangeMessageHandler } from "../common/types"
 import {
     BinanceBaseMessage,
     BinanceTradeMessage,
     BinanceBookTickerMessage,
     BinanceOrderBookMessage,
 } from "./types"
-export class BinanceMessageHandler {
+import {
+    BinanceEventType,
+    BinanceRawDataParser,
+    ParsedMessage,
+    ParsedBookTicker,
+    ParsedDepthUpdate,
+} from "./BinanceRawDataParser"
+
+export class BinanceMessageHandler implements ExchangeMessageHandler {
     handleMessage(message: unknown): WebSocketMessage {
-        if (!this.isValidMessage(message)) {
+        const data = JSON.parse(message!.toString())
+        if (!this.isValidMessage(data)) {
             throw new WebSocketError(
                 ErrorCode.MESSAGE_PARSE_ERROR,
                 "Invalid message format"
             )
         }
 
-        const baseMsg = message as BinanceBaseMessage
-        switch (baseMsg.e) {
-            case "trade":
-                return this.handleTradeMessage(message as BinanceTradeMessage)
-            case "bookTicker":
-                return this.handleBookTickerMessage(
-                    message as BinanceBookTickerMessage
-                )
-            case "depthUpdate":
-                return this.handleOrderBookMessage(
-                    message as BinanceOrderBookMessage
-                )
-            default:
-                throw new WebSocketError(
-                    ErrorCode.MESSAGE_PARSE_ERROR,
-                    `Unknown message type: ${baseMsg.e}`
-                )
-        }
-    }
+        const parsed = BinanceRawDataParser.parse(data)
+        console.log("🚀 ~파싱데이타:", parsed)
 
-    private handleTradeMessage(message: BinanceTradeMessage): WebSocketMessage {
-        return {
-            type: "trade",
-            symbol: message.s,
-            data: {
-                tradeId: message.t,
-                price: parseFloat(message.p),
-                quantity: parseFloat(message.q),
-                timestamp: message.T,
-            },
+        switch (parsed.type) {
+            case BinanceEventType.DEPTH_UPDATE:
+                return this.handleOrderBookMessage(parsed.data)
+            case BinanceEventType.BOOK_TICKER:
+                return this.handleBookTickerMessage(parsed.data)
+            default:
+                return {
+                    type: "unknown",
+                    symbol: parsed.data.s,
+                    data: message?.toString(),
+                }
+
+            // throw new WebSocketError(
+            //     ErrorCode.MESSAGE_PARSE_ERROR,
+            //     `Unknown message type: ${baseMsg.e}`
+            // )
         }
     }
 
     private handleBookTickerMessage(
-        message: BinanceBookTickerMessage
+        message: ParsedBookTicker
     ): WebSocketMessage {
         return {
             type: "bookTicker",
             symbol: message.s,
-            data: {
-                bidPrice: parseFloat(message.b),
-                bidQuantity: parseFloat(message.B),
-                askPrice: parseFloat(message.a),
-                askQuantity: parseFloat(message.A),
-                timestamp: message.E,
-            },
+            data: message,
         }
     }
 
     private handleOrderBookMessage(
-        message: BinanceOrderBookMessage
+        message: ParsedDepthUpdate
     ): WebSocketMessage {
         return {
             type: "orderBook",
             symbol: message.s,
-            data: {
-                firstUpdateId: message.U,
-                lastUpdateId: message.u,
-                bids: message.b.map(([price, quantity]) => ({
-                    price: parseFloat(price),
-                    quantity: parseFloat(quantity),
-                })),
-                asks: message.a.map(([price, quantity]) => ({
-                    price: parseFloat(price),
-                    quantity: parseFloat(quantity),
-                })),
-                timestamp: message.E,
-            },
+            data: message,
         }
     }
 
-    private isValidMessage(message: unknown): boolean {
+    isValidMessage(message: unknown): boolean {
         const msg = message as BinanceBaseMessage
         return (
-            typeof msg === "object" &&
-            msg !== null &&
-            "e" in msg &&
-            "s" in msg &&
-            "E" in msg
+            typeof msg === "object" // &&
+            // msg !== null &&
+            // "e" in msg &&
+            // "s" in msg &&
+            // "E" in msg
         )
     }
 }
