@@ -3,14 +3,14 @@
  * WebSocket 연결 관리 및 메시지 송수신 담당
  */
 
-import { IWebSocketClient } from "./IWebSocketClient" // 의존성 주입 인터페이스
+import WebSocket from "ws"
 import { EventEmitter } from "events"
 import { WebSocketError, ErrorCode } from "../errors/types"
 import { ConnectorState } from "../states/types"
 
 interface WebSocketConfig {
     url: string
-    options?: unknown
+    options?: WebSocket.ClientOptions
     reconnectOptions?: {
         maxAttempts: number
         delay: number
@@ -18,13 +18,11 @@ interface WebSocketConfig {
 }
 
 export class WebSocketManager extends EventEmitter {
+    private ws: WebSocket | null = null
     private reconnectAttempts = 0
     private state: ConnectorState = ConnectorState.INITIAL
 
-    constructor(
-        private client: IWebSocketClient, // 의존성 주입된 WebSocket 클라이언트
-        private config: WebSocketConfig
-    ) {
+    constructor(private config: WebSocketConfig) {
         super()
     }
 
@@ -36,24 +34,24 @@ export class WebSocketManager extends EventEmitter {
         return new Promise((resolve, reject) => {
             try {
                 this.state = ConnectorState.CONNECTING
-                this.client.connect(this.config.url, this.config.options)
+                this.ws = new WebSocket(this.config.url, this.config.options)
 
-                this.client.on("open", () => {
+                this.ws.on("open", () => {
                     this.state = ConnectorState.CONNECTED
                     this.reconnectAttempts = 0
                     this.emit("connected")
                     resolve()
                 })
 
-                this.client.on("message", (data) => {
+                this.ws.on("message", (data: WebSocket.Data) => {
                     this.handleMessage(data)
                 })
 
-                this.client.on("close", () => {
+                this.ws.on("close", () => {
                     this.handleClose()
                 })
 
-                this.client.on("error", (error) => {
+                this.ws.on("error", (error) => {
                     this.handleError(error)
                     reject(error)
                 })
@@ -65,20 +63,21 @@ export class WebSocketManager extends EventEmitter {
     }
 
     async disconnect(): Promise<void> {
-        if (this.state !== ConnectorState.CONNECTED || !this.client) {
+        if (this.state !== ConnectorState.CONNECTED || !this.ws) {
             return
         }
 
         return new Promise((resolve) => {
-            this.client!.close()
+            this.ws!.close()
             this.state = ConnectorState.DISCONNECTED
+            this.ws = null
             this.emit("disconnected")
             resolve()
         })
     }
 
     send(data: unknown): void {
-        if (!this.client || this.state !== ConnectorState.CONNECTED) {
+        if (!this.ws || this.state !== ConnectorState.CONNECTED) {
             throw new WebSocketError(
                 ErrorCode.INVALID_STATE,
                 "WebSocket is not connected"
@@ -86,16 +85,16 @@ export class WebSocketManager extends EventEmitter {
         }
 
         try {
-            this.client.send(JSON.stringify(data))
+            this.ws.send(JSON.stringify(data))
         } catch (error) {
             this.handleError(error)
             throw error
         }
     }
 
-    private handleMessage(data: unknown): void {
+    private handleMessage(data: WebSocket.Data): void {
         try {
-            const parsed = JSON.parse(data!.toString())
+            const parsed = JSON.parse(data.toString())
             this.emit("message", parsed)
         } catch (error) {
             this.handleError(
