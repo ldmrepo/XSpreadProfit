@@ -3,148 +3,174 @@
  * 심볼 그룹별 커넥터 관리자
  */
 
-import { EventEmitter } from "events";
-import { IExchangeConnector } from "./types";
-import { ExchangeConnector } from "./ExchangeConnector";
-import { ConnectorState, StateTransitionEvent } from "../states/types";
-import { WebSocketError } from "../errors/types";
-import { WebSocketConfig, WebSocketMessage } from "../websocket/types";
-import { ManagerMetrics, ConnectorMetrics } from "../types/metrics";
+import { EventEmitter } from "events"
+import { IExchangeConnector } from "./types"
+import { ExchangeConnector } from "./ExchangeConnector"
+import { ConnectorState, StateTransitionEvent } from "../states/types"
+import { WebSocketError } from "../errors/types"
+import { WebSocketConfig, WebSocketMessage } from "../websocket/types"
+import { ManagerMetrics, ConnectorMetrics } from "../types/metrics"
+import { ErrorHandler, IErrorHandler } from "../errors/ErrorHandler"
 
 interface ManagerEvents {
     connectorStateChange: (data: {
-        connectorId: string;
-        event: StateTransitionEvent;
-    }) => void;
+        connectorId: string
+        event: StateTransitionEvent
+    }) => void
     connectorError: (data: {
-        connectorId: string;
-        error: WebSocketError;
-    }) => void;
+        connectorId: string
+        error: WebSocketError
+    }) => void
     connectorMessage: (data: {
-        connectorId: string;
-        message: WebSocketMessage;
-    }) => void;
-    metricsUpdate: (metrics: ManagerMetrics) => void; // 추가
+        connectorId: string
+        message: WebSocketMessage
+    }) => void
+    metricsUpdate: (metrics: ManagerMetrics) => void // 추가
 }
 
 export class ConnectorManager extends EventEmitter {
-    private metrics: ManagerMetrics;
-    private connectors = new Map<string, IExchangeConnector>();
-    private readonly groupSize = 100;
+    private metrics: ManagerMetrics
+    private errorHandler: IErrorHandler
+    private connectors = new Map<string, IExchangeConnector>()
+    private readonly groupSize = 100
 
     emit<K extends keyof ManagerEvents>(
         event: K,
         ...args: Parameters<ManagerEvents[K]>
     ): boolean {
-        return super.emit(event, ...args);
+        return super.emit(event, ...args)
     }
 
     on<K extends keyof ManagerEvents>(
         event: K,
         listener: ManagerEvents[K]
     ): this {
-        return super.on(event, listener);
+        return super.on(event, listener)
     }
     constructor(
         private readonly exchangeName: string,
         private readonly config: WebSocketConfig
     ) {
-        super();
+        super()
+        this.errorHandler = new ErrorHandler(
+            async () => this.handleFatalError(),
+            (error) =>
+                this.emit("connectorError", {
+                    connectorId: "manager",
+                    error,
+                })
+        )
     }
 
     async initialize(symbols: string[]): Promise<void> {
-        const groups = this.groupSymbols(symbols);
+        try {
+            const groups = this.groupSymbols(symbols)
+            await this.initializeConnectors(groups)
+        } catch (error) {
+            throw this.errorHandler.handleError(error)
+        }
+    }
 
-        groups.forEach((group, index) => {
+    private async initializeConnectors(groups: string[][]): Promise<void> {
+        for (const [index, group] of groups.entries()) {
             const connector = new ExchangeConnector(
                 `${this.exchangeName}-${index}`,
                 group,
                 this.config
-            );
-            this.setupConnectorHandlers(connector);
-            this.connectors.set(connector.getId(), connector);
-        });
+            )
+            this.setupConnectorHandlers(connector)
+            this.connectors.set(connector.getId(), connector)
+        }
 
-        await this.startAllConnectors();
+        await this.startAllConnectors()
     }
 
     private setupConnectorHandlers(connector: IExchangeConnector): void {
         connector.on("stateChange", (event: StateTransitionEvent) => {
-            this.handleConnectorStateChange(connector.getId(), event);
-        });
+            this.handleConnectorStateChange(connector.getId(), event)
+        })
 
         connector.on("error", (error: WebSocketError) => {
-            this.handleConnectorError(connector.getId(), error);
-        });
+            this.handleConnectorError(connector.getId(), error)
+        })
 
         connector.on("message", (message: WebSocketMessage) => {
-            this.handleConnectorMessage(connector.getId(), message);
-        });
+            this.handleConnectorMessage(connector.getId(), message)
+        })
     }
 
     private async startAllConnectors(): Promise<void> {
-        const startPromises = Array.from(this.connectors.values()).map(
-            (connector) => connector.start()
-        );
-
-        await Promise.all(startPromises);
+        try {
+            await Promise.all(
+                Array.from(this.connectors.values()).map((c) => c.start())
+            )
+        } catch (error) {
+            throw this.errorHandler.handleError(error)
+        }
     }
 
     async stop(): Promise<void> {
-        const stopPromises = Array.from(this.connectors.values()).map(
-            (connector) => connector.stop()
-        );
-
-        await Promise.all(stopPromises);
-        this.connectors.clear();
+        try {
+            await Promise.all(
+                Array.from(this.connectors.values()).map((c) => c.stop())
+            )
+            this.connectors.clear()
+        } catch (error) {
+            throw this.errorHandler.handleError(error)
+        }
     }
 
     private groupSymbols(symbols: string[]): string[][] {
         return symbols.reduce((groups: string[][], symbol) => {
-            const lastGroup = groups[groups.length - 1];
+            const lastGroup = groups[groups.length - 1]
 
             if (!lastGroup || lastGroup.length >= this.groupSize) {
-                groups.push([symbol]);
+                groups.push([symbol])
             } else {
-                lastGroup.push(symbol);
+                lastGroup.push(symbol)
             }
 
-            return groups;
-        }, []);
+            return groups
+        }, [])
     }
 
-    protected handleConnectorStateChange(
+    private handleConnectorStateChange(
         connectorId: string,
         event: StateTransitionEvent
     ): void {
-        this.emit("connectorStateChange", { connectorId, event });
-        this.updateManagerMetrics(); // 상태 변경 시 메트릭 업데이트
+        this.emit("connectorStateChange", { connectorId, event })
+        this.updateManagerMetrics()
     }
-
-    protected handleConnectorError(
+    private handleConnectorError(
         connectorId: string,
         error: WebSocketError
     ): void {
-        this.emit("connectorError", { connectorId, error });
-        this.updateManagerMetrics(); // 에러 발생 시 메트릭 업데이트
+        this.errorHandler.handleConnectorError(connectorId, error)
     }
 
     private handleConnectorMessage(
         connectorId: string,
         message: WebSocketMessage
     ): void {
-        this.emit("connectorMessage", { connectorId, message });
-        this.updateManagerMetrics();
+        this.emit("connectorMessage", { connectorId, message })
+    }
+
+    private async handleFatalError(): Promise<void> {
+        try {
+            await this.stop()
+        } catch (error) {
+            console.error("Failed to stop after fatal error:", error)
+        }
     }
 
     private updateManagerMetrics(): void {
-        const currentMetrics = this.calculateMetrics();
-        this.emit("metricsUpdate", currentMetrics);
+        const currentMetrics = this.calculateMetrics()
+        this.emit("metricsUpdate", currentMetrics)
     }
     private calculateMetrics(): ManagerMetrics {
         const connectorMetrics = Array.from(this.connectors.values()).map((c) =>
             c.getMetrics()
-        );
+        )
 
         return {
             timestamp: Date.now(),
@@ -154,66 +180,59 @@ export class ConnectorManager extends EventEmitter {
             totalMessages: this.getTotalMessageCount(connectorMetrics), // 메서드명 수정
             totalErrors: this.getTotalErrorCount(connectorMetrics), // 메서드명 수정
             connectorMetrics,
-        };
+        }
     }
 
     private countActiveConnectors(): number {
         return Array.from(this.connectors.values()).filter(
             (c) => c.getState() === ConnectorState.SUBSCRIBED
-        ).length;
+        ).length
     }
     private calculateManagerStatus(): string {
         const states = Array.from(this.connectors.values()).map((c) =>
             c.getState()
-        );
+        )
 
         if (states.every((state) => state === ConnectorState.SUBSCRIBED)) {
-            return "Healthy";
+            return "Healthy"
         }
         if (states.some((state) => state === ConnectorState.ERROR)) {
-            return "Degraded";
+            return "Degraded"
         }
-        return "Partial";
+        return "Partial"
     }
     getConnectorIds(): string[] {
-        return Array.from(this.connectors.keys());
+        return Array.from(this.connectors.keys())
     }
 
     getConnector(id: string): IExchangeConnector | undefined {
-        return this.connectors.get(id);
+        return this.connectors.get(id)
     }
 
     private getManagerStatus(): string {
         const allConnected = Array.from(this.connectors.values()).every(
             (c) => c.getState() === ConnectorState.SUBSCRIBED
-        );
-        return allConnected ? "Healthy" : "Degraded";
+        )
+        return allConnected ? "Healthy" : "Degraded"
     }
     getMetrics(): ManagerMetrics {
-        const connectorMetrics = Array.from(this.connectors.values()).map((c) =>
-            c.getMetrics()
-        );
-
-        return {
-            timestamp: Date.now(),
-            status: this.getManagerStatus(),
-            totalConnectors: this.connectors.size,
-            activeConnectors: this.getActiveConnectorCount(),
-            totalMessages: this.getTotalMessageCount(connectorMetrics), // 메서드명 수정
-            totalErrors: this.getTotalErrorCount(connectorMetrics), // 메서드명 수정
-            connectorMetrics,
-        };
+        try {
+            return this.calculateMetrics()
+        } catch (error) {
+            this.errorHandler.handleError(error)
+            throw error
+        }
     }
     private getTotalMessageCount(metrics: ConnectorMetrics[]): number {
-        return metrics.reduce((sum, m) => sum + m.messageCount, 0);
+        return metrics.reduce((sum, m) => sum + m.messageCount, 0)
     }
 
     private getTotalErrorCount(metrics: ConnectorMetrics[]): number {
-        return metrics.reduce((sum, m) => sum + m.errorCount, 0);
+        return metrics.reduce((sum, m) => sum + m.errorCount, 0)
     }
     private getActiveConnectorCount(): number {
         return Array.from(this.connectors.values()).filter(
             (c) => c.getState() === ConnectorState.SUBSCRIBED
-        ).length;
+        ).length
     }
 }

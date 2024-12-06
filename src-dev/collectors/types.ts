@@ -7,37 +7,28 @@ import {
     CollectorMetrics,
     ConnectorMetrics,
     ManagerMetrics,
-} from "../types/metrics";
-import { EventEmitter } from "events";
+} from "../types/metrics"
+import { EventEmitter } from "events"
 
-export type SymbolGroup = string[];
-export type ConnectorId = string;
+export type SymbolGroup = string[]
+export type ConnectorId = string
 
 export interface ICollector {
-    start(symbols: string[]): Promise<void>;
-    stop(): Promise<void>;
-    getMetrics(): Promise<CollectorMetrics>; // Metrics -> CollectorMetrics
+    start(symbols: string[]): Promise<void>
+    stop(): Promise<void>
+    getMetrics(): Promise<CollectorMetrics> // Metrics -> CollectorMetrics
 }
 
 export interface IConnectorManager {
-    initialize(symbols: string[]): Promise<void>;
-    stop(): Promise<void>;
-    getMetrics(): ManagerMetrics;
+    initialize(symbols: string[]): Promise<void>
+    stop(): Promise<void>
+    getMetrics(): ManagerMetrics
 }
 
 export interface IExchangeConnector extends EventEmitter {
-    start(): Promise<void>;
-    stop(): Promise<void>;
-    getId(): string;
-    getState(): string;
-    getMetrics(): ConnectorMetrics;
-}
-
-export interface Metrics {
-    timestamp: number;
-    status: string;
-    messageCount: number;
-    errorCount: number;
-    uptime?: number;
-    isRunning?: boolean;
+    start(): Promise<void>
+    stop(): Promise<void>
+    getId(): string
+    getState(): string
+    getMetrics(): ConnectorMetrics
 }

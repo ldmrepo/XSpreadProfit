@@ -4,34 +4,36 @@
  */
 
 export enum ErrorCode {
-    // 연결 관련
     CONNECTION_FAILED = "CONNECTION_FAILED",
     CONNECTION_CLOSED = "CONNECTION_CLOSED",
-    CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT",
-
-    // 메시지 관련
-    MESSAGE_PARSE_ERROR = "MESSAGE_PARSE_ERROR",
-    SEND_FAILED = "SEND_FAILED",
-
-    // 구독 관련
     SUBSCRIPTION_FAILED = "SUBSCRIPTION_FAILED",
     UNSUBSCRIPTION_FAILED = "UNSUBSCRIPTION_FAILED",
-
-    // 상태 관련
+    MESSAGE_PARSE_ERROR = "MESSAGE_PARSE_ERROR",
     INVALID_STATE = "INVALID_STATE",
+    INTERNAL_ERROR = "INTERNAL_ERROR",
+    SEND_FAILED = "SEND_FAILED",
+    CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT",
+}
+
+export enum ErrorSeverity {
+    LOW = "LOW",
+    MEDIUM = "MEDIUM",
+    HIGH = "HIGH",
+    CRITICAL = "CRITICAL",
 }
 
 export class WebSocketError extends Error {
     constructor(
-        public code: ErrorCode,
+        public readonly code: ErrorCode,
         message: string,
-        public readonly originalError?: Error
+        public readonly originalError?: Error,
+        public readonly severity: ErrorSeverity = ErrorSeverity.MEDIUM
     ) {
-        super(message);
-        this.name = "WebSocketError";
+        super(message)
+        this.name = "WebSocketError"
     }
 
     toString(): string {
-        return `${this.name}[${this.code}]: ${this.message}`;
+        return `${this.name}[${this.code}]: ${this.message}`
     }
 }

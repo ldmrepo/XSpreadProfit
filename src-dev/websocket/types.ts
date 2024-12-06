@@ -4,26 +4,32 @@
  */
 
 export interface WebSocketConfig {
-    url: string;
+    url: string
     options?: {
-        headers?: Record<string, string>;
-        timeout?: number;
-    };
+        headers?: Record<string, string>
+        timeout?: number
+    }
     reconnectOptions?: {
-        maxAttempts: number;
-        delay: number;
-        maxDelay?: number;
-    };
+        maxAttempts: number
+        delay: number
+        maxDelay?: number
+    }
 }
 
 export interface WebSocketMessage {
-    type: string;
-    data: unknown;
+    type: string
+    symbol: string
+    data: unknown
 }
 
 export interface WebSocketEvent {
-    type: "open" | "close" | "error" | "message";
-    timestamp: number;
-    data?: unknown;
-    error?: Error;
+    type: "open" | "close" | "error" | "message"
+    timestamp: number
+    data?: unknown
+    error?: Error
+}
+
+export interface WebSocketSubscription {
+    type: "subscribe" | "unsubscribe"
+    symbol: string
 }
