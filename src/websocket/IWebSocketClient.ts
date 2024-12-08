@@ -10,7 +10,7 @@ export interface IWebSocketClient {
      * @param url WebSocket 서버 URL
      * @param options WebSocket 연결 옵션
      */
-    connect(url: string, options?: unknown): void;
+    connect(url: string, options?: unknown): Promise<void>;
 
     /**
      * WebSocket 이벤트 핸들러를 설정합니다.

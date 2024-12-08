@@ -4,7 +4,6 @@
 import { ExchangeConnector } from "../../collectors/ExchangeConnector";
 import { WebSocketMessage } from "../../websocket/types";
 import { WebSocketError, ErrorCode, ErrorSeverity } from "../../errors/types";
-import { WebSocketManager } from "../../websocket/WebSocketManagerState";
 import { SymbolGroup } from "../../collectors/types";
 import {
     UpbitOrderBookMessage,

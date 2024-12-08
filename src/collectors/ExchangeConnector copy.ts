@@ -123,6 +123,61 @@ abstract class ExchangeConnector
         });
     }
 
+    private async _handleStateChange(
+        event: StateTransitionEvent
+    ): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
+            try {
+                console.log(
+                    "ExchangeConnector State change:",
+                    event.previousState,
+                    "->",
+                    event.currentState
+                );
+                const previousState = this.state;
+
+                if (
+                    !this.isValidStateTransition(
+                        previousState,
+                        event.currentState
+                    )
+                ) {
+                    throw new WebSocketError(
+                        ErrorCode.INVALID_STATE,
+                        `Invalid state transition from ${previousState} to ${event.currentState}`
+                    );
+                }
+
+                this.state = event.currentState;
+                this.stateTimestamp = event.timestamp;
+
+                if (event.currentState === ConnectorState.CONNECTED) {
+                    await this.handleConnectionEstablished(previousState);
+                } else if (
+                    event.currentState === ConnectorState.ERROR ||
+                    event.currentState === ConnectorState.DISCONNECTED
+                ) {
+                    this.failedSymbols.clear();
+                    this.resetSubscriptionStatuses();
+                }
+
+                this.updateMetrics();
+                this.emit("stateChange", {
+                    ...event,
+                    metadata: {
+                        recoveryAttempts: this.recoveryAttempts,
+                        failedSymbols: Array.from(this.failedSymbols),
+                        subscriptionStats: this.getSubscriptionStats(),
+                    },
+                });
+
+                resolve();
+            } catch (error) {
+                this.handleError(error);
+                reject(error);
+            }
+        });
+    }
     private async handleStateChange(
         event: StateTransitionEvent
     ): Promise<void> {
@@ -236,7 +291,18 @@ abstract class ExchangeConnector
             });
         }
     }
-
+    private async _handleConnectionEstablished(
+        previousState: ConnectorState
+    ): Promise<void> {
+        if (
+            previousState === ConnectorState.ERROR ||
+            previousState === ConnectorState.DISCONNECTED
+        ) {
+            await this.attemptRecovery();
+        } else if (previousState === ConnectorState.CONNECTING) {
+            await this.subscribe();
+        }
+    }
     private async handleConnectionEstablished(
         previousState: ConnectorState
     ): Promise<void> {

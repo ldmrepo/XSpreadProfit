@@ -17,7 +17,12 @@ import {
     ExtendedWebSocketManagerMetrics,
     TimeSeriesMetric,
 } from "../types/metrics";
-import e from "express";
+import * as dns from "dns";
+
+interface ReconnectStep {
+    attemptDelay: number;
+    subscriptionBatchSize: number;
+}
 
 export class WebSocketManager extends EventEmitter {
     private boundHandlers: Map<string, (...args: any[]) => void>;
@@ -27,6 +32,10 @@ export class WebSocketManager extends EventEmitter {
     private pongTimer?: NodeJS.Timer;
     private metrics: ExtendedWebSocketManagerMetrics =
         this.createInitialMetrics();
+    private networkStatus: boolean = true;
+    private networkCheckTimer?: NodeJS.Timer;
+    private reconnectTimeout?: NodeJS.Timeout;
+    private networkReconnectInProgress: boolean = false;
 
     constructor(
         public readonly client: IWebSocketClient,
@@ -37,13 +46,53 @@ export class WebSocketManager extends EventEmitter {
         super();
         this.boundHandlers = new Map();
         this.setupClientEventHandlers();
+        this.setupNetworkMonitoring();
     }
 
     // 소멸자 메서드 추가
     public destroy(): void {
         this.cleanup();
-        this.removeAllListeners(); // EventEmitter의 모든 리스너 제거
+        this.reconnectAttempts = 0;
+        this.state = ConnectorState.INITIAL;
+        this.metrics = this.createInitialMetrics();
     }
+
+    private setupNetworkMonitoring(): void {
+        this.networkCheckTimer = setInterval(async () => {
+            await this.checkNetworkAndReconnect();
+        }, 5000);
+    }
+    private clearReconnectTimeout(): void {
+        if (this.reconnectTimeout) {
+            clearTimeout(this.reconnectTimeout);
+            this.reconnectTimeout = undefined;
+        }
+    }
+
+    private async checkNetworkAndReconnect(): Promise<void> {
+        if (this.networkReconnectInProgress) {
+            return; // 이미 재연결 진행 중이면 중복 실행 방지
+        }
+
+        try {
+            this.networkReconnectInProgress = true;
+            const isOnline = await dns.promises.lookup("8.8.8.8");
+
+            if (
+                isOnline &&
+                (this.state === ConnectorState.ERROR ||
+                    this.state === ConnectorState.DISCONNECTED)
+            ) {
+                this.clearReconnectTimeout(); // 기존 타임아웃 클리어
+                await this.handleReconnect();
+            }
+        } catch (error) {
+            this.handleError(error);
+        } finally {
+            this.networkReconnectInProgress = false;
+        }
+    }
+
     private setupClientEventHandlers(): void {
         // 핸들러 바인딩 및 저장
         const handlers = {
@@ -61,12 +110,19 @@ export class WebSocketManager extends EventEmitter {
     }
 
     public cleanup(): void {
-        // 등록된 모든 핸들러 제거
+        this.clearReconnectTimeout();
+        this.clearTimers(); // ping/pong 타이머
+        if (this.networkCheckTimer) {
+            clearInterval(this.networkCheckTimer);
+            this.networkCheckTimer = undefined;
+        }
+
         this.boundHandlers.forEach((handler, event) => {
             this.client.removeListener(event, handler);
         });
         this.boundHandlers.clear();
         this.removeAllListeners();
+        this.networkReconnectInProgress = false;
     }
 
     private createInitialMetrics(): ExtendedWebSocketManagerMetrics {
@@ -228,119 +284,128 @@ export class WebSocketManager extends EventEmitter {
 
     private async handleReconnect(): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
+            if (
+                this.networkReconnectInProgress ||
+                (this.state === ConnectorState.RECONNECTING &&
+                    this.reconnectAttempts > 0)
+            ) {
+                resolve();
+                return;
+            }
+
+            this.clearReconnectTimeout();
+            const timeoutDuration =
+                this.config.options?.connectionTimeout ?? 30000;
+            this.reconnectTimeout = setTimeout(() => {
+                reject(
+                    new WebSocketError(
+                        ErrorCode.CONNECTION_TIMEOUT,
+                        "Reconnection timeout"
+                    )
+                );
+            }, timeoutDuration);
+
             const { reconnectOptions } = this.config;
             if (
                 !reconnectOptions ||
                 this.reconnectAttempts >= reconnectOptions.maxAttempts
             ) {
-                this.metrics.reconnects.failures.count++;
-                this.metrics.reconnects.failures.lastUpdated = Date.now();
-                this.emit("reconnectFailed", {
-                    attempts: this.reconnectAttempts,
-                    maxAttempts: reconnectOptions?.maxAttempts,
-                });
-
-                resolve(); // 최대 재연결 시도 횟수에 도달하면 작업 완료 처리
+                this.clearReconnectTimeout();
+                this.updateState(ConnectorState.ERROR);
+                reject(new Error("Max reconnection attempts reached"));
                 return;
             }
 
-            const startTime = Date.now();
-            this.reconnectAttempts++;
-            this.metrics.reconnects.attempts.count++;
-            this.metrics.reconnects.attempts.lastUpdated = startTime;
-
-            const delay = Math.min(
-                reconnectOptions.delay *
-                    Math.pow(2, this.reconnectAttempts - 1),
-                reconnectOptions.maxDelay ?? Infinity
-            );
-
-            await new Promise((resolve) => setTimeout(resolve, delay));
-
             try {
+                this.updateState(ConnectorState.RECONNECTING);
+                this.reconnectAttempts++;
+
+                const delay = Math.min(
+                    reconnectOptions.delay *
+                        Math.pow(2, this.reconnectAttempts - 1),
+                    reconnectOptions.maxDelay ?? Infinity
+                );
+
+                await new Promise((resolve) => setTimeout(resolve, delay));
                 await this.connect();
-                const duration = Date.now() - startTime;
-                this.updateReconnectSuccessMetrics(startTime, duration);
-                resolve(); // 재연결 성공 시 resolve 호출
+
+                this.clearReconnectTimeout();
+                this.metrics.reconnects.successes.count++;
+                this.metrics.reconnects.successes.lastUpdated = Date.now();
+                resolve();
             } catch (error) {
-                const duration = Date.now() - startTime;
-                this.updateReconnectFailureMetrics(startTime, duration);
-                reject(error); // 재연결 실패 시 reject 호출
+                this.clearReconnectTimeout();
+                this.metrics.reconnects.failures.count++;
+                this.metrics.reconnects.failures.lastUpdated = Date.now();
+
+                if (this.reconnectAttempts < reconnectOptions.maxAttempts) {
+                    try {
+                        await this.handleReconnect();
+                        resolve();
+                    } catch (retryError) {
+                        reject(retryError);
+                    }
+                } else {
+                    this.updateState(ConnectorState.ERROR);
+                    reject(error);
+                }
             }
         });
     }
 
-    private updateReconnectSuccessMetrics(
-        startTime: number,
-        duration: number
-    ): void {
-        this.metrics.reconnects.successes.count++;
-        this.metrics.reconnects.successes.lastUpdated = Date.now();
-        this.metrics.reconnects.lastAttempt = {
-            timestamp: startTime,
-            success: true,
-            duration,
-        };
-    }
-
-    private updateReconnectFailureMetrics(
-        startTime: number,
-        duration: number
-    ): void {
-        this.metrics.reconnects.failures.count++;
-        this.metrics.reconnects.failures.lastUpdated = Date.now();
-        this.metrics.reconnects.lastAttempt = {
-            timestamp: startTime,
-            success: false,
-            duration,
-        };
-    }
-    // public async connect(): Promise<void> {
-    //     if (this.state === ConnectorState.CONNECTED) {
-    //         return;
-    //     }
-
-    //     try {
-    //         console.log("Connecting to WebSocket:", this.state);
-    //         this.updateState(ConnectorState.CONNECTING);
-    //         this.client.connect(this.config.url, this.config.options);
-    //     } catch (error) {
-    //         this.handleError(error);
-    //     }
-    // }
     public async connect(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (this.state === ConnectorState.CONNECTED) {
-                resolve(); // 이미 연결된 상태라면 resolve 호출
+                resolve();
                 return;
             }
 
+            const timeoutId = setTimeout(() => {
+                reject(
+                    new WebSocketError(
+                        ErrorCode.CONNECTION_TIMEOUT,
+                        "Connection timeout"
+                    )
+                );
+            }, this.config.options?.connectionTimeout ?? 30000);
+
             try {
-                console.log("Connecting to WebSocket:", this.state);
                 this.updateState(ConnectorState.CONNECTING);
-                this.client.connect(this.config.url, this.config.options);
+                this.client
+                    .connect(this.config.url, this.config.options)
+                    .then(() => {
+                        clearTimeout(timeoutId);
+                        resolve();
+                    })
+                    .catch((error) => {
+                        clearTimeout(timeoutId);
+                        this.handleError(error);
+                        reject(error);
+                    });
             } catch (error) {
+                clearTimeout(timeoutId);
                 this.handleError(error);
-                reject(error); // 예외 발생 시 reject 호출
+                reject(error);
             }
         });
     }
 
     public async disconnect(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            // 타이머 정리
+        return new Promise<void>((resolve) => {
             this.clearTimers();
-            console.log(
-                "WebSocketManager Disconnecting WebSocket...****DISCONNECTING",
-                this.state
-            );
-            this.updateState(ConnectorState.DISCONNECTING);
 
+            if (this.state === ConnectorState.RECONNECTING) {
+                this.reconnectAttempts =
+                    this.config.reconnectOptions?.maxAttempts || 0; // 재연결 중지
+            }
+
+            this.updateState(ConnectorState.DISCONNECTING);
             try {
-                this.client.close(); // WebSocket 종료 시도
+                this.client.close();
+                resolve();
             } catch (error) {
                 this.handleError(error);
-                reject(error); // 예외 발생 시 reject 호출
+                resolve(); // 에러가 발생해도 disconnect는 완료로 처리
             }
         });
     }
@@ -370,60 +435,81 @@ export class WebSocketManager extends EventEmitter {
     }
 
     private handleMessage(data: unknown): void {
-        try {
-            const message = typeof data === "string" ? JSON.parse(data) : data;
-            if (message.type === "pong") {
-                if (this.pongTimer) clearTimeout(this.pongTimer);
-                return;
+        if (typeof data === "string") {
+            try {
+                const message = JSON.parse(data);
+                this.processMessage(message);
+            } catch (error) {
+                this.handleError(
+                    new WebSocketError(
+                        ErrorCode.MESSAGE_PARSE_ERROR,
+                        "Failed to parse message",
+                        error as Error
+                    )
+                );
             }
-
-            this.metrics.totalMessages.count++;
-            this.metrics.totalMessages.lastUpdated = Date.now();
-            this.emit("message", message);
-        } catch (error) {
-            this.handleError(
-                new WebSocketError(
-                    ErrorCode.MESSAGE_PARSE_ERROR,
-                    "Failed to parse message",
-                    error as Error
-                )
-            );
+        } else {
+            this.processMessage(data);
         }
+    }
+
+    private processMessage(message: unknown): void {
+        if (this.isPongMessage(message)) {
+            if (this.pongTimer) clearTimeout(this.pongTimer);
+            return;
+        }
+
+        this.metrics.totalMessages.count++;
+        this.metrics.totalMessages.lastUpdated = Date.now();
+        this.emit("message", message);
+    }
+
+    private isPongMessage(message: unknown): boolean {
+        return (
+            typeof message === "object" &&
+            message !== null &&
+            "type" in message &&
+            message.type === "pong"
+        );
     }
 
     private handleClose(): void {
         this.clearTimers();
-        this.updateState(ConnectorState.DISCONNECTED);
-        this.emit("disconnected");
+
+        if (this.state === ConnectorState.RECONNECTING) {
+            // 이미 재연결 중이면 무시
+            return;
+        }
 
         if (this.config.reconnectOptions?.maxAttempts) {
+            this.updateState(ConnectorState.RECONNECTING);
             this.handleReconnect().catch((error) => this.handleError(error));
+        } else {
+            this.updateState(ConnectorState.DISCONNECTED);
+            this.emit("disconnected");
         }
     }
 
     private handleError(error: unknown): void {
-        try {
-            const wsError = this.errorHandler.handleWebSocketError(error);
-            const now = Date.now();
+        const wsError = this.errorHandler.handleWebSocketError(error);
+        this.updateErrorMetrics(wsError, Date.now());
 
-            this.updateErrorMetrics(wsError, now);
-
-            switch (wsError.severity) {
-                case ErrorSeverity.CRITICAL:
-                    this.handleCriticalError(wsError);
-                    break;
-                case ErrorSeverity.HIGH:
-                    this.handleHighSeverityError(wsError);
-                    break;
-                default:
-                    this.handleNormalError(wsError);
-                    break;
-            }
-
-            this.emit("error", wsError);
-        } catch (err) {
-            console.error("Unhandled Error in handleError:", err); // 예외를 로깅
+        switch (wsError.severity) {
+            case ErrorSeverity.CRITICAL:
+                this.handleCriticalError(wsError);
+                break;
+            case ErrorSeverity.HIGH:
+                this.handleHighSeverityError(wsError);
+                break;
+            default:
+                this.handleNormalError(wsError);
         }
+
+        if (this.state !== ConnectorState.RECONNECTING) {
+            this.updateState(ConnectorState.ERROR, { error: wsError });
+        }
+
+        this.emit("error", wsError);
     }
 
     private handleCriticalError(error: WebSocketError): void {

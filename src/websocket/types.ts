@@ -8,6 +8,7 @@ export interface WebSocketConfig {
     options?: {
         headers?: Record<string, string>;
         timeout?: number;
+        connectionTimeout?: number; // 연결 타임아웃 (ms)
         pingInterval?: number; // ping 간격 (ms)
         pongTimeout?: number; // pong 응답 대기 시간 (ms)
     };

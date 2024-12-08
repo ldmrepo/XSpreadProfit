@@ -10,47 +10,37 @@ import { IWebSocketClient } from "./IWebSocketClient";
 export class WebSocketClient implements IWebSocketClient {
     private ws: WebSocket | null = null;
 
-    /**
-     * WebSocket 연결을 설정합니다.
-     * @param url WebSocket 서버 URL
-     * @param options WebSocket 연결 옵션
-     */
-    connect(url: string, options?: WebSocket.ClientOptions): void {
-        this.ws = new WebSocket(url, options);
+    connect(url: string, options?: WebSocket.ClientOptions): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.ws = new WebSocket(url, options);
+            this.ws.onopen = () => resolve();
+            this.ws.onerror = (error) => reject(error);
+        });
     }
 
-    /**
-     * WebSocket 이벤트 핸들러를 설정합니다.
-     * @param event 이벤트 이름 (open, message, close, error 등)
-     * @param callback 이벤트 발생 시 호출될 콜백 함수
-     */
     on(event: string, callback: (...args: any[]) => void): void {
         if (!this.ws) throw new Error("WebSocket is not connected");
-
         this.ws.on(event, callback);
     }
 
-    /**
-     * WebSocket을 통해 데이터를 전송합니다.
-     * @param data 전송할 데이터
-     */
     send(data: unknown): void {
-        if (!this.ws) throw new Error("WebSocket is not connected");
-
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+            throw new Error("WebSocket is not connected or not ready");
+        }
         this.ws.send(JSON.stringify(data));
     }
 
-    /**
-     * WebSocket 연결을 닫습니다.
-     */
     close(): void {
         if (!this.ws) throw new Error("WebSocket is not connected");
-
         this.ws.close();
     }
+
     removeListener(event: string, callback: (...args: any[]) => void): void {
         if (!this.ws) throw new Error("WebSocket is not connected");
-
         this.ws.removeListener(event, callback);
+    }
+
+    getReadyState(): number {
+        return this.ws?.readyState ?? WebSocket.CLOSED;
     }
 }

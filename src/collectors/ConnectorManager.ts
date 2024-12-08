@@ -113,8 +113,23 @@ export class ConnectorManager extends EventEmitter {
         connectorId: string,
         event: StateTransitionEvent
     ): void {
-        this.emit("connectorStateChange", { connectorId, event });
-        this.updateManagerMetrics();
+        try {
+            if (event.currentState === ConnectorState.RECONNECTING) {
+                console.log(
+                    `Connector ${connectorId} is attempting to reconnect`
+                );
+            }
+
+            this.emit("connectorStateChange", {
+                connectorId,
+                event,
+                managerStatus: this.calculateManagerStatus(),
+            });
+
+            this.updateManagerMetrics();
+        } catch (error) {
+            this.errorHandler.handleError(error);
+        }
     }
     private handleConnectorError(
         connectorId: string,
@@ -132,35 +147,94 @@ export class ConnectorManager extends EventEmitter {
 
     private async handleFatalError(): Promise<void> {
         try {
-            await this.stop();
+            // 모든 커넥터의 상태 확인
+            const hasReconnectingConnectors = Array.from(
+                this.connectors.values()
+            ).some((c) => c.getState() === ConnectorState.RECONNECTING);
+
+            // RECONNECTING 상태가 있으면 대기
+            if (hasReconnectingConnectors) {
+                await this.waitForReconnection();
+            } else {
+                await this.stop();
+            }
         } catch (error) {
-            console.error("Failed to stop after fatal error:", error);
+            console.error("Failed to handle fatal error:", error);
+            await this.stop();
         }
+    }
+    private async waitForReconnection(timeout: number = 30000): Promise<void> {
+        return new Promise<void>((resolve) => {
+            const checkInterval = setInterval(() => {
+                const states = Array.from(this.connectors.values()).map((c) =>
+                    c.getState()
+                );
+                const hasError = states.some(
+                    (state) => state === ConnectorState.ERROR
+                );
+                const isReconnecting = states.some(
+                    (state) => state === ConnectorState.RECONNECTING
+                );
+
+                if (hasError || !isReconnecting) {
+                    clearInterval(checkInterval);
+                    if (hasError) {
+                        this.handleFatalError();
+                    }
+                    resolve();
+                }
+            }, 1000);
+
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                if (this.hasReconnectingConnectors()) {
+                    this.handleFatalError();
+                }
+                resolve();
+            }, timeout);
+        });
+    }
+
+    private hasReconnectingConnectors(): boolean {
+        return Array.from(this.connectors.values()).some(
+            (c) => c.getState() === ConnectorState.RECONNECTING
+        );
     }
 
     private updateManagerMetrics(): void {
         const currentMetrics = this.calculateMetrics();
         this.emit("metricsUpdate", currentMetrics);
     }
+
     private calculateMetrics(): ManagerMetrics {
         const connectorMetrics = Array.from(this.connectors.values()).map((c) =>
             c.getMetrics()
         );
+        const status = this.calculateManagerStatus();
 
         return {
             timestamp: Date.now(),
-            status: this.calculateManagerStatus(),
+            status,
             totalConnectors: this.connectors.size,
             activeConnectors: this.countActiveConnectors(),
-            totalMessages: this.getTotalMessageCount(connectorMetrics), // 메서드명 수정
-            totalErrors: this.getTotalErrorCount(connectorMetrics), // 메서드명 수정
+            reconnectingConnectors: this.getReconnectingCount(), // 추가
+            totalMessages: this.getTotalMessageCount(connectorMetrics),
+            totalErrors: this.getTotalErrorCount(connectorMetrics),
             connectorMetrics,
         };
     }
 
+    private getReconnectingCount(): number {
+        return Array.from(this.connectors.values()).filter(
+            (c) => c.getState() === ConnectorState.RECONNECTING
+        ).length;
+    }
+
     private countActiveConnectors(): number {
         return Array.from(this.connectors.values()).filter(
-            (c) => c.getState() === ConnectorState.SUBSCRIBED
+            (c) =>
+                c.getState() === ConnectorState.SUBSCRIBED ||
+                c.getState() === ConnectorState.CONNECTED
         ).length;
     }
     private calculateManagerStatus(): string {
@@ -171,7 +245,13 @@ export class ConnectorManager extends EventEmitter {
         if (states.every((state) => state === ConnectorState.SUBSCRIBED)) {
             return "Healthy";
         }
-        if (states.some((state) => state === ConnectorState.ERROR)) {
+        if (
+            states.some(
+                (state) =>
+                    state === ConnectorState.ERROR ||
+                    state === ConnectorState.RECONNECTING
+            )
+        ) {
             return "Degraded";
         }
         return "Partial";

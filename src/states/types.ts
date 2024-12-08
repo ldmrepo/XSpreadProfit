@@ -9,6 +9,7 @@ export enum ConnectorState {
     CONNECTED = "CONNECTED",
     SUBSCRIBING = "SUBSCRIBING",
     SUBSCRIBED = "SUBSCRIBED",
+    RECONNECTING = "RECONNECTING", // 추가
     ERROR = "ERROR",
     DISCONNECTING = "DISCONNECTING",
     DISCONNECTED = "DISCONNECTED",
@@ -52,8 +53,15 @@ export const validStateTransitions: Record<ConnectorState, ConnectorState[]> = {
         ConnectorState.ERROR, // 구독 중 에러 허용
         ConnectorState.DISCONNECTED, // 바로 종료 허용
     ],
+    [ConnectorState.RECONNECTING]: [
+        // 추가
+        ConnectorState.CONNECTED,
+        ConnectorState.ERROR,
+        ConnectorState.DISCONNECTED,
+    ],
     [ConnectorState.ERROR]: [
         ConnectorState.CONNECTING, // 에러 후 재시도
+        ConnectorState.RECONNECTING, // 추가
         ConnectorState.DISCONNECTED, // 에러 후 종료 허용
     ],
     [ConnectorState.DISCONNECTING]: [

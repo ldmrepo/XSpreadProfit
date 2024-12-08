@@ -137,7 +137,7 @@ describe("바이낸스 커넥터 테스트", () => {
         }
     });
 
-    test.skip("WebSocket 연결 및 심볼 구독이 정상적으로 완료되어야 함", async () => {
+    test("WebSocket 연결 및 심볼 구독이 정상적으로 완료되어야 함", async () => {
         // ExchangeConnector가 자동으로 subscribe를 호출할 것이므로
         // 구독 응답만 시뮬레이션하면 됨
         wsManager.simulateMessage({
@@ -147,7 +147,7 @@ describe("바이낸스 커넥터 테스트", () => {
 
         expect(connector.getState()).toBe(ConnectorState.SUBSCRIBED);
     });
-    test.skip("구독 후 Book Ticker 데이터를 정상적으로 수신해야 함", async () => {
+    test("구독 후 Book Ticker 데이터를 정상적으로 수신해야 함", async () => {
         // 데이터 수신을 위한 Promise
         const messagePromise = new Promise<BookTickerData>((resolve) => {
             connector.on("message", (message) => {
@@ -178,7 +178,7 @@ describe("바이낸스 커넥터 테스트", () => {
         expect(receivedData.bids[0]).toEqual([42000.5, 1.23]);
         expect(receivedData.asks[0]).toEqual([42001.0, 0.98]);
     });
-    test.skip("Book Ticker 메시지가 정상적으로 처리되어야 함", async () => {
+    test("Book Ticker 메시지가 정상적으로 처리되어야 함", async () => {
         const messagePromise = new Promise<WebSocketMessage<BookTickerData>>(
             (resolve) => {
                 connector.on("message", (message) => resolve(message));

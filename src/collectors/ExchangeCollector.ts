@@ -147,6 +147,7 @@ export class ExchangeCollector {
                 0
             ),
             connectorMetrics,
+            reconnectingConnectors: 0,
         };
 
         // Collector 메트릭스 생성

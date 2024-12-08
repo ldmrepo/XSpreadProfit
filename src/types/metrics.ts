@@ -40,6 +40,7 @@ export interface ConnectorMetrics extends BaseMetrics {
 export interface ManagerMetrics extends BaseMetrics {
     totalConnectors: number;
     activeConnectors: number;
+    reconnectingConnectors: number; // 추가
     totalMessages: number;
     totalErrors: number;
     connectorMetrics: ConnectorMetrics[];

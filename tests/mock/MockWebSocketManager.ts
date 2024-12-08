@@ -20,9 +20,12 @@ export class MockWebSocketClient
 {
     private isOpen = false;
 
-    connect(url: string, options?: any): void {
-        this.isOpen = true;
-        this.emit("open");
+    connect(url: string, options?: any): Promise<void> {
+        return new Promise((resolve) => {
+            this.isOpen = true;
+            this.emit("open");
+            resolve();
+        });
     }
 
     send(data: unknown): void {
