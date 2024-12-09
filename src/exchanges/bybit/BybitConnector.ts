@@ -1,30 +1,30 @@
 /**
  * Path: src/exchanges/bybit/BybitConnector.ts
  */
-import axios from "axios"
-import { ExchangeConnector } from "../../collectors/ExchangeConnector"
-import { WebSocketMessage } from "../../websocket/types"
-import { WebSocketError, ErrorCode, ErrorSeverity } from "../../errors/types"
-import { SymbolGroup } from "../../collectors/types"
+import axios from "axios";
+import { ExchangeConnector } from "../../collectors/ExchangeConnector";
+import { WebSocketMessage } from "../../websocket/types";
+import { WebSocketError, ErrorCode, ErrorSeverity } from "../../errors/types";
+import { SymbolGroup } from "../../collectors/types";
 import {
     BybitOrderBookMessage,
     BybitSubscription,
     BybitMarketInfo,
     convertBybitSymbol,
-} from "./types"
-import { BookTickerData, ExchangeInfo } from "../common/types"
-import { BybitBookTickerConverter } from "./BybitBookTickerConverter"
-import { IWebSocketManager } from "../../websocket/IWebSocketManager"
+} from "./types";
+import { BookTickerData, ExchangeInfo } from "../common/types";
+import { BybitBookTickerConverter } from "./BybitBookTickerConverter";
+import { IWebSocketManager } from "../../websocket/IWebSocketManager";
 
 export class BybitConnector extends ExchangeConnector {
-    static readonly BASE_URL = "https://api.bybit.com/v5"
+    static readonly BASE_URL = "https://api.bybit.com/v5";
 
     constructor(
         id: string,
         symbols: SymbolGroup,
         wsManager: IWebSocketManager
     ) {
-        super(id, symbols, wsManager)
+        super(id, symbols, wsManager);
     }
 
     public formatSubscriptionRequest(symbols: string[]): BybitSubscription {
@@ -34,7 +34,7 @@ export class BybitConnector extends ExchangeConnector {
                 (symbol) =>
                     `orderbook.1.${convertBybitSymbol.toBybitSymbol(symbol)}`
             ),
-        }
+        };
     }
 
     protected formatUnsubscriptionRequest(
@@ -46,12 +46,12 @@ export class BybitConnector extends ExchangeConnector {
                 (symbol) =>
                     `orderbook.1.${convertBybitSymbol.toBybitSymbol(symbol)}`
             ),
-        }
+        };
     }
 
     protected validateExchangeMessage(data: unknown): boolean {
         try {
-            const msg = data as BybitOrderBookMessage
+            const msg = data as BybitOrderBookMessage;
             return (
                 typeof msg === "object" &&
                 msg !== null &&
@@ -59,34 +59,36 @@ export class BybitConnector extends ExchangeConnector {
                 "data" in msg &&
                 Array.isArray(msg.data.b) &&
                 Array.isArray(msg.data.a)
-            )
+            );
         } catch {
-            return false
+            return false;
         }
     }
 
     protected normalizeExchangeMessage(
         data: unknown
     ): WebSocketMessage<BookTickerData> {
-        const msg = data as BybitOrderBookMessage
-        const bookTicker = BybitBookTickerConverter.convert(msg)
+        const msg = data as BybitOrderBookMessage;
+        const bookTicker = BybitBookTickerConverter.convert(msg);
 
-        this.emit("bookTickerUpdate", bookTicker)
+        this.emit("bookTickerUpdate", bookTicker);
 
         return {
             type: "bookTicker",
             symbol: bookTicker.symbol,
             data: bookTicker,
-        }
+        };
     }
 
-    static async fetchExchangeInfo(): Promise<ExchangeInfo[]> {
+    static async fetchSpotExchangeInfo(): Promise<ExchangeInfo[]> {
         try {
             const response = await axios.get<{
                 result: {
-                    list: BybitMarketInfo[]
-                }
-            }>(`https://api.bybit.com/v5/market/instruments-info?category=spot`)
+                    list: BybitMarketInfo[];
+                };
+            }>(
+                `https://api.bybit.com/v5/market/instruments-info?category=spot`
+            );
 
             return response.data.result.list.map((market) => ({
                 type: "spot",
@@ -101,7 +103,7 @@ export class BybitConnector extends ExchangeConnector {
                     priceFilter: market.priceFilter,
                     timestamp: Date.now(),
                 },
-            }))
+            }));
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 429) {
@@ -110,24 +112,72 @@ export class BybitConnector extends ExchangeConnector {
                         "Bybit API rate limit exceeded",
                         error,
                         ErrorSeverity.HIGH
-                    )
+                    );
                 }
                 throw new WebSocketError(
                     ErrorCode.API_REQUEST_FAILED,
                     `Bybit API request failed: ${error.message}`,
                     error,
                     ErrorSeverity.HIGH
-                )
+                );
             }
             throw new WebSocketError(
                 ErrorCode.API_ERROR,
                 "Unknown API error occurred",
                 error as Error,
                 ErrorSeverity.HIGH
-            )
+            );
         }
     }
+    static async fetchFuturesExchangeInfo(): Promise<ExchangeInfo[]> {
+        try {
+            const response = await axios.get<{
+                result: {
+                    list: BybitMarketInfo[];
+                };
+            }>(
+                `${BybitConnector.BASE_URL}/market/instruments-info?category=linear`
+            );
 
+            return response.data.result.list.map((market) => ({
+                type: "futures",
+                exchange: "bybit",
+                marketSymbol: market.symbol,
+                baseSymbol: market.baseCoin,
+                quoteSymbol: market.quoteCoin,
+                status: market.status.toLowerCase(),
+                additionalInfo: {
+                    // contractType: market.contractType,
+                    priceFilter: market.priceFilter,
+                    lotSizeFilter: market.lotSizeFilter,
+                    timestamp: Date.now(),
+                },
+            }));
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response?.status === 429) {
+                    throw new WebSocketError(
+                        ErrorCode.API_RATE_LIMIT,
+                        "Bybit API rate limit exceeded",
+                        error,
+                        ErrorSeverity.HIGH
+                    );
+                }
+                throw new WebSocketError(
+                    ErrorCode.API_REQUEST_FAILED,
+                    `Bybit API request failed: ${error.message}`,
+                    error,
+                    ErrorSeverity.HIGH
+                );
+            }
+            throw new WebSocketError(
+                ErrorCode.API_ERROR,
+                "Unknown API error occurred",
+                error as Error,
+                ErrorSeverity.HIGH
+            );
+        }
+    }
     protected handleError(error: unknown): void {
         const wsError =
             error instanceof WebSocketError
@@ -137,12 +187,12 @@ export class BybitConnector extends ExchangeConnector {
                       "Bybit internal error",
                       error as Error,
                       ErrorSeverity.MEDIUM
-                  )
+                  );
 
-        super.handleError(wsError)
+        super.handleError(wsError);
     }
 
     onBookTickerUpdate(callback: (data: BookTickerData) => void): void {
-        this.on("bookTickerUpdate", callback)
+        this.on("bookTickerUpdate", callback);
     }
 }

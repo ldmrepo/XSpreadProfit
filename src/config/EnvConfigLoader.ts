@@ -30,6 +30,41 @@ export class EnvConfigLoader implements IConfigLoader {
                 symbols: JSON.parse(process.env.BINANCE_SYMBOLS || "[]"),
             },
             {
+                // binance.futures 추가
+                name: "binance.futures",
+                wsUrl:
+                    process.env.BINANCE_WS_URL ||
+                    "wss://fstream.binance.com/ws",
+                streamLimit: parseInt(
+                    process.env.BINANCE_STREAM_LIMIT || "1024",
+                    10
+                ),
+                symbols: JSON.parse(process.env.BINANCE_SYMBOLS || "[]"),
+            },
+            {
+                name: "bybit",
+                wsUrl:
+                    process.env.BYBIT_WS_URL ||
+                    "wss://stream.bybit.com/v5/public/spot",
+                streamLimit: parseInt(
+                    process.env.BYBIT_STREAM_LIMIT || "200",
+                    10
+                ),
+                symbols: JSON.parse(process.env.BYBIT_SYMBOLS || "[]"),
+            },
+            {
+                // bybit.futures 추가
+                name: "bybit.futures",
+                wsUrl:
+                    process.env.BYBIT_WS_URL ||
+                    "wss://stream.bybit.com/realtime",
+                streamLimit: parseInt(
+                    process.env.BYBIT_STREAM_LIMIT || "200",
+                    10
+                ),
+                symbols: JSON.parse(process.env.BYBIT_SYMBOLS || "[]"),
+            },
+            {
                 name: "upbit",
                 wsUrl:
                     process.env.UPBIT_WS_URL ||
@@ -39,6 +74,29 @@ export class EnvConfigLoader implements IConfigLoader {
                     10
                 ),
                 symbols: JSON.parse(process.env.UPBIT_SYMBOLS || "[]"),
+            },
+            {
+                // 빗썸 추가
+                name: "bithumb",
+                wsUrl:
+                    process.env.BITHUMB_WS_URL ||
+                    "wss://pubwss.bithumb.com/pub/ws",
+                streamLimit: parseInt(
+                    process.env.BITHUMB_STREAM_LIMIT || "100",
+                    10
+                ),
+                symbols: JSON.parse(process.env.BITHUMB_SYMBOLS || "[]"),
+            },
+            {
+                // 코인원 추가
+                name: "coinone",
+                wsUrl:
+                    process.env.COINONE_WS_URL || "wss://push.coinone.co.kr/ws",
+                streamLimit: parseInt(
+                    process.env.COINONE_STREAM_LIMIT || "100",
+                    10
+                ),
+                symbols: JSON.parse(process.env.COINONE_SYMBOLS || "[]"),
             },
         ];
 
