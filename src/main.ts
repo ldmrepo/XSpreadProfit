@@ -172,10 +172,11 @@ class Application {
     protected createCollectorForExchange(
         exchangeConfig: ExchangeConfig
     ): ExchangeCollector {
+        console.log(exchangeConfig.symbols.length);
         return new ExchangeCollector(
             (id: string, symbols: string[]) =>
                 this.createConnector(exchangeConfig, id, symbols),
-            [exchangeConfig.symbols[0]], // TODO: 디버그용으로 첫 번째 심볼만 사용
+            exchangeConfig.symbols, //.splice(0, 355), // TODO: 디버그용으로 첫 번째 심볼만 사용
             { streamLimitPerConnection: exchangeConfig.streamLimit }
         );
     }

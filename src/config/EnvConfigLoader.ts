@@ -25,7 +25,7 @@ export class EnvConfigLoader implements IConfigLoader {
                 wsUrl:
                     process.env.BINANCE_WS_URL ||
                     "wss://stream.binance.com:9443/ws",
-                streamLimit: 1024,
+                streamLimit: 300,
                 symbols: [],
                 used: true,
             },
@@ -37,7 +37,7 @@ export class EnvConfigLoader implements IConfigLoader {
                 wsUrl:
                     process.env.BINANCE_WS_URL ||
                     "wss://fstream.binance.com/ws",
-                streamLimit: 1024,
+                streamLimit: 300,
                 symbols: [],
                 used: false,
             },

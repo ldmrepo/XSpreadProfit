@@ -132,7 +132,7 @@ export class BinanceConnector extends ExchangeConnector {
     public formatSubscriptionRequest(symbols: string[]): BinanceSubscription {
         const params = symbols.flatMap((symbol) => [
             `${symbol.toLowerCase()}@bookTicker`,
-            `${symbol.toLowerCase()}@depth10@100ms`, // 설정에 따라 depth level과 속도 조정 가능
+            // `${symbol.toLowerCase()}@depth10@100ms`, // 설정에 따라 depth level과 속도 조정 가능
         ]);
 
         return {
@@ -147,7 +147,7 @@ export class BinanceConnector extends ExchangeConnector {
     ): BinanceSubscription {
         const params = symbols.flatMap((symbol) => [
             `${symbol.toLowerCase()}@bookTicker`,
-            `${symbol.toLowerCase()}@depth20@100ms`,
+            // `${symbol.toLowerCase()}@depth10@100ms`,
         ]);
 
         return {
