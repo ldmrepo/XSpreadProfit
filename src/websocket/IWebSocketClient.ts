@@ -4,7 +4,9 @@
  * 다양한 WebSocket 구현체를 지원하기 위한 인터페이스
  */
 
-export interface IWebSocketClient {
+import EventEmitter from "events";
+
+export interface IWebSocketClient extends EventEmitter {
     /**
      * WebSocket 서버에 연결합니다.
      * @param url WebSocket 서버 URL
@@ -17,7 +19,8 @@ export interface IWebSocketClient {
      * @param event 이벤트 이름 (open, message, close, error 등)
      * @param callback 이벤트 발생 시 호출될 콜백 함수
      */
-    on(event: string, callback: (...args: any[]) => void): void;
+    // on(event: string, callback: (...args: any[]) => void): void;
+    on(event: string | symbol, callback: (...args: any[]) => void): this;
 
     /**
      * WebSocket을 통해 데이터를 전송합니다.
@@ -35,5 +38,6 @@ export interface IWebSocketClient {
      * @param event 이벤트 이름
      * @param callback 제거할 콜백 함수
      */
-    removeListener(event: string, callback: (...args: any[]) => void): void; // 추가
+    // removeListener(event: string, callback: (...args: any[]) => void): void; // 추가
+    removeListener(event: string, callback: (...args: any[]) => void): this;
 }

@@ -1,0 +1,643 @@
+
+        ====================================================================
+           ██╗  ██╗███████╗██████╗ ██████╗ ██████╗ ██████╗ ██████╗ ███████╗
+           ██║  ██║██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝
+           ███████║█████╗  ██████╔╝██║  ██║██║  ██║██████╔╝██║  ██║█████╗  
+           ██╔══██║██╔══╝  ██╔═══╝ ██║  ██║██║  ██║██╔═══╝ ██║  ██║██╔══╝  
+           ██║  ██║███████╗██║     ██████╔╝██████╔╝██║     ██████╔╝███████╗
+           ╚═╝  ╚═╝╚══════╝╚═╝     ╚═════╝ ╚═════╝ ╚═╝     ╚═════╝ ╚══════╝
+        ====================================================================
+        Welcome to xspreadprofit - Cryptocurrency Arbitrage System!
+        Initializing the application. Please wait...
+        ====================================================================
+        
+binance spot
+globalData 151
+전체 마스터 데이터 크기: 151
+binance:spot 교집합 데이터 크기: 108
+binance:future 교집합 데이터 크기: 0
+bybit:spot 교집합 데이터 크기: 0
+bybit:future 교집합 데이터 크기: 0
+upbit:spot 교집합 데이터 크기: 151
+bithumb:spot 교집합 데이터 크기: 0
+coinone:spot 교집합 데이터 크기: 0
+Exchange data initialization completed
+************Starting collector for spot
+[ExchangeCollector] Initializing collector
+Creating connector for spot
+🚀 ~ WebSocketManager ~ id: ws_1733852050518
+ExchangeConnector constructor connector-0 386
+🚀 ~ ExchangeCollector ~ start ~ this.currentState: Ready
+🚀 ~ ExchangeConnector Starting connector... INITIAL
+🚀 ~ WebSocketManager ~ 연결 ~
+State Change: INITIAL -> CONNECTING
+[ExchangeConnector] handleStateChange(): INITIAL -> CONNECTING
+[ExchangeConnector] Current State after set: CONNECTING
+[ExchangeConnector] StateChange event emitted for state: CONNECTING
+[WebSocketClient] Attempting to connect: wss://stream.binance.com:9443/ws
+[WebSocketClient] 'open' event fired
+[WebSocketClient] Connected and handlers registered
+[WebSocketManager] handleOpen() called
+[WebSocketManager] Updating state to CONNECTED
+State Change: CONNECTING -> CONNECTED
+[ExchangeConnector] handleStateChange(): CONNECTING -> CONNECTED
+[ExchangeConnector] Current State after set: CONNECTED
+[ExchangeConnector] State is CONNECTED, calling handleConnectionEstablished()
+[ExchangeConnector] handleConnectionEstablished() called with previousState: CONNECTING
+[ExchangeConnector] Previous state was CONNECTING, calling subscribe() now...
+[ExchangeConnector] subscribe() called
+[ExchangeConnector] setState() called: CONNECTED -> SUBSCRIBING
+[ExchangeConnector] State changed: CONNECTED -> SUBSCRIBING
+[ExchangeConnector] State changed to SUBSCRIBING. Preparing to send subscription requests...
+[ExchangeConnector] Symbols to subscribe: [
+  'BTCUSDT',   'ETHUSDT',   'BNBUSDT',  'NEOUSDT',   'LTCUSDT',
+  'QTUMUSDT',  'ADAUSDT',   'XRPUSDT',  'EOSUSDT',   'TUSDUSDT',
+  'IOTAUSDT',  'XLMUSDT',   'ONTUSDT',  'TRXUSDT',   'ETCUSDT',
+  'ICXUSDT',   'NULSUSDT',  'VETUSDT',  'USDCUSDT',  'LINKUSDT',
+  'ONGUSDT',   'HOTUSDT',   'ZILUSDT',  'ZRXUSDT',   'FETUSDT',
+  'BATUSDT',   'ZECUSDT',   'IOSTUSDT', 'CELRUSDT',  'DASHUSDT',
+  'THETAUSDT', 'ENJUSDT',   'ATOMUSDT', 'TFUELUSDT', 'ONEUSDT',
+  'FTMUSDT',   'ALGOUSDT',  'DOGEUSDT', 'DUSKUSDT',  'ANKRUSDT',
+  'WINUSDT',   'COSUSDT',   'MTLUSDT',  'DENTUSDT',  'WANUSDT',
+  'FUNUSDT',   'CVCUSDT',   'CHZUSDT',  'BANDUSDT',  'XTZUSDT',
+  'RVNUSDT',   'HBARUSDT',  'NKNUSDT',  'STXUSDT',   'KAVAUSDT',
+  'ARPAUSDT',  'IOTXUSDT',  'RLCUSDT',  'CTXCUSDT',  'BCHUSDT',
+  'TROYUSDT',  'VITEUSDT',  'FTTUSDT',  'EURUSDT',   'OGNUSDT',
+  'WRXUSDT',   'LSKUSDT',   'BNTUSDT',  'LTOUSDT',   'MBLUSDT',
+  'COTIUSDT',  'STPTUSDT',  'DATAUSDT', 'SOLUSDT',   'CTSIUSDT',
+  'HIVEUSDT',  'CHRUSDT',   'ARDRUSDT', 'MDTUSDT',   'STMXUSDT',
+  'KNCUSDT',   'LRCUSDT',   'COMPUSDT', 'SCUSDT',    'ZENUSDT',
+  'SNXUSDT',   'VTHOUSDT',  'DGBUSDT',  'SXPUSDT',   'MKRUSDT',
+  'DCRUSDT',   'STORJUSDT', 'MANAUSDT', 'YFIUSDT',   'BALUSDT',
+  'BLZUSDT',   'KMDUSDT',   'JSTUSDT',  'CRVUSDT',   'SANDUSDT',
+  ... 286 more items
+]
+[ExchangeConnector] subscribeSymbols() called with: [
+  'BTCUSDT',   'ETHUSDT',   'BNBUSDT',  'NEOUSDT',   'LTCUSDT',
+  'QTUMUSDT',  'ADAUSDT',   'XRPUSDT',  'EOSUSDT',   'TUSDUSDT',
+  'IOTAUSDT',  'XLMUSDT',   'ONTUSDT',  'TRXUSDT',   'ETCUSDT',
+  'ICXUSDT',   'NULSUSDT',  'VETUSDT',  'USDCUSDT',  'LINKUSDT',
+  'ONGUSDT',   'HOTUSDT',   'ZILUSDT',  'ZRXUSDT',   'FETUSDT',
+  'BATUSDT',   'ZECUSDT',   'IOSTUSDT', 'CELRUSDT',  'DASHUSDT',
+  'THETAUSDT', 'ENJUSDT',   'ATOMUSDT', 'TFUELUSDT', 'ONEUSDT',
+  'FTMUSDT',   'ALGOUSDT',  'DOGEUSDT', 'DUSKUSDT',  'ANKRUSDT',
+  'WINUSDT',   'COSUSDT',   'MTLUSDT',  'DENTUSDT',  'WANUSDT',
+  'FUNUSDT',   'CVCUSDT',   'CHZUSDT',  'BANDUSDT',  'XTZUSDT',
+  'RVNUSDT',   'HBARUSDT',  'NKNUSDT',  'STXUSDT',   'KAVAUSDT',
+  'ARPAUSDT',  'IOTXUSDT',  'RLCUSDT',  'CTXCUSDT',  'BCHUSDT',
+  'TROYUSDT',  'VITEUSDT',  'FTTUSDT',  'EURUSDT',   'OGNUSDT',
+  'WRXUSDT',   'LSKUSDT',   'BNTUSDT',  'LTOUSDT',   'MBLUSDT',
+  'COTIUSDT',  'STPTUSDT',  'DATAUSDT', 'SOLUSDT',   'CTSIUSDT',
+  'HIVEUSDT',  'CHRUSDT',   'ARDRUSDT', 'MDTUSDT',   'STMXUSDT',
+  'KNCUSDT',   'LRCUSDT',   'COMPUSDT', 'SCUSDT',    'ZENUSDT',
+  'SNXUSDT',   'VTHOUSDT',  'DGBUSDT',  'SXPUSDT',   'MKRUSDT',
+  'DCRUSDT',   'STORJUSDT', 'MANAUSDT', 'YFIUSDT',   'BALUSDT',
+  'BLZUSDT',   'KMDUSDT',   'JSTUSDT',  'CRVUSDT',   'SANDUSDT',
+  ... 286 more items
+]
+[ExchangeConnector] Attempting to subscribe batch: [
+  'BTCUSDT',   'ETHUSDT',   'BNBUSDT',  'NEOUSDT',   'LTCUSDT',
+  'QTUMUSDT',  'ADAUSDT',   'XRPUSDT',  'EOSUSDT',   'TUSDUSDT',
+  'IOTAUSDT',  'XLMUSDT',   'ONTUSDT',  'TRXUSDT',   'ETCUSDT',
+  'ICXUSDT',   'NULSUSDT',  'VETUSDT',  'USDCUSDT',  'LINKUSDT',
+  'ONGUSDT',   'HOTUSDT',   'ZILUSDT',  'ZRXUSDT',   'FETUSDT',
+  'BATUSDT',   'ZECUSDT',   'IOSTUSDT', 'CELRUSDT',  'DASHUSDT',
+  'THETAUSDT', 'ENJUSDT',   'ATOMUSDT', 'TFUELUSDT', 'ONEUSDT',
+  'FTMUSDT',   'ALGOUSDT',  'DOGEUSDT', 'DUSKUSDT',  'ANKRUSDT',
+  'WINUSDT',   'COSUSDT',   'MTLUSDT',  'DENTUSDT',  'WANUSDT',
+  'FUNUSDT',   'CVCUSDT',   'CHZUSDT',  'BANDUSDT',  'XTZUSDT',
+  'RVNUSDT',   'HBARUSDT',  'NKNUSDT',  'STXUSDT',   'KAVAUSDT',
+  'ARPAUSDT',  'IOTXUSDT',  'RLCUSDT',  'CTXCUSDT',  'BCHUSDT',
+  'TROYUSDT',  'VITEUSDT',  'FTTUSDT',  'EURUSDT',   'OGNUSDT',
+  'WRXUSDT',   'LSKUSDT',   'BNTUSDT',  'LTOUSDT',   'MBLUSDT',
+  'COTIUSDT',  'STPTUSDT',  'DATAUSDT', 'SOLUSDT',   'CTSIUSDT',
+  'HIVEUSDT',  'CHRUSDT',   'ARDRUSDT', 'MDTUSDT',   'STMXUSDT',
+  'KNCUSDT',   'LRCUSDT',   'COMPUSDT', 'SCUSDT',    'ZENUSDT',
+  'SNXUSDT',   'VTHOUSDT',  'DGBUSDT',  'SXPUSDT',   'MKRUSDT',
+  'DCRUSDT',   'STORJUSDT', 'MANAUSDT', 'YFIUSDT',   'BALUSDT',
+  'BLZUSDT',   'KMDUSDT',   'JSTUSDT',  'CRVUSDT',   'SANDUSDT',
+  ... 286 more items
+]
+[ExchangeConnector] Sending SUBSCRIBE request: {"method":"SUBSCRIBE","params":["btcusdt@bookTicker","btcusdt@depth10@100ms","ethusdt@bookTicker","ethusdt@depth10@100ms","bnbusdt@bookTicker","bnbusdt@depth10@100ms","neousdt@bookTicker","neousdt@depth10@100ms","ltcusdt@bookTicker","ltcusdt@depth10@100ms","qtumusdt@bookTicker","qtumusdt@depth10@100ms","adausdt@bookTicker","adausdt@depth10@100ms","xrpusdt@bookTicker","xrpusdt@depth10@100ms","eosusdt@bookTicker","eosusdt@depth10@100ms","tusdusdt@bookTicker","tusdusdt@depth10@100ms","iotausdt@bookTicker","iotausdt@depth10@100ms","xlmusdt@bookTicker","xlmusdt@depth10@100ms","ontusdt@bookTicker","ontusdt@depth10@100ms","trxusdt@bookTicker","trxusdt@depth10@100ms","etcusdt@bookTicker","etcusdt@depth10@100ms","icxusdt@bookTicker","icxusdt@depth10@100ms","nulsusdt@bookTicker","nulsusdt@depth10@100ms","vetusdt@bookTicker","vetusdt@depth10@100ms","usdcusdt@bookTicker","usdcusdt@depth10@100ms","linkusdt@bookTicker","linkusdt@depth10@100ms","ongusdt@bookTicker","ongusdt@depth10@100ms","hotusdt@bookTicker","hotusdt@depth10@100ms","zilusdt@bookTicker","zilusdt@depth10@100ms","zrxusdt@bookTicker","zrxusdt@depth10@100ms","fetusdt@bookTicker","fetusdt@depth10@100ms","batusdt@bookTicker","batusdt@depth10@100ms","zecusdt@bookTicker","zecusdt@depth10@100ms","iostusdt@bookTicker","iostusdt@depth10@100ms","celrusdt@bookTicker","celrusdt@depth10@100ms","dashusdt@bookTicker","dashusdt@depth10@100ms","thetausdt@bookTicker","thetausdt@depth10@100ms","enjusdt@bookTicker","enjusdt@depth10@100ms","atomusdt@bookTicker","atomusdt@depth10@100ms","tfuelusdt@bookTicker","tfuelusdt@depth10@100ms","oneusdt@bookTicker","oneusdt@depth10@100ms","ftmusdt@bookTicker","ftmusdt@depth10@100ms","algousdt@bookTicker","algousdt@depth10@100ms","dogeusdt@bookTicker","dogeusdt@depth10@100ms","duskusdt@bookTicker","duskusdt@depth10@100ms","ankrusdt@bookTicker","ankrusdt@depth10@100ms","winusdt@bookTicker","winusdt@depth10@100ms","cosusdt@bookTicker","cosusdt@depth10@100ms","mtlusdt@bookTicker","mtlusdt@depth10@100ms","dentusdt@bookTicker","dentusdt@depth10@100ms","wanusdt@bookTicker","wanusdt@depth10@100ms","funusdt@bookTicker","funusdt@depth10@100ms","cvcusdt@bookTicker","cvcusdt@depth10@100ms","chzusdt@bookTicker","chzusdt@depth10@100ms","bandusdt@bookTicker","bandusdt@depth10@100ms","xtzusdt@bookTicker","xtzusdt@depth10@100ms","rvnusdt@bookTicker","rvnusdt@depth10@100ms","hbarusdt@bookTicker","hbarusdt@depth10@100ms","nknusdt@bookTicker","nknusdt@depth10@100ms","stxusdt@bookTicker","stxusdt@depth10@100ms","kavausdt@bookTicker","kavausdt@depth10@100ms","arpausdt@bookTicker","arpausdt@depth10@100ms","iotxusdt@bookTicker","iotxusdt@depth10@100ms","rlcusdt@bookTicker","rlcusdt@depth10@100ms","ctxcusdt@bookTicker","ctxcusdt@depth10@100ms","bchusdt@bookTicker","bchusdt@depth10@100ms","troyusdt@bookTicker","troyusdt@depth10@100ms","viteusdt@bookTicker","viteusdt@depth10@100ms","fttusdt@bookTicker","fttusdt@depth10@100ms","eurusdt@bookTicker","eurusdt@depth10@100ms","ognusdt@bookTicker","ognusdt@depth10@100ms","wrxusdt@bookTicker","wrxusdt@depth10@100ms","lskusdt@bookTicker","lskusdt@depth10@100ms","bntusdt@bookTicker","bntusdt@depth10@100ms","ltousdt@bookTicker","ltousdt@depth10@100ms","mblusdt@bookTicker","mblusdt@depth10@100ms","cotiusdt@bookTicker","cotiusdt@depth10@100ms","stptusdt@bookTicker","stptusdt@depth10@100ms","datausdt@bookTicker","datausdt@depth10@100ms","solusdt@bookTicker","solusdt@depth10@100ms","ctsiusdt@bookTicker","ctsiusdt@depth10@100ms","hiveusdt@bookTicker","hiveusdt@depth10@100ms","chrusdt@bookTicker","chrusdt@depth10@100ms","ardrusdt@bookTicker","ardrusdt@depth10@100ms","mdtusdt@bookTicker","mdtusdt@depth10@100ms","stmxusdt@bookTicker","stmxusdt@depth10@100ms","kncusdt@bookTicker","kncusdt@depth10@100ms","lrcusdt@bookTicker","lrcusdt@depth10@100ms","compusdt@bookTicker","compusdt@depth10@100ms","scusdt@bookTicker","scusdt@depth10@100ms","zenusdt@bookTicker","zenusdt@depth10@100ms","snxusdt@bookTicker","snxusdt@depth10@100ms","vthousdt@bookTicker","vthousdt@depth10@100ms","dgbusdt@bookTicker","dgbusdt@depth10@100ms","sxpusdt@bookTicker","sxpusdt@depth10@100ms","mkrusdt@bookTicker","mkrusdt@depth10@100ms","dcrusdt@bookTicker","dcrusdt@depth10@100ms","storjusdt@bookTicker","storjusdt@depth10@100ms","manausdt@bookTicker","manausdt@depth10@100ms","yfiusdt@bookTicker","yfiusdt@depth10@100ms","balusdt@bookTicker","balusdt@depth10@100ms","blzusdt@bookTicker","blzusdt@depth10@100ms","kmdusdt@bookTicker","kmdusdt@depth10@100ms","jstusdt@bookTicker","jstusdt@depth10@100ms","crvusdt@bookTicker","crvusdt@depth10@100ms","sandusdt@bookTicker","sandusdt@depth10@100ms","nmrusdt@bookTicker","nmrusdt@depth10@100ms","dotusdt@bookTicker","dotusdt@depth10@100ms","lunausdt@bookTicker","lunausdt@depth10@100ms","rsrusdt@bookTicker","rsrusdt@depth10@100ms","paxgusdt@bookTicker","paxgusdt@depth10@100ms","trbusdt@bookTicker","trbusdt@depth10@100ms","sushiusdt@bookTicker","sushiusdt@depth10@100ms","ksmusdt@bookTicker","ksmusdt@depth10@100ms","egldusdt@bookTicker","egldusdt@depth10@100ms","diausdt@bookTicker","diausdt@depth10@100ms","runeusdt@bookTicker","runeusdt@depth10@100ms","fiousdt@bookTicker","fiousdt@depth10@100ms","umausdt@bookTicker","umausdt@depth10@100ms","belusdt@bookTicker","belusdt@depth10@100ms","wingusdt@bookTicker","wingusdt@depth10@100ms","uniusdt@bookTicker","uniusdt@depth10@100ms","oxtusdt@bookTicker","oxtusdt@depth10@100ms","sunusdt@bookTicker","sunusdt@depth10@100ms","avaxusdt@bookTicker","avaxusdt@depth10@100ms","flmusdt@bookTicker","flmusdt@depth10@100ms","utkusdt@bookTicker","utkusdt@depth10@100ms","xvsusdt@bookTicker","xvsusdt@depth10@100ms","alphausdt@bookTicker","alphausdt@depth10@100ms","aaveusdt@bookTicker","aaveusdt@depth10@100ms","nearusdt@bookTicker","nearusdt@depth10@100ms","filusdt@bookTicker","filusdt@depth10@100ms","injusdt@bookTicker","injusdt@depth10@100ms","audiousdt@bookTicker","audiousdt@depth10@100ms","ctkusdt@bookTicker","ctkusdt@depth10@100ms","akrousdt@bookTicker","akrousdt@depth10@100ms","axsusdt@bookTicker","axsusdt@depth10@100ms","hardusdt@bookTicker","hardusdt@depth10@100ms","straxusdt@bookTicker","straxusdt@depth10@100ms","roseusdt@bookTicker","roseusdt@depth10@100ms","avausdt@bookTicker","avausdt@depth10@100ms","sklusdt@bookTicker","sklusdt@depth10@100ms","grtusdt@bookTicker","grtusdt@depth10@100ms","juvusdt@bookTicker","juvusdt@depth10@100ms","psgusdt@bookTicker","psgusdt@depth10@100ms","1inchusdt@bookTicker","1inchusdt@depth10@100ms","ogusdt@bookTicker","ogusdt@depth10@100ms","atmusdt@bookTicker","atmusdt@depth10@100ms","asrusdt@bookTicker","asrusdt@depth10@100ms","celousdt@bookTicker","celousdt@depth10@100ms","rifusdt@bookTicker","rifusdt@depth10@100ms","truusdt@bookTicker","truusdt@depth10@100ms","ckbusdt@bookTicker","ckbusdt@depth10@100ms","twtusdt@bookTicker","twtusdt@depth10@100ms","firousdt@bookTicker","firousdt@depth10@100ms","litusdt@bookTicker","litusdt@depth10@100ms","sfpusdt@bookTicker","sfpusdt@depth10@100ms","dodousdt@bookTicker","dodousdt@depth10@100ms","cakeusdt@bookTicker","cakeusdt@depth10@100ms","acmusdt@bookTicker","acmusdt@depth10@100ms","badgerusdt@bookTicker","badgerusdt@depth10@100ms","fisusdt@bookTicker","fisusdt@depth10@100ms","omusdt@bookTicker","omusdt@depth10@100ms","pondusdt@bookTicker","pondusdt@depth10@100ms","degousdt@bookTicker","degousdt@depth10@100ms","aliceusdt@bookTicker","aliceusdt@depth10@100ms","linausdt@bookTicker","linausdt@depth10@100ms","perpusdt@bookTicker","perpusdt@depth10@100ms","superusdt@bookTicker","superusdt@depth10@100ms","cfxusdt@bookTicker","cfxusdt@depth10@100ms","tkousdt@bookTicker","tkousdt@depth10@100ms","pundixusdt@bookTicker","pundixusdt@depth10@100ms","tlmusdt@bookTicker","tlmusdt@depth10@100ms","barusdt@bookTicker","barusdt@depth10@100ms","forthusdt@bookTicker","forthusdt@depth10@100ms","bakeusdt@bookTicker","bakeusdt@depth10@100ms","burgerusdt@bookTicker","burgerusdt@depth10@100ms","slpusdt@bookTicker","slpusdt@depth10@100ms","shibusdt@bookTicker","shibusdt@depth10@100ms","icpusdt@bookTicker","icpusdt@depth10@100ms","arusdt@bookTicker","arusdt@depth10@100ms","maskusdt@bookTicker","maskusdt@depth10@100ms","lptusdt@bookTicker","lptusdt@depth10@100ms","xvgusdt@bookTicker","xvgusdt@depth10@100ms","atausdt@bookTicker","atausdt@depth10@100ms","gtcusdt@bookTicker","gtcusdt@depth10@100ms","ernusdt@bookTicker","ernusdt@depth10@100ms","phausdt@bookTicker","phausdt@depth10@100ms","mlnusdt@bookTicker","mlnusdt@depth10@100ms","dexeusdt@bookTicker","dexeusdt@depth10@100ms","c98usdt@bookTicker","c98usdt@depth10@100ms","clvusdt@bookTicker","clvusdt@depth10@100ms","qntusdt@bookTicker","qntusdt@depth10@100ms","flowusdt@bookTicker","flowusdt@depth10@100ms","minausdt@bookTicker","minausdt@depth10@100ms","rayusdt@bookTicker","rayusdt@depth10@100ms","farmusdt@bookTicker","farmusdt@depth10@100ms","alpacausdt@bookTicker","alpacausdt@depth10@100ms","quickusdt@bookTicker","quickusdt@depth10@100ms","mboxusdt@bookTicker","mboxusdt@depth10@100ms","requsdt@bookTicker","requsdt@depth10@100ms","ghstusdt@bookTicker","ghstusdt@depth10@100ms","waxpusdt@bookTicker","waxpusdt@depth10@100ms","gnousdt@bookTicker","gnousdt@depth10@100ms","xecusdt@bookTicker","xecusdt@depth10@100ms","elfusdt@bookTicker","elfusdt@depth10@100ms","dydxusdt@bookTicker","dydxusdt@depth10@100ms","idexusdt@bookTicker","idexusdt@depth10@100ms","vidtusdt@bookTicker","vidtusdt@depth10@100ms","usdpusdt@bookTicker","usdpusdt@depth10@100ms","galausdt@bookTicker","galausdt@depth10@100ms","ilvusdt@bookTicker","ilvusdt@depth10@100ms","yggusdt@bookTicker","yggusdt@depth10@100ms","sysusdt@bookTicker","sysusdt@depth10@100ms","dfusdt@bookTicker","dfusdt@depth10@100ms","fidausdt@bookTicker","fidausdt@depth10@100ms","agldusdt@bookTicker","agldusdt@depth10@100ms","radusdt@bookTicker","radusdt@depth10@100ms","betausdt@bookTicker","betausdt@depth10@100ms","rareusdt@bookTicker","rareusdt@depth10@100ms","laziousdt@bookTicker","laziousdt@depth10@100ms","chessusdt@bookTicker","chessusdt@depth10@100ms","adxusdt@bookTicker","adxusdt@depth10@100ms","auctionusdt@bookTicker","auctionusdt@depth10@100ms","darusdt@bookTicker","darusdt@depth10@100ms","bnxusdt@bookTicker","bnxusdt@depth10@100ms","movrusdt@bookTicker","movrusdt@depth10@100ms","cityusdt@bookTicker","cityusdt@depth10@100ms","ensusdt@bookTicker","ensusdt@depth10@100ms","qiusdt@bookTicker","qiusdt@depth10@100ms","portousdt@bookTicker","portousdt@depth10@100ms","powrusdt@bookTicker","powrusdt@depth10@100ms","jasmyusdt@bookTicker","jasmyusdt@depth10@100ms","ampusdt@bookTicker","ampusdt@depth10@100ms","pyrusdt@bookTicker","pyrusdt@depth10@100ms","alcxusdt@bookTicker","alcxusdt@depth10@100ms","santosusdt@bookTicker","santosusdt@depth10@100ms","bicousdt@bookTicker","bicousdt@depth10@100ms","fluxusdt@bookTicker","fluxusdt@depth10@100ms","fxsusdt@bookTicker","fxsusdt@depth10@100ms","voxelusdt@bookTicker","voxelusdt@depth10@100ms","highusdt@bookTicker","highusdt@depth10@100ms","cvxusdt@bookTicker","cvxusdt@depth10@100ms","peopleusdt@bookTicker","peopleusdt@depth10@100ms","spellusdt@bookTicker","spellusdt@depth10@100ms","joeusdt@bookTicker","joeusdt@depth10@100ms","achusdt@bookTicker","achusdt@depth10@100ms","imxusdt@bookTicker","imxusdt@depth10@100ms","glmrusdt@bookTicker","glmrusdt@depth10@100ms","lokausdt@bookTicker","lokausdt@depth10@100ms","scrtusdt@bookTicker","scrtusdt@depth10@100ms","api3usdt@bookTicker","api3usdt@depth10@100ms","bttcusdt@bookTicker","bttcusdt@depth10@100ms","acausdt@bookTicker","acausdt@depth10@100ms","xnousdt@bookTicker","xnousdt@depth10@100ms","woousdt@bookTicker","woousdt@depth10@100ms","alpineusdt@bookTicker","alpineusdt@depth10@100ms","tusdt@bookTicker","tusdt@depth10@100ms","astrusdt@bookTicker","astrusdt@depth10@100ms","gmtusdt@bookTicker","gmtusdt@depth10@100ms","kdausdt@bookTicker","kdausdt@depth10@100ms","apeusdt@bookTicker","apeusdt@depth10@100ms","bswusdt@bookTicker","bswusdt@depth10@100ms","bifiusdt@bookTicker","bifiusdt@depth10@100ms","steemusdt@bookTicker","steemusdt@depth10@100ms","nexousdt@bookTicker","nexousdt@depth10@100ms","reiusdt@bookTicker","reiusdt@depth10@100ms","ldousdt@bookTicker","ldousdt@depth10@100ms","opusdt@bookTicker","opusdt@depth10@100ms","leverusdt@bookTicker","leverusdt@depth10@100ms","stgusdt@bookTicker","stgusdt@depth10@100ms","luncusdt@bookTicker","luncusdt@depth10@100ms","gmxusdt@bookTicker","gmxusdt@depth10@100ms","polyxusdt@bookTicker","polyxusdt@depth10@100ms","aptusdt@bookTicker","aptusdt@depth10@100ms","osmousdt@bookTicker","osmousdt@depth10@100ms","hftusdt@bookTicker","hftusdt@depth10@100ms","phbusdt@bookTicker","phbusdt@depth10@100ms","hookusdt@bookTicker","hookusdt@depth10@100ms","magicusdt@bookTicker","magicusdt@depth10@100ms","hifiusdt@bookTicker","hifiusdt@depth10@100ms","rplusdt@bookTicker","rplusdt@depth10@100ms","prosusdt@bookTicker","prosusdt@depth10@100ms","gnsusdt@bookTicker","gnsusdt@depth10@100ms","synusdt@bookTicker","synusdt@depth10@100ms","vibusdt@bookTicker","vibusdt@depth10@100ms","ssvusdt@bookTicker","ssvusdt@depth10@100ms","lqtyusdt@bookTicker","lqtyusdt@depth10@100ms","ambusdt@bookTicker","ambusdt@depth10@100ms","ustcusdt@bookTicker","ustcusdt@depth10@100ms","gasusdt@bookTicker","gasusdt@depth10@100ms","glmusdt@bookTicker","glmusdt@depth10@100ms","promusdt@bookTicker","promusdt@depth10@100ms","qkcusdt@bookTicker","qkcusdt@depth10@100ms","uftusdt@bookTicker","uftusdt@depth10@100ms","idusdt@bookTicker","idusdt@depth10@100ms","arbusdt@bookTicker","arbusdt@depth10@100ms","rdntusdt@bookTicker","rdntusdt@depth10@100ms","wbtcusdt@bookTicker","wbtcusdt@depth10@100ms","eduusdt@bookTicker","eduusdt@depth10@100ms","suiusdt@bookTicker","suiusdt@depth10@100ms","aergousdt@bookTicker","aergousdt@depth10@100ms","pepeusdt@bookTicker","pepeusdt@depth10@100ms","flokiusdt@bookTicker","flokiusdt@depth10@100ms","astusdt@bookTicker","astusdt@depth10@100ms","sntusdt@bookTicker","sntusdt@depth10@100ms","combousdt@bookTicker","combousdt@depth10@100ms","mavusdt@bookTicker","mavusdt@depth10@100ms","pendleusdt@bookTicker","pendleusdt@depth10@100ms","arkmusdt@bookTicker","arkmusdt@depth10@100ms","wbethusdt@bookTicker","wbethusdt@depth10@100ms","wldusdt@bookTicker","wldusdt@depth10@100ms","fdusdusdt@bookTicker","fdusdusdt@depth10@100ms","seiusdt@bookTicker","seiusdt@depth10@100ms","cyberusdt@bookTicker","cyberusdt@depth10@100ms","arkusdt@bookTicker","arkusdt@depth10@100ms","creamusdt@bookTicker","creamusdt@depth10@100ms","iqusdt@bookTicker","iqusdt@depth10@100ms","ntrnusdt@bookTicker","ntrnusdt@depth10@100ms","tiausdt@bookTicker","tiausdt@depth10@100ms","memeusdt@bookTicker","memeusdt@depth10@100ms","ordiusdt@bookTicker","ordiusdt@depth10@100ms","beamxusdt@bookTicker","beamxusdt@depth10@100ms","pivxusdt@bookTicker","pivxusdt@depth10@100ms","vicusdt@bookTicker","vicusdt@depth10@100ms","blurusdt@bookTicker","blurusdt@depth10@100ms","vanryusdt@bookTicker","vanryusdt@depth10@100ms","aeurusdt@bookTicker","aeurusdt@depth10@100ms","jtousdt@bookTicker","jtousdt@depth10@100ms","1000satsusdt@bookTicker","1000satsusdt@depth10@100ms","bonkusdt@bookTicker","bonkusdt@depth10@100ms","aceusdt@bookTicker","aceusdt@depth10@100ms","nfpusdt@bookTicker","nfpusdt@depth10@100ms","aiusdt@bookTicker","aiusdt@depth10@100ms","xaiusdt@bookTicker","xaiusdt@depth10@100ms","mantausdt@bookTicker","mantausdt@depth10@100ms","altusdt@bookTicker","altusdt@depth10@100ms","jupusdt@bookTicker","jupusdt@depth10@100ms","pythusdt@bookTicker","pythusdt@depth10@100ms","roninusdt@bookTicker","roninusdt@depth10@100ms","dymusdt@bookTicker","dymusdt@depth10@100ms","pixelusdt@bookTicker","pixelusdt@depth10@100ms","strkusdt@bookTicker","strkusdt@depth10@100ms","portalusdt@bookTicker","portalusdt@depth10@100ms","pdausdt@bookTicker","pdausdt@depth10@100ms","axlusdt@bookTicker","axlusdt@depth10@100ms","wifusdt@bookTicker","wifusdt@depth10@100ms","metisusdt@bookTicker","metisusdt@depth10@100ms","aevousdt@bookTicker","aevousdt@depth10@100ms","bomeusdt@bookTicker","bomeusdt@depth10@100ms","ethfiusdt@bookTicker","ethfiusdt@depth10@100ms","enausdt@bookTicker","enausdt@depth10@100ms","wusdt@bookTicker","wusdt@depth10@100ms","tnsrusdt@bookTicker","tnsrusdt@depth10@100ms","sagausdt@bookTicker","sagausdt@depth10@100ms","taousdt@bookTicker","taousdt@depth10@100ms","omniusdt@bookTicker","omniusdt@depth10@100ms","rezusdt@bookTicker","rezusdt@depth10@100ms","bbusdt@bookTicker","bbusdt@depth10@100ms","notusdt@bookTicker","notusdt@depth10@100ms","iousdt@bookTicker","iousdt@depth10@100ms","zkusdt@bookTicker","zkusdt@depth10@100ms","listausdt@bookTicker","listausdt@depth10@100ms","zrousdt@bookTicker","zrousdt@depth10@100ms","gusdt@bookTicker","gusdt@depth10@100ms","bananausdt@bookTicker","bananausdt@depth10@100ms","renderusdt@bookTicker","renderusdt@depth10@100ms","tonusdt@bookTicker","tonusdt@depth10@100ms","dogsusdt@bookTicker","dogsusdt@depth10@100ms","euriusdt@bookTicker","euriusdt@depth10@100ms","slfusdt@bookTicker","slfusdt@depth10@100ms","polusdt@bookTicker","polusdt@depth10@100ms","neirousdt@bookTicker","neirousdt@depth10@100ms","turbousdt@bookTicker","turbousdt@depth10@100ms","1mbabydogeusdt@bookTicker","1mbabydogeusdt@depth10@100ms","catiusdt@bookTicker","catiusdt@depth10@100ms","hmstrusdt@bookTicker","hmstrusdt@depth10@100ms","eigenusdt@bookTicker","eigenusdt@depth10@100ms","scrusdt@bookTicker","scrusdt@depth10@100ms","bnsolusdt@bookTicker","bnsolusdt@depth10@100ms","lumiausdt@bookTicker","lumiausdt@depth10@100ms","kaiausdt@bookTicker","kaiausdt@depth10@100ms","cowusdt@bookTicker","cowusdt@depth10@100ms","cetususdt@bookTicker","cetususdt@depth10@100ms","pnutusdt@bookTicker","pnutusdt@depth10@100ms","actusdt@bookTicker","actusdt@depth10@100ms","usualusdt@bookTicker","usualusdt@depth10@100ms","theusdt@bookTicker","theusdt@depth10@100ms","acxusdt@bookTicker","acxusdt@depth10@100ms","orcausdt@bookTicker","orcausdt@depth10@100ms","moveusdt@bookTicker","moveusdt@depth10@100ms","meusdt@bookTicker","meusdt@depth10@100ms"],"id":1733852050695}
+[WebSocketClient] Sending data: {
+  method: 'SUBSCRIBE',
+  params: [
+    'btcusdt@bookTicker',
+    'btcusdt@depth10@100ms',
+    'ethusdt@bookTicker',
+    'ethusdt@depth10@100ms',
+    'bnbusdt@bookTicker',
+    'bnbusdt@depth10@100ms',
+    'neousdt@bookTicker',
+    'neousdt@depth10@100ms',
+    'ltcusdt@bookTicker',
+    'ltcusdt@depth10@100ms',
+    'qtumusdt@bookTicker',
+    'qtumusdt@depth10@100ms',
+    'adausdt@bookTicker',
+    'adausdt@depth10@100ms',
+    'xrpusdt@bookTicker',
+    'xrpusdt@depth10@100ms',
+    'eosusdt@bookTicker',
+    'eosusdt@depth10@100ms',
+    'tusdusdt@bookTicker',
+    'tusdusdt@depth10@100ms',
+    'iotausdt@bookTicker',
+    'iotausdt@depth10@100ms',
+    'xlmusdt@bookTicker',
+    'xlmusdt@depth10@100ms',
+    'ontusdt@bookTicker',
+    'ontusdt@depth10@100ms',
+    'trxusdt@bookTicker',
+    'trxusdt@depth10@100ms',
+    'etcusdt@bookTicker',
+    'etcusdt@depth10@100ms',
+    'icxusdt@bookTicker',
+    'icxusdt@depth10@100ms',
+    'nulsusdt@bookTicker',
+    'nulsusdt@depth10@100ms',
+    'vetusdt@bookTicker',
+    'vetusdt@depth10@100ms',
+    'usdcusdt@bookTicker',
+    'usdcusdt@depth10@100ms',
+    'linkusdt@bookTicker',
+    'linkusdt@depth10@100ms',
+    'ongusdt@bookTicker',
+    'ongusdt@depth10@100ms',
+    'hotusdt@bookTicker',
+    'hotusdt@depth10@100ms',
+    'zilusdt@bookTicker',
+    'zilusdt@depth10@100ms',
+    'zrxusdt@bookTicker',
+    'zrxusdt@depth10@100ms',
+    'fetusdt@bookTicker',
+    'fetusdt@depth10@100ms',
+    'batusdt@bookTicker',
+    'batusdt@depth10@100ms',
+    'zecusdt@bookTicker',
+    'zecusdt@depth10@100ms',
+    'iostusdt@bookTicker',
+    'iostusdt@depth10@100ms',
+    'celrusdt@bookTicker',
+    'celrusdt@depth10@100ms',
+    'dashusdt@bookTicker',
+    'dashusdt@depth10@100ms',
+    'thetausdt@bookTicker',
+    'thetausdt@depth10@100ms',
+    'enjusdt@bookTicker',
+    'enjusdt@depth10@100ms',
+    'atomusdt@bookTicker',
+    'atomusdt@depth10@100ms',
+    'tfuelusdt@bookTicker',
+    'tfuelusdt@depth10@100ms',
+    'oneusdt@bookTicker',
+    'oneusdt@depth10@100ms',
+    'ftmusdt@bookTicker',
+    'ftmusdt@depth10@100ms',
+    'algousdt@bookTicker',
+    'algousdt@depth10@100ms',
+    'dogeusdt@bookTicker',
+    'dogeusdt@depth10@100ms',
+    'duskusdt@bookTicker',
+    'duskusdt@depth10@100ms',
+    'ankrusdt@bookTicker',
+    'ankrusdt@depth10@100ms',
+    'winusdt@bookTicker',
+    'winusdt@depth10@100ms',
+    'cosusdt@bookTicker',
+    'cosusdt@depth10@100ms',
+    'mtlusdt@bookTicker',
+    'mtlusdt@depth10@100ms',
+    'dentusdt@bookTicker',
+    'dentusdt@depth10@100ms',
+    'wanusdt@bookTicker',
+    'wanusdt@depth10@100ms',
+    'funusdt@bookTicker',
+    'funusdt@depth10@100ms',
+    'cvcusdt@bookTicker',
+    'cvcusdt@depth10@100ms',
+    'chzusdt@bookTicker',
+    'chzusdt@depth10@100ms',
+    'bandusdt@bookTicker',
+    'bandusdt@depth10@100ms',
+    'xtzusdt@bookTicker',
+    'xtzusdt@depth10@100ms',
+    ... 672 more items
+  ],
+  id: 1733852050695
+}
+[WebSocketManager] State updated to CONNECTED
+[WebSocketManager] 'connected' event emitted
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BTCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ETHUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BNBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NEOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LTCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: QTUMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ADAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: XRPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: EOSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TUSDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: IOTAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: XLMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ONTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TRXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ETCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ICXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NULSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: VETUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: USDCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LINKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ONGUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: HOTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ZILUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ZRXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FETUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BATUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ZECUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: IOSTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CELRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DASHUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: THETAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ENJUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ATOMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TFUELUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ONEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FTMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ALGOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DOGEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DUSKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ANKRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WINUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: COSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MTLUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DENTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WANUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FUNUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CVCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CHZUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BANDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: XTZUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RVNUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: HBARUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NKNUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: STXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: KAVAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ARPAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: IOTXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RLCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CTXCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BCHUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TROYUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: VITEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FTTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: EURUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: OGNUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WRXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LSKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BNTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LTOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MBLUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: COTIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: STPTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DATAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SOLUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CTSIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: HIVEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CHRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ARDRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MDTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: STMXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: KNCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LRCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: COMPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ZENUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SNXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: VTHOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DGBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SXPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MKRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DCRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: STORJUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MANAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: YFIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BALUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BLZUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: KMDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: JSTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CRVUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SANDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NMRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DOTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LUNAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RSRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PAXGUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TRBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SUSHIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: KSMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: EGLDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DIAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RUNEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FIOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: UMAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BELUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WINGUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: UNIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: OXTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SUNUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AVAXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FLMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: UTKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: XVSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ALPHAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AAVEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NEARUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FILUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: INJUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AUDIOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CTKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AKROUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AXSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: HARDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: STRAXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ROSEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AVAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SKLUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GRTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: JUVUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PSGUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: 1INCHUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: OGUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ATMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ASRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CELOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RIFUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TRUUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CKBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TWTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FIROUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LITUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SFPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DODOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CAKEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ACMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BADGERUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FISUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: OMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PONDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DEGOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ALICEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LINAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PERPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SUPERUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CFXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TKOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PUNDIXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TLMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BARUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FORTHUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BAKEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BURGERUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SLPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SHIBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ICPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ARUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MASKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LPTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: XVGUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ATAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GTCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ERNUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PHAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MLNUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DEXEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: C98USDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CLVUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: QNTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FLOWUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MINAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RAYUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FARMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ALPACAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: QUICKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MBOXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: REQUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GHSTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WAXPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GNOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: XECUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ELFUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DYDXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: IDEXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: VIDTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: USDPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GALAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ILVUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: YGGUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SYSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DFUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FIDAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AGLDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RADUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BETAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RAREUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LAZIOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CHESSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ADXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AUCTIONUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DARUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BNXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MOVRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CITYUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ENSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: QIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PORTOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: POWRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: JASMYUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AMPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PYRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ALCXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SANTOSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BICOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FLUXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FXSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: VOXELUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: HIGHUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CVXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PEOPLEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SPELLUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: JOEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ACHUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: IMXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GLMRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LOKAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SCRTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: API3USDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BTTCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ACAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: XNOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WOOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ALPINEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ASTRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GMTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: KDAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: APEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BSWUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BIFIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: STEEMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NEXOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: REIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LDOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: OPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LEVERUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: STGUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LUNCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GMXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: POLYXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: APTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: OSMOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: HFTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PHBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: HOOKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MAGICUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: HIFIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RPLUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PROSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GNSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SYNUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: VIBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SSVUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LQTYUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AMBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: USTCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GASUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GLMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PROMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: QKCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: UFTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: IDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ARBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RDNTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WBTCUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: EDUUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SUIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AERGOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PEPEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FLOKIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ASTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SNTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: COMBOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MAVUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PENDLEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ARKMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WBETHUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WLDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: FDUSDUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SEIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CYBERUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ARKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CREAMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: IQUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NTRNUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TIAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MEMEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ORDIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BEAMXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PIVXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: VICUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BLURUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: VANRYUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AEURUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: JTOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: 1000SATSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BONKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ACEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NFPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: XAIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MANTAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ALTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: JUPUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PYTHUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RONINUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DYMUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PIXELUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: STRKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PORTALUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PDAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AXLUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WIFUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: METISUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: AEVOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BOMEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ETHFIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ENAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: WUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TNSRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SAGAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TAOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: OMNIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: REZUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BBUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NOTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: IOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ZKUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LISTAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ZROUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: GUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BANANAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: RENDERUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TONUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: DOGSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: EURIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SLFUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: POLUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: NEIROUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: TURBOUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: 1MBABYDOGEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CATIUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: HMSTRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: EIGENUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: SCRUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: BNSOLUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: LUMIAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: KAIAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: COWUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: CETUSUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: PNUTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ACTUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: USUALUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: THEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ACXUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: ORCAUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MOVEUSDT
+[ExchangeConnector] SUBSCRIBE request sent successfully for symbol: MEUSDT
+Connector-0 started successfully
+Started collector for spot
+[ExchangeConnector] All subscription requests processed.
+[ExchangeConnector] Active subscriptions after subscribe attempt: 386/386
+[ExchangeConnector] setState() called: SUBSCRIBING -> SUBSCRIBED
+[ExchangeConnector] State changed: SUBSCRIBING -> SUBSCRIBED
+[ExchangeConnector] State changed to SUBSCRIBED. Subscription completed successfully!
+[ExchangeConnector] subscribe() completed successfully.
+[ExchangeConnector] handleConnectionEstablished() completed, now calling validateSubscriptions()
+[ExchangeConnector] StateChange event emitted for state: SUBSCRIBED
+[ExchangeConnector] WebSocket is CONNECTED, starting subscription...
+Received SIGINT. Initiating graceful shutdown...
+Shutting down... Cleaning up resources.
+[ExchangeCollector] Stopping collection
+ExchangeConnector Stopping connector...
+ExchangeConnector Stopping connector connector-0
+State Change: CONNECTED -> DISCONNECTING
+[ExchangeConnector] handleStateChange(): CONNECTED -> DISCONNECTING
+[ExchangeConnector] Current State after set: DISCONNECTING
+[ExchangeConnector] StateChange event emitted for state: DISCONNECTING
+[WebSocketClient] Closing websocket
+ExchangeConnector Disconnected from WebSocket
+Connector-0 stopped successfully
+Stopped collector for spot.
+Storage connection closed.
+Shutdown process completed.
+Application stopped gracefully after receiving SIGINT.
