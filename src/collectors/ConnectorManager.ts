@@ -3,22 +3,23 @@
  * 심볼 그룹별 커넥터 관리자
  */
 
-import { EventEmitter } from "events";
-import { IExchangeConnector } from "./types";
-import { ConnectorState, StateTransitionEvent } from "../states/types";
-import { WebSocketError } from "../errors/types";
-import { WebSocketConfig, WebSocketMessage } from "../websocket/types";
-import { ManagerMetrics, ConnectorMetrics } from "../types/metrics";
-import { ErrorHandler, IErrorHandler } from "../errors/ErrorHandler";
+import { EventEmitter } from "events"
+import { IExchangeConnector } from "./types"
+import { ConnectorState, StateTransitionEvent } from "../states/types"
+import { WebSocketError } from "../errors/types"
+import { WebSocketConfig, WebSocketMessage } from "../websocket/types"
+import { ManagerMetrics, ConnectorMetrics } from "../types/metrics"
+import { ErrorHandler, IErrorHandler } from "../errors/ErrorHandler"
 
 export class ConnectorManager extends EventEmitter {
     // private metrics: ManagerMetrics
-    private errorHandler: IErrorHandler;
-    private connectors = new Map<string, IExchangeConnector>();
-    private readonly groupSize = 100;
+    private errorHandler: IErrorHandler
+    private connectors = new Map<string, IExchangeConnector>()
+    private readonly groupSize = 100
 
     constructor(
         private readonly exchangeName: string,
+        private readonly type: string,
         private readonly config: WebSocketConfig,
         private readonly createConnector: (
             id: string,
@@ -26,7 +27,7 @@ export class ConnectorManager extends EventEmitter {
             config: WebSocketConfig
         ) => IExchangeConnector // 생성 함수 주입
     ) {
-        super();
+        super()
         this.errorHandler = new ErrorHandler(
             async () => this.handleFatalError(),
             (error) =>
@@ -34,53 +35,53 @@ export class ConnectorManager extends EventEmitter {
                     connectorId: "manager",
                     error,
                 })
-        );
+        )
     }
 
     async initialize(symbols: string[]): Promise<void> {
         try {
-            const groups = this.groupSymbols(symbols);
-            await this.initializeConnectors(groups);
+            const groups = this.groupSymbols(symbols)
+            await this.initializeConnectors(groups)
         } catch (error) {
-            throw this.errorHandler.handleError(error);
+            throw this.errorHandler.handleError(error)
         }
     }
 
     private async initializeConnectors(groups: string[][]): Promise<void> {
         for (const [index, group] of groups.entries()) {
             const connector = this.createConnector(
-                `${this.exchangeName}-${index}`,
+                `${this.exchangeName}-${this.type}-${index}`,
                 group,
                 this.config
-            );
-            this.setupConnectorHandlers(connector);
-            this.connectors.set(connector.getId(), connector);
+            )
+            this.setupConnectorHandlers(connector)
+            this.connectors.set(connector.getId(), connector)
         }
 
-        await this.startAllConnectors();
+        await this.startAllConnectors()
     }
 
     private setupConnectorHandlers(connector: IExchangeConnector): void {
         connector.on("stateChange", (event: StateTransitionEvent) => {
-            this.handleConnectorStateChange(connector.getId(), event);
-        });
+            this.handleConnectorStateChange(connector.getId(), event)
+        })
 
         connector.on("error", (error: WebSocketError) => {
-            this.handleConnectorError(connector.getId(), error);
-        });
+            this.handleConnectorError(connector.getId(), error)
+        })
 
         connector.on("message", (message: WebSocketMessage) => {
-            this.handleConnectorMessage(connector.getId(), message);
-        });
+            this.handleConnectorMessage(connector.getId(), message)
+        })
     }
 
     private async startAllConnectors(): Promise<void> {
         try {
             await Promise.all(
                 Array.from(this.connectors.values()).map((c) => c.start())
-            );
+            )
         } catch (error) {
-            throw this.errorHandler.handleError(error);
+            throw this.errorHandler.handleError(error)
         }
     }
 
@@ -88,25 +89,25 @@ export class ConnectorManager extends EventEmitter {
         try {
             await Promise.all(
                 Array.from(this.connectors.values()).map((c) => c.stop())
-            );
-            this.connectors.clear();
+            )
+            this.connectors.clear()
         } catch (error) {
-            throw this.errorHandler.handleError(error);
+            throw this.errorHandler.handleError(error)
         }
     }
 
     private groupSymbols(symbols: string[]): string[][] {
         return symbols.reduce((groups: string[][], symbol) => {
-            const lastGroup = groups[groups.length - 1];
+            const lastGroup = groups[groups.length - 1]
 
             if (!lastGroup || lastGroup.length >= this.groupSize) {
-                groups.push([symbol]);
+                groups.push([symbol])
             } else {
-                lastGroup.push(symbol);
+                lastGroup.push(symbol)
             }
 
-            return groups;
-        }, []);
+            return groups
+        }, [])
     }
 
     private handleConnectorStateChange(
@@ -117,32 +118,32 @@ export class ConnectorManager extends EventEmitter {
             if (event.currentState === ConnectorState.RECONNECTING) {
                 console.log(
                     `Connector ${connectorId} is attempting to reconnect`
-                );
+                )
             }
 
             this.emit("connectorStateChange", {
                 connectorId,
                 event,
                 managerStatus: this.calculateManagerStatus(),
-            });
+            })
 
-            this.updateManagerMetrics();
+            this.updateManagerMetrics()
         } catch (error) {
-            this.errorHandler.handleError(error);
+            this.errorHandler.handleError(error)
         }
     }
     private handleConnectorError(
         connectorId: string,
         error: WebSocketError
     ): void {
-        this.errorHandler.handleConnectorError(connectorId, error);
+        this.errorHandler.handleConnectorError(connectorId, error)
     }
 
     private handleConnectorMessage(
         connectorId: string,
         message: WebSocketMessage
     ): void {
-        this.emit("connectorMessage", { connectorId, message });
+        this.emit("connectorMessage", { connectorId, message })
     }
 
     private async handleFatalError(): Promise<void> {
@@ -150,17 +151,17 @@ export class ConnectorManager extends EventEmitter {
             // 모든 커넥터의 상태 확인
             const hasReconnectingConnectors = Array.from(
                 this.connectors.values()
-            ).some((c) => c.getState() === ConnectorState.RECONNECTING);
+            ).some((c) => c.getState() === ConnectorState.RECONNECTING)
 
             // RECONNECTING 상태가 있으면 대기
             if (hasReconnectingConnectors) {
-                await this.waitForReconnection();
+                await this.waitForReconnection()
             } else {
-                await this.stop();
+                await this.stop()
             }
         } catch (error) {
-            console.error("Failed to handle fatal error:", error);
-            await this.stop();
+            console.error("Failed to handle fatal error:", error)
+            await this.stop()
         }
     }
     private async waitForReconnection(timeout: number = 30000): Promise<void> {
@@ -168,49 +169,49 @@ export class ConnectorManager extends EventEmitter {
             const checkInterval = setInterval(() => {
                 const states = Array.from(this.connectors.values()).map((c) =>
                     c.getState()
-                );
+                )
                 const hasError = states.some(
                     (state) => state === ConnectorState.ERROR
-                );
+                )
                 const isReconnecting = states.some(
                     (state) => state === ConnectorState.RECONNECTING
-                );
+                )
 
                 if (hasError || !isReconnecting) {
-                    clearInterval(checkInterval);
+                    clearInterval(checkInterval)
                     if (hasError) {
-                        this.handleFatalError();
+                        this.handleFatalError()
                     }
-                    resolve();
+                    resolve()
                 }
-            }, 1000);
+            }, 1000)
 
             setTimeout(() => {
-                clearInterval(checkInterval);
+                clearInterval(checkInterval)
                 if (this.hasReconnectingConnectors()) {
-                    this.handleFatalError();
+                    this.handleFatalError()
                 }
-                resolve();
-            }, timeout);
-        });
+                resolve()
+            }, timeout)
+        })
     }
 
     private hasReconnectingConnectors(): boolean {
         return Array.from(this.connectors.values()).some(
             (c) => c.getState() === ConnectorState.RECONNECTING
-        );
+        )
     }
 
     private updateManagerMetrics(): void {
-        const currentMetrics = this.calculateMetrics();
-        this.emit("metricsUpdate", currentMetrics);
+        const currentMetrics = this.calculateMetrics()
+        this.emit("metricsUpdate", currentMetrics)
     }
 
     private calculateMetrics(): ManagerMetrics {
         const connectorMetrics = Array.from(this.connectors.values()).map((c) =>
             c.getMetrics()
-        );
-        const status = this.calculateManagerStatus();
+        )
+        const status = this.calculateManagerStatus()
 
         return {
             timestamp: Date.now(),
@@ -221,13 +222,13 @@ export class ConnectorManager extends EventEmitter {
             totalMessages: this.getTotalMessageCount(connectorMetrics),
             totalErrors: this.getTotalErrorCount(connectorMetrics),
             connectorMetrics,
-        };
+        }
     }
 
     private getReconnectingCount(): number {
         return Array.from(this.connectors.values()).filter(
             (c) => c.getState() === ConnectorState.RECONNECTING
-        ).length;
+        ).length
     }
 
     private countActiveConnectors(): number {
@@ -235,15 +236,15 @@ export class ConnectorManager extends EventEmitter {
             (c) =>
                 c.getState() === ConnectorState.SUBSCRIBED ||
                 c.getState() === ConnectorState.CONNECTED
-        ).length;
+        ).length
     }
     private calculateManagerStatus(): string {
         const states = Array.from(this.connectors.values()).map((c) =>
             c.getState()
-        );
+        )
 
         if (states.every((state) => state === ConnectorState.SUBSCRIBED)) {
-            return "Healthy";
+            return "Healthy"
         }
         if (
             states.some(
@@ -252,36 +253,36 @@ export class ConnectorManager extends EventEmitter {
                     state === ConnectorState.RECONNECTING
             )
         ) {
-            return "Degraded";
+            return "Degraded"
         }
-        return "Partial";
+        return "Partial"
     }
     getConnectorIds(): string[] {
-        return Array.from(this.connectors.keys());
+        return Array.from(this.connectors.keys())
     }
 
     getConnector(id: string): IExchangeConnector | undefined {
-        return this.connectors.get(id);
+        return this.connectors.get(id)
     }
 
     getMetrics(): ManagerMetrics {
         try {
-            return this.calculateMetrics();
+            return this.calculateMetrics()
         } catch (error) {
-            this.errorHandler.handleError(error);
-            throw error;
+            this.errorHandler.handleError(error)
+            throw error
         }
     }
     private getTotalMessageCount(metrics: ConnectorMetrics[]): number {
-        return metrics.reduce((sum, m) => sum + m.messageCount, 0);
+        return metrics.reduce((sum, m) => sum + m.messageCount, 0)
     }
 
     private getTotalErrorCount(metrics: ConnectorMetrics[]): number {
-        return metrics.reduce((sum, m) => sum + m.errorCount, 0);
+        return metrics.reduce((sum, m) => sum + m.errorCount, 0)
     }
     private getActiveConnectorCount(): number {
         return Array.from(this.connectors.values()).filter(
             (c) => c.getState() === ConnectorState.SUBSCRIBED
-        ).length;
+        ).length
     }
 }

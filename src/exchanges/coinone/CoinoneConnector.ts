@@ -1,32 +1,34 @@
 /**
  * Path: src/exchanges/coinone/CoinoneConnector.ts
  */
-import axios from "axios";
-import { ExchangeConnector } from "../../collectors/ExchangeConnector";
-import { WebSocketMessage } from "../../websocket/types";
-import { WebSocketError, ErrorCode, ErrorSeverity } from "../../errors/types";
-import { SymbolGroup } from "../../collectors/types";
+import axios from "axios"
+import { ExchangeConnector } from "../../collectors/ExchangeConnector"
+import { WebSocketMessage } from "../../websocket/types"
+import { WebSocketError, ErrorCode, ErrorSeverity } from "../../errors/types"
+import { SymbolGroup } from "../../collectors/types"
 import {
     CoinoneOrderBookMessage,
     CoinoneSubscription,
     CoinoneMarketInfo,
     convertCoinoneMarketCode,
-} from "./types";
-import { BookTickerData, ExchangeInfo } from "../common/types";
-import { CoinoneBookTickerConverter } from "./CoinoneBookTickerConverter";
-import { IWebSocketManager } from "../../websocket/IWebSocketManager";
+} from "./types"
+import { BookTickerData, ExchangeInfo } from "../common/types"
+import { CoinoneBookTickerConverter } from "./CoinoneBookTickerConverter"
+import { IWebSocketManager } from "../../websocket/IWebSocketManager"
+import { ExchangeConfig } from "../../config/types"
 
 export class CoinoneConnector extends ExchangeConnector {
-    static readonly BASE_URL = "https://api.coinone.co.kr/v2";
-    private readonly converter: CoinoneBookTickerConverter;
+    static readonly BASE_URL = "https://api.coinone.co.kr/v2"
+    private readonly converter: CoinoneBookTickerConverter
 
     constructor(
-        id: string,
-        symbols: SymbolGroup,
-        wsManager: IWebSocketManager
+        protected readonly id: string,
+        protected readonly config: ExchangeConfig,
+        protected readonly symbols: SymbolGroup,
+        protected readonly wsManager: IWebSocketManager
     ) {
-        super(id, symbols, wsManager);
-        this.converter = new CoinoneBookTickerConverter();
+        super(id, config, symbols, wsManager)
+        this.converter = new CoinoneBookTickerConverter()
     }
 
     public formatSubscriptionRequest(symbols: string[]): CoinoneSubscription {
@@ -36,7 +38,7 @@ export class CoinoneConnector extends ExchangeConnector {
             markets: symbols.map((symbol) =>
                 convertCoinoneMarketCode.toMarketCode(symbol)
             ),
-        };
+        }
     }
 
     protected formatUnsubscriptionRequest(
@@ -48,12 +50,12 @@ export class CoinoneConnector extends ExchangeConnector {
             markets: symbols.map((symbol) =>
                 convertCoinoneMarketCode.toMarketCode(symbol)
             ),
-        };
+        }
     }
 
     protected validateExchangeMessage(data: unknown): boolean {
         try {
-            const msg = data as CoinoneOrderBookMessage;
+            const msg = data as CoinoneOrderBookMessage
             return (
                 typeof msg === "object" &&
                 msg !== null &&
@@ -63,45 +65,49 @@ export class CoinoneConnector extends ExchangeConnector {
                 "orderbook" in msg &&
                 Array.isArray(msg.orderbook.asks) &&
                 Array.isArray(msg.orderbook.bids)
-            );
+            )
         } catch {
-            return false;
+            return false
         }
     }
 
     protected normalizeExchangeMessage(
         data: unknown
     ): WebSocketMessage<BookTickerData> {
-        const msg = data as CoinoneOrderBookMessage;
-        const bookTicker = CoinoneBookTickerConverter.convert(msg);
+        const msg = data as CoinoneOrderBookMessage
+        const bookTicker = CoinoneBookTickerConverter.convert(this.config, msg)
 
-        this.emit("bookTickerUpdate", bookTicker);
+        this.emit("bookTickerUpdate", bookTicker)
 
         return {
             type: "bookTicker",
+            exchange: this.config.exchange,
+            exchangeType: this.config.exchangeType,
             symbol: bookTicker.symbol,
             data: bookTicker,
-        };
+        }
     }
 
-    static async fetchSpotExchangeInfo(): Promise<ExchangeInfo[]> {
+    static async fetchSpotExchangeInfo(
+        config: ExchangeConfig
+    ): Promise<ExchangeInfo[]> {
         try {
             const response = await axios.get<{
-                result: string;
-                error_code: string;
-                server_time: number;
+                result: string
+                error_code: string
+                server_time: number
                 currencies: {
-                    name: string;
-                    symbol: string;
-                    deposit_status: string;
-                    withdraw_status: string;
-                    deposit_confirm_count: number;
-                    max_precision: number;
-                    deposit_fee: string;
-                    withdrawal_min_amount: string;
-                    withdrawal_fee: string;
-                }[];
-            }>("https://api.coinone.co.kr/public/v2/currencies");
+                    name: string
+                    symbol: string
+                    deposit_status: string
+                    withdraw_status: string
+                    deposit_confirm_count: number
+                    max_precision: number
+                    deposit_fee: string
+                    withdrawal_min_amount: string
+                    withdrawal_fee: string
+                }[]
+            }>("https://api.coinone.co.kr/public/v2/currencies")
 
             if (response.data.result !== "success") {
                 throw new WebSocketError(
@@ -109,12 +115,12 @@ export class CoinoneConnector extends ExchangeConnector {
                     `Coinone API error: ${response.data.error_code}`,
                     undefined,
                     ErrorSeverity.HIGH
-                );
+                )
             }
 
             return response.data.currencies.map((currency) => ({
-                type: "spot",
                 exchange: "coinone",
+                exchangeType: config.exchangeType,
                 marketSymbol: `${currency.symbol}-KRW`,
                 baseSymbol: currency.symbol,
                 quoteSymbol: "KRW",
@@ -136,7 +142,7 @@ export class CoinoneConnector extends ExchangeConnector {
                     withdrawalFee: currency.withdrawal_fee,
                     timestamp: response.data.server_time,
                 },
-            }));
+            }))
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 429) {
@@ -145,22 +151,27 @@ export class CoinoneConnector extends ExchangeConnector {
                         "Coinone API rate limit exceeded",
                         error,
                         ErrorSeverity.HIGH
-                    );
+                    )
                 }
                 throw new WebSocketError(
                     ErrorCode.API_REQUEST_FAILED,
                     `Coinone API request failed: ${error.message}`,
                     error,
                     ErrorSeverity.HIGH
-                );
+                )
             }
             throw new WebSocketError(
                 ErrorCode.API_ERROR,
                 "Unknown API error occurred",
                 error as Error,
                 ErrorSeverity.HIGH
-            );
+            )
         }
+    }
+    static async fetchFuturesExchangeInfo(
+        config: ExchangeConfig
+    ): Promise<ExchangeInfo[]> {
+        throw new Error("Method not implemented.")
     }
 
     protected handleError(error: unknown): void {
@@ -172,12 +183,12 @@ export class CoinoneConnector extends ExchangeConnector {
                       "Coinone internal error",
                       error as Error,
                       ErrorSeverity.MEDIUM
-                  );
+                  )
 
-        super.handleError(wsError);
+        super.handleError(wsError)
     }
 
     onBookTickerUpdate(callback: (data: BookTickerData) => void): void {
-        this.on("bookTickerUpdate", callback);
+        this.on("bookTickerUpdate", callback)
     }
 }

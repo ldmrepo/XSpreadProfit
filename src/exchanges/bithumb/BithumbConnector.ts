@@ -15,16 +15,18 @@ import {
 import { BookTickerData, ExchangeInfo } from "../common/types"
 import { BithumbBookTickerConverter } from "./BithumbBookTickerConverter"
 import { IWebSocketManager } from "../../websocket/IWebSocketManager"
+import { ExchangeConfig } from "../../config/types"
 
 export class BithumbConnector extends ExchangeConnector {
     static readonly BASE_URL = "https://api.bithumb.com/public"
 
     constructor(
-        id: string,
-        symbols: SymbolGroup,
-        wsManager: IWebSocketManager
+        protected readonly id: string,
+        protected readonly config: ExchangeConfig,
+        protected readonly symbols: SymbolGroup,
+        protected readonly wsManager: IWebSocketManager
     ) {
-        super(id, symbols, wsManager)
+        super(id, config, symbols, wsManager)
     }
 
     public formatSubscriptionRequest(symbols: string[]): BithumbSubscription {
@@ -71,18 +73,22 @@ export class BithumbConnector extends ExchangeConnector {
         data: unknown
     ): WebSocketMessage<BookTickerData> {
         const msg = data as BithumbOrderBookMessage
-        const bookTicker = BithumbBookTickerConverter.convert(msg)
+        const bookTicker = BithumbBookTickerConverter.convert(this.config, msg)
 
         this.emit("bookTickerUpdate", bookTicker)
 
         return {
             type: "bookTicker",
+            exchange: this.config.exchange,
+            exchangeType: this.config.exchangeType,
             symbol: bookTicker.symbol,
             data: bookTicker,
         }
     }
 
-    static async fetchExchangeInfo(): Promise<ExchangeInfo[]> {
+    static async fetchSpotExchangeInfo(
+        config: ExchangeConfig
+    ): Promise<ExchangeInfo[]> {
         try {
             const response = await axios.get<{
                 data: {
@@ -96,8 +102,8 @@ export class BithumbConnector extends ExchangeConnector {
             // 응답 데이터 변환
             const data: any = response.data
             return data.map((item: any) => ({
-                type: "spot", // 빗썸은 현물 데이터로 가정
                 exchange: "bithumb",
+                exchangeType: config.exchangeType, // 빗썸은 현물 데이터로 가정
                 marketSymbol: item.market,
                 baseSymbol: item.market.split("-")[1], // 기초 자산 추출
                 quoteSymbol: item.market.split("-")[0], // 거래 심볼 추출
@@ -133,7 +139,11 @@ export class BithumbConnector extends ExchangeConnector {
             )
         }
     }
-
+    static fetchFuturesExchangeInfo(
+        config: ExchangeConfig
+    ): Promise<ExchangeInfo[]> {
+        throw new Error("Method not implemented.")
+    }
     protected handleError(error: unknown): void {
         const wsError =
             error instanceof WebSocketError

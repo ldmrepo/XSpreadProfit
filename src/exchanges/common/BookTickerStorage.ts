@@ -1,42 +1,43 @@
 /**
  * Path: src/exchanges/common/BookTickerStorage.ts
  */
-import { RedisBookTickerStorage } from "../../storage/redis/RedisClient";
-import { BookTickerData } from "./types";
+import { RedisBookTickerStorage } from "../../storage/redis/RedisClient"
+import { BookTickerData } from "./types"
 
 export class BookTickerStorage {
-    private static instance: BookTickerStorage;
-    private storage: RedisBookTickerStorage;
+    private static instance: BookTickerStorage
+    private storage: RedisBookTickerStorage
 
     private constructor(redisStorage: RedisBookTickerStorage) {
-        this.storage = redisStorage;
+        this.storage = redisStorage
     }
 
     static initialize(redisStorage: RedisBookTickerStorage): void {
         if (!BookTickerStorage.instance) {
-            BookTickerStorage.instance = new BookTickerStorage(redisStorage);
+            BookTickerStorage.instance = new BookTickerStorage(redisStorage)
         }
     }
 
     static getInstance(): BookTickerStorage {
         if (!BookTickerStorage.instance) {
-            throw new Error("BookTickerStorage not initialized");
+            throw new Error("BookTickerStorage not initialized")
         }
-        return BookTickerStorage.instance;
+        return BookTickerStorage.instance
     }
 
     async storeBookTicker(data: BookTickerData): Promise<void> {
-        await this.storage.saveBookTicker(data);
+        await this.storage.saveBookTicker(data)
     }
 
     async getBookTicker(
         exchange: string,
+        exchangeType: string,
         symbol: string
     ): Promise<BookTickerData | null> {
-        return await this.storage.getBookTicker(exchange, symbol);
+        return await this.storage.getBookTicker(exchange, exchangeType, symbol)
     }
 
     async getLatestBookTickers(): Promise<BookTickerData[]> {
-        return await this.storage.getLatestBookTickers();
+        return await this.storage.getLatestBookTickers()
     }
 }

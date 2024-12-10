@@ -1,46 +1,55 @@
 /**
  * Path: src/exchanges/binance/BinanceBookTickerConverter.ts
  */
-import { BookTickerConverter, BookTickerData } from "../common/types";
-import { BinanceBookTickerMessage, BinanceDepthMessage } from "./types";
+import { ExchangeConfig } from "../../config/types"
+import { BookTickerConverter, BookTickerData } from "../common/types"
+import { BinanceBookTickerMessage, BinanceDepthMessage } from "./types"
 
 export class BinanceBookTickerConverter extends BookTickerConverter {
-    static convert(rawData: BinanceBookTickerMessage): BookTickerData {
+    static convert(
+        config: ExchangeConfig,
+        rawData: BinanceBookTickerMessage
+    ): BookTickerData {
         return {
+            exchange: config.exchange,
+            exchangeType: config.exchangeType,
             symbol: rawData.s,
-            exchange: "binance",
             timestamp: Date.now(),
             bids: [[parseFloat(rawData.b), parseFloat(rawData.B)]],
             asks: [[parseFloat(rawData.a), parseFloat(rawData.A)]],
-        };
+        }
     }
     static convertFromDepth(
+        config: ExchangeConfig,
         rawData: BinanceDepthMessage,
         symbol: string
     ): BookTickerData {
         // depth 데이터에서 최우선 호가만 사용
-        const bestBid = rawData.bids[0];
-        const bestAsk = rawData.asks[0];
+        const bestBid = rawData.bids[0]
+        const bestAsk = rawData.asks[0]
 
         return {
-            symbol: symbol, // 심볼은 외부에서 주입
             exchange: "binance",
+            exchangeType: config.exchangeType,
+            symbol: symbol, // 심볼은 외부에서 주입
             timestamp: Date.now(), // Binance depth 메시지는 타임스탬프 미포함
             bids: [[parseFloat(bestBid[0]), parseFloat(bestBid[1])]],
             asks: [[parseFloat(bestAsk[0]), parseFloat(bestAsk[1])]],
-        };
+        }
     }
     static convertFullDepth(
+        config: ExchangeConfig,
         rawData: BinanceDepthMessage,
         symbol: string
     ): BookTickerData & {
-        lastUpdateId: number;
-        fullBids: [number, number][];
-        fullAsks: [number, number][];
+        lastUpdateId: number
+        fullBids: [number, number][]
+        fullAsks: [number, number][]
     } {
         return {
+            exchange: config.exchange,
+            exchangeType: config.exchangeType,
             symbol: symbol,
-            exchange: "binance",
             timestamp: Date.now(),
             // 최우선 호가
             bids: [
@@ -65,6 +74,6 @@ export class BinanceBookTickerConverter extends BookTickerConverter {
                 parseFloat(price),
                 parseFloat(qty),
             ]),
-        };
+        }
     }
 }
