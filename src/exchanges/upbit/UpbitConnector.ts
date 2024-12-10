@@ -17,12 +17,16 @@ import { IWebSocketManager } from "../../websocket/IWebSocketManager"
 import axios from "axios"
 import { ExchangeConfig } from "../../config/types"
 
+interface UpbitTickSizeInfo {
+    market: string // 마켓 심볼 (예: KRW-BTC)
+    min_price: string // 최소 주문 가격
+    max_price: string // 최대 주문 가격
+    min_trade_volume: string // 최소 주문 수량
+    max_trade_volume: string // 최대 주문 수량
+}
+
 export class UpbitConnector extends ExchangeConnector {
-    static readonly BASE_URL = "https://api.upbit.com/v1"
-
     private readonly TICKET = `UPBIT_${Date.now()}`
-    private readonly converter: UpbitBookTickerConverter
-
     constructor(
         protected readonly id: string,
         protected readonly config: ExchangeConfig,
@@ -30,7 +34,6 @@ export class UpbitConnector extends ExchangeConnector {
         protected readonly wsManager: IWebSocketManager
     ) {
         super(id, config, symbols, wsManager)
-        this.converter = new UpbitBookTickerConverter()
     }
 
     public formatSubscriptionRequest(symbols: string[]): UpbitSubscription {
@@ -114,33 +117,54 @@ export class UpbitConnector extends ExchangeConnector {
     ): Promise<ExchangeInfo[]> {
         try {
             // 마켓 코드 조회
-            const response = await axios.get<UpbitMarketInfo[]>(
-                `https://api.upbit.com/v1/market/all?isDetails=true`
-            )
+            const response = await axios.get<
+                {
+                    market: string
+                    korean_name: string
+                    english_name: string
+                    market_event?: {
+                        warning?: boolean
+                        caution?: {
+                            PRICE_FLUCTUATIONS?: boolean
+                            TRADING_VOLUME_SOARING?: boolean
+                            DEPOSIT_AMOUNT_SOARING?: boolean
+                            GLOBAL_PRICE_DIFFERENCES?: boolean
+                            CONCENTRATION_OF_SMALL_ACCOUNTS?: boolean
+                        }
+                    }
+                }[]
+            >(`${config.url}/v1/market/all?isDetails=true`)
 
             return response.data
                 .filter((market) => market.market.startsWith("KRW-")) // KRW 마켓만 필터링
                 .map((market) => {
                     const [quote, base] = market.market.split("-")
+
+                    // 경고 및 주의 상태 파악
+                    const isMarketWarning =
+                        market.market_event?.warning === true
+                    const isMarketCaution = Object.values(
+                        market.market_event?.caution || {}
+                    ).some((value) => value === true)
+
                     return {
                         exchange: "upbit",
                         exchangeType: config.exchangeType,
                         marketSymbol: market.market,
                         baseSymbol: base,
                         quoteSymbol: quote,
-                        status:
-                            market.market_warning === "NONE" &&
-                            market.state === "active"
-                                ? "active"
-                                : "inactive",
+                        status: "active",
+                        isDepositEnabled: true, // 업비트는 입금 상태 정보 제공 안 함
+                        isWithdrawalEnabled: true, // 업비트는 출금 상태 정보 제공 안 함
+                        minPrice: "0", // Tick Size 정보를 제공하지 않음
+                        maxPrice: "0", // Tick Size 정보를 제공하지 않음
+                        minOrderQty: "0", // 주문 단위 정보를 제공하지 않음
+                        maxOrderQty: "0", // 주문 단위 정보를 제공하지 않음
                         additionalInfo: {
-                            exchange: "upbit",
                             koreanName: market.korean_name,
                             englishName: market.english_name,
-                            warning: market.market_warning,
-                            bidFee: market.bid_fee,
-                            askFee: market.ask_fee,
-                            maxTotal: market.max_total,
+                            warning: isMarketWarning,
+                            cautionDetails: market.market_event?.caution || {},
                             timestamp: Date.now(),
                         },
                     }
@@ -170,9 +194,10 @@ export class UpbitConnector extends ExchangeConnector {
             )
         }
     }
+
     static async fetchFuturesExchangeInfo(
         config: ExchangeConfig
     ): Promise<ExchangeInfo[]> {
-        throw new Error("Upbit does not support futures trading")
+        throw new Error("Upbit does not support future trading")
     }
 }

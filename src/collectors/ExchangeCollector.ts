@@ -1,13 +1,13 @@
-import { CollectorMetrics, ConnectorMetrics, ManagerMetrics } from "metrics";
-import { IExchangeConnector } from "./types";
-import { ConnectorState } from "../states/types";
+import { CollectorMetrics, ConnectorMetrics, ManagerMetrics } from "metrics"
+import { IExchangeConnector } from "./types"
+import { ConnectorState } from "../states/types"
 
 export class ExchangeCollector {
-    private groupedSymbols: string[][] = [];
-    private totalSymbols: number;
-    private currentState: "Ready" | "Running" | "Stopped" = "Ready";
-    private exchangeConnector: IExchangeConnector[] = [];
-    private startTime: number;
+    private groupedSymbols: string[][] = []
+    private totalSymbols: number
+    private currentState: "Ready" | "Running" | "Stopped" = "Ready"
+    private exchangeConnector: IExchangeConnector[] = []
+    private startTime: number
 
     constructor(
         private readonly exchangeFactory: (
@@ -17,104 +17,108 @@ export class ExchangeCollector {
         private readonly symbols: string[],
         private readonly config: { streamLimitPerConnection: number }
     ) {
-        this.totalSymbols = symbols.length;
-        this.startTime = Date.now();
-        this.initialize();
+        this.totalSymbols = symbols.length
+        this.startTime = Date.now()
+        this.initialize()
     }
 
     private initialize() {
+        console.log("[ExchangeCollector] Initializing collector", this.symbols)
         // 심볼 그룹화
         this.groupedSymbols = this.symbols.reduce((acc, symbol, index) => {
             const groupIndex = Math.floor(
                 index / this.config.streamLimitPerConnection
-            );
+            )
             if (!acc[groupIndex]) {
-                acc[groupIndex] = [];
+                acc[groupIndex] = []
             }
-            acc[groupIndex].push(symbol);
-            return acc;
-        }, [] as string[][]);
+            acc[groupIndex].push(symbol)
+            return acc
+        }, [] as string[][])
 
         // 각 그룹별 커넥터 생성
         this.exchangeConnector = this.groupedSymbols.map((symbols, index) => {
             const connector = this.exchangeFactory(
                 `connector-${index}`,
                 symbols
-            );
+            )
 
             // 이벤트 리스너 설정
             connector.on("error", (error) => {
-                console.error(`Connector-${index} error:`, error);
-                this.handleConnectorError(index, error);
-            });
+                console.error(`Connector-${index} error:`, error)
+                this.handleConnectorError(index, error)
+            })
 
-            return connector;
-        });
+            return connector
+        })
     }
 
     private handleConnectorError(connectorIndex: number, error: Error): void {
-        console.error(`Connector-${connectorIndex} error:`, error);
+        console.error(`Connector-${connectorIndex} error:`, error)
         // 필요한 경우 해당 커넥터만 재시작
         if (this.currentState === "Running") {
-            this.restartConnector(connectorIndex);
+            this.restartConnector(connectorIndex)
         }
     }
 
     private async restartConnector(index: number): Promise<void> {
         try {
-            await this.exchangeConnector[index].stop();
-            await this.exchangeConnector[index].start();
-            console.log(`Connector-${index} successfully restarted`);
+            await this.exchangeConnector[index].stop()
+            await this.exchangeConnector[index].start()
+            console.log(`Connector-${index} successfully restarted`)
         } catch (error) {
-            console.error(`Failed to restart Connector-${index}:`, error);
+            console.error(`Failed to restart Connector-${index}:`, error)
         }
     }
 
     public async start(): Promise<void> {
-        console.log("[ExchangeCollector] Starting collection");
-        this.currentState = "Running";
+        console.log(
+            "🚀 ~ ExchangeCollector ~ start ~ this.currentState:",
+            this.currentState
+        )
+        this.currentState = "Running"
 
         await Promise.all(
             this.exchangeConnector.map(async (connector, index) => {
                 try {
-                    await connector.start();
-                    console.log(`Connector-${index} started successfully`);
+                    await connector.start()
+                    console.log(`Connector-${index} started successfully`)
                 } catch (error) {
-                    console.error(`Failed to start Connector-${index}:`, error);
-                    throw error;
+                    console.error(`Failed to start Connector-${index}:`, error)
+                    throw error
                 }
             })
-        );
+        )
     }
 
     public async stop(): Promise<void> {
-        console.log("[ExchangeCollector] Stopping collection");
-        this.currentState = "Stopped";
+        console.log("[ExchangeCollector] Stopping collection")
+        this.currentState = "Stopped"
 
         await Promise.all(
             this.exchangeConnector.map(async (connector, index) => {
                 try {
-                    await connector.stop();
-                    console.log(`Connector-${index} stopped successfully`);
+                    await connector.stop()
+                    console.log(`Connector-${index} stopped successfully`)
                 } catch (error) {
-                    console.error(`Failed to stop Connector-${index}:`, error);
-                    throw error;
+                    console.error(`Failed to stop Connector-${index}:`, error)
+                    throw error
                 }
             })
-        );
+        )
     }
 
     public getCurrentState(): string {
-        return this.currentState;
+        return this.currentState
     }
 
     public getMetrics(): CollectorMetrics {
-        const now = Date.now();
+        const now = Date.now()
 
         // 각 커넥터의 메트릭스 수집
         const connectorMetrics: ConnectorMetrics[] = this.exchangeConnector.map(
             (connector) => {
-                const metrics = connector.getMetrics();
+                const metrics = connector.getMetrics()
                 return {
                     id: connector.getId(),
                     symbols:
@@ -126,9 +130,9 @@ export class ExchangeCollector {
                     messageCount: metrics.messageCount,
                     errorCount: metrics.errorCount,
                     state: metrics.state,
-                };
+                }
             }
-        );
+        )
 
         // Manager 메트릭스 계산
         const managerMetrics: ManagerMetrics = {
@@ -148,7 +152,7 @@ export class ExchangeCollector {
             ),
             connectorMetrics,
             reconnectingConnectors: 0,
-        };
+        }
 
         // Collector 메트릭스 생성
         const collectorMetrics: CollectorMetrics = {
@@ -157,20 +161,20 @@ export class ExchangeCollector {
             uptime: now - this.startTime, // startTime은 클래스에 추가 필요
             isRunning: this.currentState === "Running",
             managerMetrics,
-        };
+        }
 
-        return collectorMetrics;
+        return collectorMetrics
     }
 
     public getConnectorStates(): Array<{
-        id: string;
-        state: string;
-        symbols: string[];
+        id: string
+        state: string
+        symbols: string[]
     }> {
         return this.exchangeConnector.map((connector, index) => ({
             id: connector.getId(),
             state: connector.getState(),
             symbols: this.groupedSymbols[index],
-        }));
+        }))
     }
 }

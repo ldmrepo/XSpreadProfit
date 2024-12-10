@@ -597,6 +597,10 @@ abstract class ExchangeConnector
 
     public async start(): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
+            console.log(
+                "🚀 ~ ExchangeConnector Starting connector...",
+                this.state
+            )
             if (this.state !== ConnectorState.INITIAL) {
                 reject(
                     this.errorHandler.handleError(

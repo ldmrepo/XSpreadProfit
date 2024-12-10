@@ -88,6 +88,9 @@ class Application {
                         this.createWebSocketManager(exchangeConfig)
                     )
                 } else if (exchangeConfig.exchangeType === "spot") {
+                    console.log(
+                        `Creating connector for ${exchangeConfig.exchangeType}`
+                    )
                     return new BinanceConnector(
                         id,
                         exchangeConfig,
@@ -185,10 +188,15 @@ class Application {
             )
 
             for (const config of exchangeConfigs) {
-                const collector = this.createCollectorForExchange(config)
-                this.collectors.set(config.exchangeType, collector)
-                await collector.start()
-                console.log(`Started collector for ${config.exchangeType}`)
+                if (config.used && config.exchange === "binance") {
+                    console.log(
+                        `************Starting collector for ${config.exchangeType}`
+                    )
+                    const collector = this.createCollectorForExchange(config)
+                    this.collectors.set(config.exchangeType, collector)
+                    await collector.start()
+                    console.log(`Started collector for ${config.exchangeType}`)
+                }
             }
 
             this.startMetricsMonitoring()

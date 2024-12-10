@@ -32,7 +32,7 @@ interface ExchangeInfo {
 interface Subscription {
     client: WebSocket
     symbol: string
-    marketType: "spot" | "futures"
+    marketType: "spot" | "future"
     stream: string // 스트림 유형 (bookTicker, depth 등)
 }
 

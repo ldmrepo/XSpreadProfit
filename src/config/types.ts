@@ -17,4 +17,5 @@ export interface ExchangeConfig {
     wsUrl: string // exchange websocket url
     streamLimit: number
     symbols: string[]
+    used?: boolean // 사용 여부
 }

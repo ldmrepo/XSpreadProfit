@@ -47,6 +47,8 @@ export const convertUpbitMarketCode = {
 }
 // Upbit Market API 응답 타입 정의
 export interface UpbitMarketInfo {
+    deposit: boolean
+    withdraw: boolean
     market: string
     korean_name: string
     english_name: string

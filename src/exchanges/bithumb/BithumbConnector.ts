@@ -9,7 +9,6 @@ import { SymbolGroup } from "../../collectors/types"
 import {
     BithumbOrderBookMessage,
     BithumbSubscription,
-    BithumbMarketInfo,
     convertBithumbSymbol,
 } from "./types"
 import { BookTickerData, ExchangeInfo } from "../common/types"
@@ -18,8 +17,6 @@ import { IWebSocketManager } from "../../websocket/IWebSocketManager"
 import { ExchangeConfig } from "../../config/types"
 
 export class BithumbConnector extends ExchangeConnector {
-    static readonly BASE_URL = "https://api.bithumb.com/public"
-
     constructor(
         protected readonly id: string,
         protected readonly config: ExchangeConfig,
@@ -96,24 +93,36 @@ export class BithumbConnector extends ExchangeConnector {
                     korean_name: string
                     english_name: string
                 }[]
-            }>("https://api.bithumb.com/v1/market/all")
+            }>(`${config.url}/v1/market/all`)
 
-            // console.log("response", response.data)
             // 응답 데이터 변환
             const data: any = response.data
-            return data.map((item: any) => ({
-                exchange: "bithumb",
-                exchangeType: config.exchangeType, // 빗썸은 현물 데이터로 가정
-                marketSymbol: item.market,
-                baseSymbol: item.market.split("-")[1], // 기초 자산 추출
-                quoteSymbol: item.market.split("-")[0], // 거래 심볼 추출
-                status: "active", // 기본값
-                additionalInfo: {
-                    koreanName: item.korean_name,
-                    englishName: item.english_name,
-                    timestamp: Date.now(),
-                },
-            }))
+
+            return data
+                .filter((item: any) => item.market.startsWith("KRW-")) // KRW 마켓만 필터링
+                .map((item: any) => {
+                    const [quoteSymbol, baseSymbol] = item.market.split("-")
+
+                    return {
+                        exchange: "bithumb",
+                        exchangeType: config.exchangeType, // 빗썸은 현물 데이터로 가정
+                        marketSymbol: item.market,
+                        baseSymbol,
+                        quoteSymbol,
+                        status: "active", // 기본값 설정
+                        isDepositEnabled: true, // 빗썸은 입출금 상태 정보를 제공하지 않으므로 기본값
+                        isWithdrawalEnabled: true, // 입출금 기본값
+                        minPrice: "0", // 빗썸은 가격 단위 정보를 제공하지 않으므로 기본값
+                        maxPrice: "0", // 가격 단위 기본값
+                        minOrderQty: "0", // 최소 주문량 기본값
+                        maxOrderQty: "0", // 최대 주문량 기본값
+                        additionalInfo: {
+                            koreanName: item.korean_name,
+                            englishName: item.english_name,
+                            timestamp: Date.now(),
+                        },
+                    }
+                })
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 429) {

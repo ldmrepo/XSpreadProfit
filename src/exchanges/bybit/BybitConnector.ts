@@ -18,8 +18,6 @@ import { IWebSocketManager } from "../../websocket/IWebSocketManager"
 import { ExchangeConfig } from "../../config/types"
 
 export class BybitConnector extends ExchangeConnector {
-    static readonly BASE_URL = "https://api.bybit.com/v5"
-
     constructor(
         protected readonly id: string,
         protected readonly config: ExchangeConfig,
@@ -92,22 +90,30 @@ export class BybitConnector extends ExchangeConnector {
                 result: {
                     list: BybitMarketInfo[]
                 }
-            }>(`https://api.bybit.com/v5/market/instruments-info?category=spot`)
-
-            return response.data.result.list.map((market) => ({
-                exchange: "bybit",
-                exchangeType: config.exchangeType,
-                marketSymbol: market.symbol,
-                baseSymbol: market.baseCoin,
-                quoteSymbol: market.quoteCoin,
-                status: market.status.toLowerCase(),
-                additionalInfo: {
-                    marginTrading: market.marginTrading,
-                    lotSizeFilter: market.lotSizeFilter,
-                    priceFilter: market.priceFilter,
-                    timestamp: Date.now(),
-                },
-            }))
+            }>(
+                `${config.url}/v5/market/instruments-info?category=spot&baseCoin=USDT`
+            )
+            return response.data.result.list
+                .filter((market) => market.status.toLowerCase() === "trading")
+                .map((market) => ({
+                    exchange: "bybit",
+                    exchangeType: config.exchangeType,
+                    marketSymbol: market.symbol,
+                    baseSymbol: market.baseCoin,
+                    quoteSymbol: market.quoteCoin,
+                    // 추가된 필드
+                    minPrice: market.priceFilter.minPrice, // 최소 가격 ex)  "minPrice": "0.01" -> 0.01 USDT
+                    maxPrice: market.priceFilter.maxPrice, // 최대 가격 ex)  "maxPrice": "1000000" -> 1000000 USDT
+                    maxOrderQty: market.lotSizeFilter.maxOrderQty, // 최대 주문 수량 ex)  "maxOrderQty": "1000000" -> 1000000
+                    minOrderQty: market.lotSizeFilter.minOrderQty, // 최소 주문 수량 ex)  "minOrderQty": "0.0001" -> 0.0001
+                    status: "active",
+                    additionalInfo: {
+                        marginTrading: market.marginTrading,
+                        lotSizeFilter: market.lotSizeFilter,
+                        priceFilter: market.priceFilter,
+                        timestamp: Date.now(),
+                    },
+                }))
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 429) {
@@ -141,24 +147,29 @@ export class BybitConnector extends ExchangeConnector {
                 result: {
                     list: BybitMarketInfo[]
                 }
-            }>(
-                `${BybitConnector.BASE_URL}/market/instruments-info?category=linear`
-            )
+            }>(`${config.url}/v5/market/instruments-info?category=linear`) // 무기한 선물 = linear
 
-            return response.data.result.list.map((market) => ({
-                exchange: "bybit",
-                exchangeType: config.exchangeType,
-                marketSymbol: market.symbol,
-                baseSymbol: market.baseCoin,
-                quoteSymbol: market.quoteCoin,
-                status: market.status.toLowerCase(),
-                additionalInfo: {
-                    // contractType: market.contractType,
-                    priceFilter: market.priceFilter,
-                    lotSizeFilter: market.lotSizeFilter,
-                    timestamp: Date.now(),
-                },
-            }))
+            return response.data.result.list
+                .filter((market) => market.quoteCoin.toLowerCase() === "usdt")
+                .filter((market) => market.status.toLowerCase() === "trading")
+                .map((market) => ({
+                    exchange: "bybit",
+                    exchangeType: config.exchangeType,
+                    marketSymbol: market.symbol,
+                    baseSymbol: market.baseCoin,
+                    quoteSymbol: market.quoteCoin,
+                    status: "active",
+                    minPrice: market.priceFilter.minPrice,
+                    maxPrice: market.priceFilter.maxPrice,
+                    maxOrderQty: market.lotSizeFilter.maxOrderQty,
+                    minOrderQty: market.lotSizeFilter.minOrderQty,
+                    additionalInfo: {
+                        // contractType: market.contractType,
+                        priceFilter: market.priceFilter,
+                        lotSizeFilter: market.lotSizeFilter,
+                        timestamp: Date.now(),
+                    },
+                }))
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 429) {

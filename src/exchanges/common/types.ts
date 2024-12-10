@@ -29,5 +29,9 @@ export interface ExchangeInfo {
     status: string
     isDepositEnabled?: boolean // 입금 가능 여부
     isWithdrawalEnabled?: boolean // 출금 가능 여부
+    minPrice: string // 주문 최소 가격
+    maxPrice: string // 주문 최대 가격
+    maxOrderQty: string // 주문 최대 수량
+    minOrderQty: string // 주문 최소 수량
     additionalInfo?: Record<string, unknown>
 }

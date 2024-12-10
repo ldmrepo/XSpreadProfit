@@ -5,41 +5,99 @@ import { ExchangeConnector } from "../../collectors/ExchangeConnector"
 import { WebSocketMessage } from "../../websocket/types"
 import { WebSocketError, ErrorCode, ErrorSeverity } from "../../errors/types"
 import { SymbolGroup } from "../../collectors/types"
-import {
-    BinanceBookTickerMessage,
-    BinanceSubscription,
-    BinanceBookTickerData,
-} from "./types"
+import { BinanceBookTickerMessage, BinanceSubscription } from "./types"
 import { BinanceBookTickerConverter } from "./BinanceBookTickerConverter"
 import { BookTickerData, ExchangeInfo } from "../common/types"
 import { IWebSocketManager } from "../../websocket/IWebSocketManager"
 import axios from "axios"
 import { ExchangeConfig } from "../../config/types"
+// 공통 필터 타입 정의
+interface PriceFilter {
+    filterType: "PRICE_FILTER"
+    minPrice: string
+    maxPrice: string
+    tickSize: string
+}
+
+interface LotSizeFilter {
+    filterType: "LOT_SIZE"
+    minQty: string
+    maxQty: string
+    stepSize: string
+}
+
+type Filter = PriceFilter | LotSizeFilter
 
 interface BinanceSpotInfo {
+    isDepositEnabled: boolean
+    isWithdrawalEnabled: boolean
     symbol: string
     baseAsset: string
     quoteAsset: string
     status: string
-    isSpotTradingAllowed: boolean
-    filters: unknown[]
+    filters: Filter[]
 }
 
 interface BinanceFuturesInfo {
     symbol: string
-    pair: string
-    contractType: string
-    status: string
     baseAsset: string
     quoteAsset: string
+    status: string
+    contractType: string
+    filters: Filter[]
+}
+
+function isPriceFilter(filter: unknown): filter is PriceFilter {
+    return (
+        typeof filter === "object" &&
+        filter !== null &&
+        (filter as any).filterType === "PRICE_FILTER"
+    )
+}
+
+function isLotSizeFilter(filter: unknown): filter is LotSizeFilter {
+    return (
+        typeof filter === "object" &&
+        filter !== null &&
+        (filter as any).filterType === "LOT_SIZE"
+    )
+}
+// 공통 데이터 매핑 함수
+function mapExchangeInfo(
+    symbol: BinanceSpotInfo | BinanceFuturesInfo,
+    exchange: string,
+    exchangeType: string
+): ExchangeInfo {
+    const priceFilter = symbol.filters.find(
+        (filter): filter is PriceFilter => filter.filterType === "PRICE_FILTER"
+    )
+
+    const lotSizeFilter = symbol.filters.find(
+        (filter): filter is LotSizeFilter => filter.filterType === "LOT_SIZE"
+    )
+
+    return {
+        exchange,
+        exchangeType,
+        marketSymbol: symbol.symbol,
+        baseSymbol: symbol.baseAsset,
+        quoteSymbol: symbol.quoteAsset,
+        status:
+            symbol.status.toLowerCase() === "trading" ? "active" : "inactive",
+        isDepositEnabled: true, //엔드포인트: GET /sapi/v1/capital/config/getall 인증 필요
+        isWithdrawalEnabled: true, //엔드포인트: GET /sapi/v1/capital/config/getall 인증 필요
+        minPrice: priceFilter?.minPrice || "0",
+        maxPrice: priceFilter?.maxPrice || "0",
+        maxOrderQty: lotSizeFilter?.maxQty || "0",
+        minOrderQty: lotSizeFilter?.minQty || "0",
+        additionalInfo: {
+            contractType:
+                (symbol as BinanceFuturesInfo).contractType || undefined,
+        },
+    }
 }
 
 export class BinanceConnector extends ExchangeConnector {
-    // private static readonly SPOT_API_URL =
-    //     "https://api.binance.com/api/v3/exchangeInfo"
-    // private static readonly FUTURES_API_URL =
-    //     "https://fapi.binance.com/fapi/v1/exchangeInfo"
-
     private readonly RATE_LIMIT_PER_SECOND = 5
     private lastRequestTime: number = 0
     private requestCount: number = 0
@@ -166,54 +224,61 @@ export class BinanceConnector extends ExchangeConnector {
         super.handleError(wsError)
     }
 
-    public static async fetchSpotExchangeInfo(
+    // Spot Exchange Info Fetcher
+    static fetchSpotExchangeInfo(
         config: ExchangeConfig
     ): Promise<ExchangeInfo[]> {
-        try {
-            const { data } = await axios.get<{ symbols: BinanceSpotInfo[] }>(
-                `{config.url}/api/v3/exchangeInfo` //BinanceConnector.SPOT_API_URL
-            )
-
-            return data.symbols
-                .filter((symbol) => symbol.isSpotTradingAllowed)
-                .map((symbol) => ({
-                    marketSymbol: symbol.symbol,
-                    baseSymbol: symbol.baseAsset,
-                    quoteSymbol: symbol.quoteAsset,
-                    status: symbol.status.toLowerCase(),
-                    exchangeType: config.exchangeType,
-                    exchange: "binance",
-                    additionalInfo: {
-                        filters: symbol.filters,
-                    },
-                }))
-        } catch (error) {
-            throw new Error(`Failed to fetch Binance spot markets: ${error}`)
+        if (!config?.url) {
+            return Promise.reject(new Error("Invalid config: url is required"))
         }
+        return axios
+            .get<{ symbols: BinanceSpotInfo[] }>(
+                `${config.url}/api/v3/exchangeInfo`
+            )
+            .then(({ data }) => {
+                if (!data?.symbols?.length) {
+                    throw new Error("Invalid response format from Binance API")
+                }
+                return data.symbols
+                    .filter((symbol) => symbol?.quoteAsset === "USDT")
+                    .filter((symbol) => symbol?.status === "TRADING")
+                    .map((symbol) =>
+                        mapExchangeInfo(symbol, "binance", config.exchangeType)
+                    )
+            })
+            .catch((error) => {
+                const errorMsg = `Failed to fetch Binance spot markets: ${error.message}`
+                console.error(errorMsg)
+                throw new Error(errorMsg)
+            })
     }
 
-    public static async fetchFuturesExchangeInfo(
+    // Futures Exchange Info Fetcher
+    static fetchFuturesExchangeInfo(
         config: ExchangeConfig
     ): Promise<ExchangeInfo[]> {
-        try {
-            const { data } = await axios.get<{ symbols: BinanceFuturesInfo[] }>(
-                `{config.url}/api/v3/exchangeInfo` //BinanceConnector.FUTURES_API_URL
-            )
-            return data.symbols
-                .filter((symbol) => symbol.status === "TRADING")
-                .map((symbol) => ({
-                    marketSymbol: symbol.symbol,
-                    baseSymbol: symbol.baseAsset,
-                    quoteSymbol: symbol.quoteAsset,
-                    status: "active",
-                    exchange: "binance",
-                    exchangeType: config.exchangeType,
-                    additionalInfo: {
-                        contractType: symbol.contractType,
-                    },
-                }))
-        } catch (error) {
-            throw new Error(`Failed to fetch Binance futures markets: ${error}`)
+        if (!config?.url) {
+            return Promise.reject(new Error("Invalid config: url is required"))
         }
+        return axios
+            .get<{ symbols: BinanceFuturesInfo[] }>(
+                `${config.url}/fapi/v1/exchangeInfo`
+            )
+            .then(({ data }) => {
+                if (!data?.symbols?.length) {
+                    throw new Error("Invalid response format from Binance API")
+                }
+                return data.symbols
+                    .filter((symbol) => symbol?.quoteAsset === "USDT")
+                    .filter((symbol) => symbol?.status === "TRADING")
+                    .map((symbol) =>
+                        mapExchangeInfo(symbol, "binance", config.exchangeType)
+                    )
+            })
+            .catch((error) => {
+                const errorMsg = `Failed to fetch Binance futures markets: ${error.message}`
+                console.error(errorMsg)
+                throw new Error(errorMsg)
+            })
     }
 }

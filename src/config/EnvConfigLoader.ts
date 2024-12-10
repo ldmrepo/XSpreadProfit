@@ -29,7 +29,8 @@ export class EnvConfigLoader implements IConfigLoader {
                     process.env.BINANCE_STREAM_LIMIT || "1024",
                     10
                 ),
-                symbols: JSON.parse(process.env.BINANCE_SYMBOLS || "[]"),
+                symbols: [],
+                used: true,
             },
             {
                 // binance.futures 추가
@@ -43,7 +44,8 @@ export class EnvConfigLoader implements IConfigLoader {
                     process.env.BINANCE_STREAM_LIMIT || "1024",
                     10
                 ),
-                symbols: JSON.parse(process.env.BINANCE_SYMBOLS || "[]"),
+                symbols: [],
+                used: false,
             },
             {
                 exchange: "bybit",
@@ -56,10 +58,10 @@ export class EnvConfigLoader implements IConfigLoader {
                     process.env.BYBIT_STREAM_LIMIT || "200",
                     10
                 ),
-                symbols: JSON.parse(process.env.BYBIT_SYMBOLS || "[]"),
+                symbols: [],
+                used: false,
             },
             {
-                // bybit.futures 추가
                 exchange: "bybit",
                 exchangeType: "future",
                 url: process.env.BYBIT_URL || "https://api.bybit.com",
@@ -70,7 +72,8 @@ export class EnvConfigLoader implements IConfigLoader {
                     process.env.BYBIT_STREAM_LIMIT || "200",
                     10
                 ),
-                symbols: JSON.parse(process.env.BYBIT_SYMBOLS || "[]"),
+                symbols: [],
+                used: false,
             },
             {
                 exchange: "upbit",
@@ -83,7 +86,8 @@ export class EnvConfigLoader implements IConfigLoader {
                     process.env.UPBIT_STREAM_LIMIT || "15",
                     10
                 ),
-                symbols: JSON.parse(process.env.UPBIT_SYMBOLS || "[]"),
+                symbols: [],
+                used: true,
             },
             {
                 // 빗썸 추가
@@ -97,7 +101,8 @@ export class EnvConfigLoader implements IConfigLoader {
                     process.env.BITHUMB_STREAM_LIMIT || "100",
                     10
                 ),
-                symbols: JSON.parse(process.env.BITHUMB_SYMBOLS || "[]"),
+                symbols: [],
+                used: false,
             },
             {
                 // 코인원 추가
@@ -110,7 +115,8 @@ export class EnvConfigLoader implements IConfigLoader {
                     process.env.COINONE_STREAM_LIMIT || "100",
                     10
                 ),
-                symbols: JSON.parse(process.env.COINONE_SYMBOLS || "[]"),
+                symbols: [],
+                used: false,
             },
         ]
 

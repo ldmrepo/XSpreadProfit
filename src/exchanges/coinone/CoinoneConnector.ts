@@ -9,7 +9,6 @@ import { SymbolGroup } from "../../collectors/types"
 import {
     CoinoneOrderBookMessage,
     CoinoneSubscription,
-    CoinoneMarketInfo,
     convertCoinoneMarketCode,
 } from "./types"
 import { BookTickerData, ExchangeInfo } from "../common/types"
@@ -18,7 +17,6 @@ import { IWebSocketManager } from "../../websocket/IWebSocketManager"
 import { ExchangeConfig } from "../../config/types"
 
 export class CoinoneConnector extends ExchangeConnector {
-    static readonly BASE_URL = "https://api.coinone.co.kr/v2"
     private readonly converter: CoinoneBookTickerConverter
 
     constructor(
@@ -96,18 +94,19 @@ export class CoinoneConnector extends ExchangeConnector {
                 result: string
                 error_code: string
                 server_time: number
-                currencies: {
-                    name: string
-                    symbol: string
-                    deposit_status: string
-                    withdraw_status: string
-                    deposit_confirm_count: number
-                    max_precision: number
-                    deposit_fee: string
-                    withdrawal_min_amount: string
-                    withdrawal_fee: string
+                markets: {
+                    quote_currency: string
+                    target_currency: string
+                    min_price: string
+                    max_price: string
+                    min_qty: string
+                    max_qty: string
+                    min_order_amount: string
+                    max_order_amount: string
+                    maintenance_status: number
+                    trade_status: number
                 }[]
-            }>("https://api.coinone.co.kr/public/v2/currencies")
+            }>(`${config.url}/public/v2/markets/KRW`)
 
             if (response.data.result !== "success") {
                 throw new WebSocketError(
@@ -118,31 +117,29 @@ export class CoinoneConnector extends ExchangeConnector {
                 )
             }
 
-            return response.data.currencies.map((currency) => ({
-                exchange: "coinone",
-                exchangeType: config.exchangeType,
-                marketSymbol: `${currency.symbol}-KRW`,
-                baseSymbol: currency.symbol,
-                quoteSymbol: "KRW",
-                status:
-                    currency.deposit_status === "normal" &&
-                    currency.withdraw_status === "normal"
-                        ? "active"
-                        : "inactive",
-                isDepositEnabled: currency.deposit_status === "normal",
-                isWithdrawalEnabled: currency.withdraw_status === "normal",
-                additionalInfo: {
-                    name: currency.name,
-                    depositStatus: currency.deposit_status,
-                    withdrawStatus: currency.withdraw_status,
-                    depositConfirmCount: currency.deposit_confirm_count,
-                    maxPrecision: currency.max_precision,
-                    depositFee: currency.deposit_fee,
-                    minWithdrawalAmount: currency.withdrawal_min_amount,
-                    withdrawalFee: currency.withdrawal_fee,
-                    timestamp: response.data.server_time,
-                },
-            }))
+            return response.data.markets
+                .filter((market) => market.trade_status === 1)
+                .map((market) => ({
+                    exchange: "coinone",
+                    exchangeType: config.exchangeType,
+                    marketSymbol: `${market.target_currency}`,
+                    baseSymbol: market.target_currency,
+                    quoteSymbol: market.quote_currency,
+                    status: "active",
+                    isDepositEnabled: market.maintenance_status === 0,
+                    isWithdrawalEnabled: market.maintenance_status === 0,
+                    minPrice: market.min_price,
+                    maxPrice: market.max_price,
+                    maxOrderQty: market.max_qty,
+                    minOrderQty: market.min_qty,
+                    additionalInfo: {
+                        minOrderAmount: market.min_order_amount,
+                        maxOrderAmount: market.max_order_amount,
+                        tradeStatus: market.trade_status,
+                        maintenanceStatus: market.maintenance_status,
+                        timestamp: response.data.server_time,
+                    },
+                }))
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 429) {
@@ -168,6 +165,7 @@ export class CoinoneConnector extends ExchangeConnector {
             )
         }
     }
+
     static async fetchFuturesExchangeInfo(
         config: ExchangeConfig
     ): Promise<ExchangeInfo[]> {
