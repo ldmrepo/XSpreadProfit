@@ -2,17 +2,17 @@
  * Path: src/config/EnvConfigLoader.ts
  * EnvConfigLoader 구현
  */
-import dotenv from "dotenv";
-import { AppConfig, ExchangeConfig } from "./types";
-import { IConfigLoader } from "./IConfigLoader";
-import { RedisConfig } from "../storage/redis/types";
+import dotenv from "dotenv"
+import { AppConfig, ExchangeConfig } from "./types"
+import { IConfigLoader } from "./IConfigLoader"
+import { RedisConfig } from "../storage/redis/types"
 
 export class EnvConfigLoader implements IConfigLoader {
     constructor(private readonly envPath?: string) {
         if (envPath) {
-            dotenv.config({ path: envPath });
+            dotenv.config({ path: envPath })
         } else {
-            dotenv.config();
+            dotenv.config()
         }
     }
 
@@ -21,23 +21,18 @@ export class EnvConfigLoader implements IConfigLoader {
             {
                 exchange: "binance",
                 exchangeType: "spot",
-                url: process.env.BINANCE_URL || "https://api.binance.com",
-                wsUrl:
-                    process.env.BINANCE_WS_URL ||
-                    "wss://stream.binance.com:9443/ws",
-                streamLimit: 300,
+                url: "https://api.binance.com",
+                wsUrl: "wss://stream.binance.com:9443/stream",
+                streamLimit: 200,
                 symbols: [],
-                used: true,
+                used: false,
             },
             {
-                // binance.futures 추가
                 exchange: "binance",
                 exchangeType: "future",
-                url: process.env.BINANCE_URL || "https://fapi.binance.com",
-                wsUrl:
-                    process.env.BINANCE_WS_URL ||
-                    "wss://fstream.binance.com/ws",
-                streamLimit: 300,
+                url: "https://fapi.binance.com",
+                wsUrl: "wss://fstream.binance.com/stream",
+                streamLimit: 200,
                 symbols: [],
                 used: false,
             },
@@ -72,14 +67,9 @@ export class EnvConfigLoader implements IConfigLoader {
             {
                 exchange: "upbit",
                 exchangeType: "spot",
-                url: process.env.UPBIT_URL || "https://api.upbit.com",
-                wsUrl:
-                    process.env.UPBIT_WS_URL ||
-                    "wss://api.upbit.com/websocket/v1",
-                streamLimit: parseInt(
-                    process.env.UPBIT_STREAM_LIMIT || "15",
-                    10
-                ),
+                url: "https://api.upbit.com",
+                wsUrl: "wss://api.upbit.com/websocket/v1",
+                streamLimit: 100,
                 symbols: [],
                 used: true,
             },
@@ -112,15 +102,15 @@ export class EnvConfigLoader implements IConfigLoader {
                 symbols: [],
                 used: false,
             },
-        ];
+        ]
 
         const redis: RedisConfig = {
             host: process.env.REDIS_HOST || "localhost",
             port: parseInt(process.env.REDIS_PORT || "6379", 10),
             password: process.env.REDIS_PASSWORD,
             db: parseInt(process.env.REDIS_DB || "0", 10),
-        };
+        }
 
-        return { exchanges, redis };
+        return { exchanges, redis }
     }
 }

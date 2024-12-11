@@ -31,7 +31,6 @@ abstract class ExchangeConnector
     private readonly BUFFER_FLUSH_INTERVAL = 100 // 100ms
     private readonly BUFFER_SIZE = 1000 // 1000 messages
     private readonly RECONNECT_DELAY = 5000 // 5s
-    private isSubscribed = false
 
     constructor(
         protected readonly id: string,
@@ -89,16 +88,17 @@ abstract class ExchangeConnector
     }
 
     private createWebSocket(): WebSocket {
-        const ws = new WebSocket(this.config.wsUrl)
-        console.log(
-            "🚀 ~ createWebSocket ~ this.config.wsUrl:",
-            this.config.wsUrl
-        )
+        // const request = this.formatUnsubscriptionRequest(this.symbols)
 
-        ws.on("open", async () => {
+        const streams = this.symbols
+            .map((s) => `${s.toLowerCase()}@bookTicker`)
+            .join("/")
+
+        const ws = new WebSocket(`${this.config.wsUrl}?streams=${streams}`)
+
+        ws.on("open", () => {
             console.log(`Connected: ${this.id}`)
             this.updateState(ConnectorState.CONNECTED)
-            await this.subscribe() // 연결 후 구독
         })
 
         ws.on("message", this.handleMessage.bind(this))
@@ -113,48 +113,17 @@ abstract class ExchangeConnector
 
         ws.on("close", () => {
             console.log(`Disconnected: ${this.id}`)
-            this.isSubscribed = false // 구독 상태 초기화
             this.updateState(ConnectorState.DISCONNECTED)
             this.scheduleReconnect()
         })
 
         return ws
     }
-    // 구독 처리
-    private async subscribe(): Promise<void> {
-        if (!this.ws || this.isSubscribed) return
 
-        try {
-            const request = this.formatSubscriptionRequest(this.symbols)
-            console.log("🚀 ~ subscribe ~ request:", request)
-            this.ws.send(JSON.stringify(request))
-            this.isSubscribed = true
-            console.log(`Subscribed: ${this.id}`)
-        } catch (error) {
-            console.error(`Subscription failed: ${error}`)
-            this.metrics.errorCount++
-            this.scheduleReconnect()
-        }
-    }
-
-    // 구독 해제 처리
-    private async unsubscribe(): Promise<void> {
-        if (!this.ws || !this.isSubscribed) return
-
-        try {
-            const request = this.formatUnsubscriptionRequest(this.symbols)
-            this.ws.send(JSON.stringify(request))
-            this.isSubscribed = false
-            console.log(`Unsubscribed: ${this.id}`)
-        } catch (error) {
-            console.error(`Unsubscription failed: ${error}`)
-            this.metrics.errorCount++
-        }
-    }
     private handleMessage(data: WebSocket.Data): void {
         try {
             const message = JSON.parse(data.toString())
-            // console.log(`Received message: ${this.id}`, message)
+            console.log(`Received message: ${this.id}`, message)
             if (!this.validateExchangeMessage(message)) return
 
             const normalized = this.normalizeExchangeMessage(message)
@@ -211,6 +180,7 @@ abstract class ExchangeConnector
 
         this.updateMetrics({ reconnectCount: this.metrics.reconnectCount + 1 })
     }
+
     public async start(): Promise<void> {
         if (this.ws) return
 
@@ -222,11 +192,9 @@ abstract class ExchangeConnector
             throw error
         }
     }
+
     public async stop(): Promise<void> {
         if (!this.ws) return
-
-        // 구독 해제 후 연결 종료
-        await this.unsubscribe()
 
         if (this.processingTimer) {
             clearInterval(this.processingTimer)
@@ -238,6 +206,7 @@ abstract class ExchangeConnector
             this.reconnectTimer = null
         }
 
+        // 남은 메시지 처리
         await this.flushBuffer()
 
         this.ws.close()
@@ -283,7 +252,6 @@ abstract class ExchangeConnector
         console.error(`Error occurred: ${error}`)
     }
     // Abstract methods for exchange-specific implementations
-    protected abstract formatSubscriptionRequest(symbols: string[]): unknown
     protected abstract formatUnsubscriptionRequest(symbols: string[]): unknown
     protected abstract validateExchangeMessage(data: unknown): boolean
     protected abstract normalizeExchangeMessage(

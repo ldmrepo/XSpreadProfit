@@ -10,6 +10,7 @@ import { WebSocketError } from "../errors/types"
 import { WebSocketConfig, WebSocketMessage } from "../websocket/types"
 import { ManagerMetrics, ConnectorMetrics } from "../types/metrics"
 import { ErrorHandler, IErrorHandler } from "../errors/ErrorHandler"
+import { ExchangeConfig } from "../config/types"
 
 export class ConnectorManager extends EventEmitter {
     // private metrics: ManagerMetrics
@@ -18,13 +19,11 @@ export class ConnectorManager extends EventEmitter {
     private readonly groupSize = 100
 
     constructor(
-        private readonly exchangeName: string,
-        private readonly type: string,
-        private readonly config: WebSocketConfig,
+        private readonly config: ExchangeConfig,
         private readonly createConnector: (
             id: string,
             symbols: string[],
-            config: WebSocketConfig
+            config: ExchangeConfig
         ) => IExchangeConnector // 생성 함수 주입
     ) {
         super()
@@ -38,9 +37,10 @@ export class ConnectorManager extends EventEmitter {
         )
     }
 
-    async initialize(symbols: string[]): Promise<void> {
+    async start(symbols: string[]): Promise<void> {
         try {
             const groups = this.groupSymbols(symbols)
+            console.log(`Starting ${groups.length} connectors`)
             await this.initializeConnectors(groups)
         } catch (error) {
             throw this.errorHandler.handleError(error)
@@ -50,7 +50,7 @@ export class ConnectorManager extends EventEmitter {
     private async initializeConnectors(groups: string[][]): Promise<void> {
         for (const [index, group] of groups.entries()) {
             const connector = this.createConnector(
-                `${this.exchangeName}-${this.type}-${index}`,
+                `${this.config.exchange}-${this.config.exchangeType}-${index}`,
                 group,
                 this.config
             )
@@ -97,10 +97,11 @@ export class ConnectorManager extends EventEmitter {
     }
 
     private groupSymbols(symbols: string[]): string[][] {
+        const groupSize = this.config.streamLimit || this.groupSize
         return symbols.reduce((groups: string[][], symbol) => {
             const lastGroup = groups[groups.length - 1]
 
-            if (!lastGroup || lastGroup.length >= this.groupSize) {
+            if (!lastGroup || lastGroup.length >= groupSize) {
                 groups.push([symbol])
             } else {
                 lastGroup.push(symbol)

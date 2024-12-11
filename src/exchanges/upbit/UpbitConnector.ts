@@ -36,15 +36,16 @@ export class UpbitConnector extends ExchangeConnector {
         super(id, config, symbols, wsManager)
     }
 
-    public formatSubscriptionRequest(symbols: string[]): UpbitSubscription {
-        return {
-            ticket: this.TICKET,
-            type: "orderbook",
-            codes: symbols.map((symbol) =>
-                convertUpbitMarketCode.toMarketCode(symbol)
-            ),
-            format: "SIMPLE",
-        }
+    public formatSubscriptionRequest(symbols: string[]): any {
+        //UpbitSubscription {
+        return [
+            { ticket: this.TICKET },
+            {
+                type: "orderbook",
+                codes: symbols.map((symbol) => symbol),
+            },
+            // { format: "SIMPLE" },
+        ]
     }
 
     protected formatUnsubscriptionRequest(
@@ -53,9 +54,7 @@ export class UpbitConnector extends ExchangeConnector {
         return {
             ticket: this.TICKET,
             type: "orderbook",
-            codes: symbols.map((symbol) =>
-                convertUpbitMarketCode.toMarketCode(symbol)
-            ),
+            codes: symbols.map((symbol) => symbol),
         }
     }
 
@@ -83,8 +82,6 @@ export class UpbitConnector extends ExchangeConnector {
     ): WebSocketMessage<BookTickerData> {
         const msg = data as UpbitOrderBookMessage
         const bookTicker = UpbitBookTickerConverter.convert(this.config, msg)
-
-        this.emit("bookTickerUpdate", bookTicker)
 
         return {
             type: "bookTicker",

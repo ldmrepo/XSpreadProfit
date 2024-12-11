@@ -115,8 +115,8 @@ export class ExchangeDataInitializer {
             exchange: exchange.exchange,
             exchangeType: exchange.exchangeType,
             url: exchange.url,
-            wsUrl: this.WS_URLS[exchange.exchange] || "",
-            streamLimit: this.STREAM_LIMITS[exchange.exchange] || 100,
+            wsUrl: exchange.wsUrl, //this.WS_URLS[exchange.exchange] || "",
+            streamLimit: exchange.streamLimit || 100,
             used: exchange.used,
             symbols: markets
                 .filter((m) => m.status === "active")
