@@ -16,7 +16,7 @@ import { BookTickerData, ExchangeInfo } from "../common/types";
 import { BybitBookTickerConverter } from "./BybitBookTickerConverter";
 import { IWebSocketManager } from "../../websocket/IWebSocketManager";
 import { ExchangeConfig } from "../../config/types";
-
+import { splitIntoBatches } from "../../utils/common";
 export class BybitConnector extends ExchangeConnector {
     protected pingMessage(): unknown {
         return { req_id: "ping", op: "ping" };
@@ -32,18 +32,11 @@ export class BybitConnector extends ExchangeConnector {
     ) {
         super(id, config, symbols, wsManager);
     }
-    // 요청을 MAX_ARGS_SIZE 단위로 분할
-    splitIntoBatches<T>(array: T[], batchSize: number): T[][] {
-        const result: T[][] = [];
-        for (let i = 0; i < array.length; i += batchSize) {
-            result.push(array.slice(i, i + batchSize));
-        }
-        return result;
-    }
+
     public formatSubscriptionRequest(symbols: string[]): BybitSubscription[] {
         // 10개 이상의 심볼을 한번에 구독할 수 없음
         // 10 개로 나누어서 요청
-        const topicBatches = this.splitIntoBatches(symbols, 10);
+        const topicBatches = splitIntoBatches(symbols, 10);
         return topicBatches.map((topicBatch, index) => {
             return {
                 req_id: `subscribe_batch_${index + 1}`,
@@ -107,7 +100,6 @@ export class BybitConnector extends ExchangeConnector {
             }>(
                 `${config.url}/v5/market/instruments-info?category=spot&baseCoin=USDT`
             );
-            console.log("fetchSpotExchangeInfo");
             return response.data.result.list
                 .filter((market) => market.status.toLowerCase() === "trading")
                 .map((market) => ({

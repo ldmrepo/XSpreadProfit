@@ -16,6 +16,7 @@ import { UpbitBookTickerConverter } from "./UpbitBookTickerConverter";
 import { IWebSocketManager } from "../../websocket/IWebSocketManager";
 import axios from "axios";
 import { ExchangeConfig } from "../../config/types";
+import { splitIntoBatches } from "../../utils/common";
 
 interface UpbitTickSizeInfo {
     market: string; // 마켓 심볼 (예: KRW-BTC)
@@ -42,25 +43,31 @@ export class UpbitConnector extends ExchangeConnector {
         return data;
     }
     public formatSubscriptionRequest(symbols: string[]): any {
-        //UpbitSubscription {
-        return [
-            { ticket: this.TICKET },
-            {
-                type: "orderbook",
-                codes: symbols.map((symbol) => symbol),
-            },
-            // { format: "SIMPLE" },
-        ];
+        const topicBatches = splitIntoBatches(symbols, 100);
+        return topicBatches.map((topicBatch: any, index: number) => {
+            return [
+                { ticket: this.TICKET },
+                {
+                    type: "orderbook",
+                    codes: topicBatch,
+                },
+                // { format: "SIMPLE" },
+            ];
+        });
     }
 
-    protected formatUnsubscriptionRequest(
-        symbols: string[]
-    ): UpbitSubscription {
-        return {
-            ticket: this.TICKET,
-            type: "orderbook",
-            codes: symbols.map((symbol) => symbol),
-        };
+    protected formatUnsubscriptionRequest(symbols: string[]): any {
+        const topicBatches = splitIntoBatches(symbols, 100);
+        return topicBatches.map((topicBatch: any, index: number) => {
+            return [
+                { ticket: this.TICKET },
+                {
+                    type: "orderbook",
+                    codes: topicBatch,
+                    isUnsubscribe: true,
+                },
+            ];
+        });
     }
 
     protected validateExchangeMessage(data: unknown): boolean {

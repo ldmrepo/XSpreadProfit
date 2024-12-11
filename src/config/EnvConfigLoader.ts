@@ -25,7 +25,7 @@ export class EnvConfigLoader implements IConfigLoader {
                 wsUrl: "wss://stream.binance.com:9443/stream",
                 streamLimit: 100,
                 symbols: [],
-                used: true,
+                used: false,
             },
             {
                 exchange: "binance",
@@ -34,7 +34,7 @@ export class EnvConfigLoader implements IConfigLoader {
                 wsUrl: "wss://fstream.binance.com/stream",
                 streamLimit: 100,
                 symbols: [],
-                used: true,
+                used: false,
             },
             {
                 exchange: "bybit",
@@ -43,7 +43,7 @@ export class EnvConfigLoader implements IConfigLoader {
                 wsUrl: "wss://stream.bybit.com/v5/public/spot",
                 streamLimit: 100,
                 symbols: [],
-                used: true,
+                used: false,
             },
             {
                 exchange: "bybit",
@@ -53,7 +53,7 @@ export class EnvConfigLoader implements IConfigLoader {
                 streamLimit: 100,
                 pingInterval: 20000,
                 symbols: [],
-                used: true,
+                used: false,
             },
             {
                 exchange: "upbit",
@@ -71,10 +71,10 @@ export class EnvConfigLoader implements IConfigLoader {
                 url: process.env.BITHUMB_URL || "https://api.bithumb.com",
                 wsUrl:
                     process.env.BITHUMB_WS_URL ||
-                    "wss://pubwss.bithumb.com/pub/ws",
+                    "wss://ws-api.bithumb.com/websocket/v1",
                 streamLimit: 100,
                 symbols: [],
-                used: false,
+                used: true,
             },
             {
                 // 코인원 추가
@@ -84,7 +84,7 @@ export class EnvConfigLoader implements IConfigLoader {
                 wsUrl: "wss://stream.coinone.co.kr",
                 streamLimit: 100,
                 symbols: [],
-                used: true,
+                used: false,
                 pingInterval: 25 * 60 * 1000, // 25분 (30분 제한보다 여유있게 설정)
                 pongTimeout: 5000,
             },

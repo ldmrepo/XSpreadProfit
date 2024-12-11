@@ -15,6 +15,7 @@ import { BookTickerData, ExchangeInfo } from "../common/types";
 import { BithumbBookTickerConverter } from "./BithumbBookTickerConverter";
 import { IWebSocketManager } from "../../websocket/IWebSocketManager";
 import { ExchangeConfig } from "../../config/types";
+import { splitIntoBatches } from "../../utils/common";
 
 export class BithumbConnector extends ExchangeConnector {
     private readonly TICKET = `BITHUMB_${Date.now()}`;
@@ -33,20 +34,26 @@ export class BithumbConnector extends ExchangeConnector {
         return data;
     }
     public formatSubscriptionRequest(symbols: string[]): any {
-        //} BithumbSubscription {
-        return [
-            {
-                ticket: this.TICKET,
-            },
-            {
-                type: "orderbook",
-                codes: symbols.map((symbol) => symbol),
-                level: 1,
-            },
-            {
-                format: "DEFAULT",
-            },
-        ];
+        const topicBatches = splitIntoBatches(symbols, 10);
+        return topicBatches.map((topicBatch: any, index: number) => {
+            return [
+                {
+                    ticket: this.TICKET, // 클라이언트 요청 식별자
+                },
+                {
+                    type: "orderbook", // 요청 타입
+                    codes: topicBatch.map((symbol: string) =>
+                        symbol.toUpperCase()
+                    ), // 요청 마켓 코드 리스트 (대문자)
+                    level: 1, // 호가 모아보기 단위 (기본값: 1)
+                    isOnlySanpshot: false, // 스냅샷 데이터만 요청 여부
+                    isOnlyRealtime: true, // 실시간 데이터만 요청 여부
+                },
+                {
+                    format: "DEFAULT", // 데이터 포맷
+                },
+            ];
+        });
     }
 
     protected formatUnsubscriptionRequest(
@@ -61,19 +68,37 @@ export class BithumbConnector extends ExchangeConnector {
 
     protected validateExchangeMessage(data: unknown): boolean {
         try {
-            console.log("validateExchangeMessage", data);
-            const msg = data as BithumbOrderBookMessage;
+            const msg = data as {
+                type: string;
+                code: string;
+                total_ask_size: number;
+                total_bid_size: number;
+                orderbook_units: Array<{
+                    ask_price: number;
+                    bid_price: number;
+                    ask_size: number;
+                    bid_size: number;
+                }>;
+            };
+
             return (
                 typeof msg === "object" &&
                 msg !== null &&
-                msg.type === "orderbookdepth" &&
-                "content" in msg &&
-                "symbol" in msg.content &&
-                "timestamp" in msg.content &&
-                Array.isArray(msg.content.asks) &&
-                Array.isArray(msg.content.bids)
+                msg.type === "orderbook" &&
+                typeof msg.code === "string" &&
+                typeof msg.total_ask_size === "number" &&
+                typeof msg.total_bid_size === "number" &&
+                Array.isArray(msg.orderbook_units) &&
+                msg.orderbook_units.every(
+                    (unit) =>
+                        typeof unit.ask_price === "number" &&
+                        typeof unit.bid_price === "number" &&
+                        typeof unit.ask_size === "number" &&
+                        typeof unit.bid_size === "number"
+                )
             );
-        } catch {
+        } catch (error) {
+            console.error("validateExchangeMessage Error:", error);
             return false;
         }
     }
@@ -82,9 +107,10 @@ export class BithumbConnector extends ExchangeConnector {
         data: unknown
     ): WebSocketMessage<BookTickerData> {
         const msg = data as BithumbOrderBookMessage;
-        const bookTicker = BithumbBookTickerConverter.convert(this.config, msg);
-
-        this.emit("bookTickerUpdate", bookTicker);
+        const bookTicker = BithumbBookTickerConverter.convert(
+            this.config,
+            data as any
+        );
 
         return {
             type: "bookTicker",
