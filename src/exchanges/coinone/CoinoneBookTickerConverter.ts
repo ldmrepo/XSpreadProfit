@@ -1,31 +1,44 @@
 /**
- * Path: src/exchanges/coinone/CoinoneBookTickerConverter.ts
+ * Path: src/exchanges/coinone/CoinoneTickerConverter.ts
  */
-import { ExchangeConfig } from "../../config/types"
-import { BookTickerConverter, BookTickerData } from "../common/types"
-import { CoinoneOrderBookMessage, convertCoinoneMarketCode } from "./types"
+import { ExchangeConfig } from "../../config/types";
+import { BookTickerConverter, BookTickerData } from "../common/types";
+import { CoinoneTickerMessage, convertCoinoneMarketCode } from "./types";
 
-export class CoinoneBookTickerConverter extends BookTickerConverter {
+export class CoinoneTickerConverter extends BookTickerConverter {
     static convert(
         config: ExchangeConfig,
-        rawData: CoinoneOrderBookMessage
+        rawData: CoinoneTickerMessage
     ): BookTickerData {
-        const bestBid = rawData.orderbook.bids[0] || {
-            price: "0",
-            quantity: "0",
-        }
-        const bestAsk = rawData.orderbook.asks[0] || {
-            price: "0",
-            quantity: "0",
-        }
+        const {
+            data: {
+                quote_currency,
+                target_currency,
+                timestamp,
+                ask_best_price,
+                ask_best_qty,
+                bid_best_price,
+                bid_best_qty,
+            },
+        } = rawData;
+
+        const bestBid = {
+            price: bid_best_price ? parseFloat(bid_best_price) : 0,
+            quantity: bid_best_qty ? parseFloat(bid_best_qty) : 0,
+        };
+
+        const bestAsk = {
+            price: ask_best_price ? parseFloat(ask_best_price) : 0,
+            quantity: ask_best_qty ? parseFloat(ask_best_qty) : 0,
+        };
 
         return {
             exchange: config.exchange,
             exchangeType: config.exchangeType,
-            symbol: convertCoinoneMarketCode.toStandardSymbol(rawData.market),
-            timestamp: rawData.timestamp,
-            bids: [[parseFloat(bestBid.price), parseFloat(bestBid.quantity)]],
-            asks: [[parseFloat(bestAsk.price), parseFloat(bestAsk.quantity)]],
-        }
+            symbol: `${quote_currency}/${target_currency}`,
+            timestamp,
+            bids: [[bestBid.price, bestBid.quantity]],
+            asks: [[bestAsk.price, bestAsk.quantity]],
+        };
     }
 }

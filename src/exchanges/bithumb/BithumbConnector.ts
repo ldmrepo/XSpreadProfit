@@ -1,56 +1,68 @@
 /**
  * Path: src/exchanges/bithumb/BithumbConnector.ts
  */
-import axios from "axios"
-import { ExchangeConnector } from "../../collectors/ExchangeConnector"
-import { WebSocketMessage } from "../../websocket/types"
-import { WebSocketError, ErrorCode, ErrorSeverity } from "../../errors/types"
-import { SymbolGroup } from "../../collectors/types"
+import axios from "axios";
+import { ExchangeConnector } from "../../collectors/ExchangeConnector";
+import { WebSocketMessage } from "../../websocket/types";
+import { WebSocketError, ErrorCode, ErrorSeverity } from "../../errors/types";
+import { SymbolGroup } from "../../collectors/types";
 import {
     BithumbOrderBookMessage,
     BithumbSubscription,
     convertBithumbSymbol,
-} from "./types"
-import { BookTickerData, ExchangeInfo } from "../common/types"
-import { BithumbBookTickerConverter } from "./BithumbBookTickerConverter"
-import { IWebSocketManager } from "../../websocket/IWebSocketManager"
-import { ExchangeConfig } from "../../config/types"
+} from "./types";
+import { BookTickerData, ExchangeInfo } from "../common/types";
+import { BithumbBookTickerConverter } from "./BithumbBookTickerConverter";
+import { IWebSocketManager } from "../../websocket/IWebSocketManager";
+import { ExchangeConfig } from "../../config/types";
 
 export class BithumbConnector extends ExchangeConnector {
+    private readonly TICKET = `BITHUMB_${Date.now()}`;
     constructor(
         protected readonly id: string,
         protected readonly config: ExchangeConfig,
         protected readonly symbols: SymbolGroup,
         protected readonly wsManager: IWebSocketManager
     ) {
-        super(id, config, symbols, wsManager)
+        super(id, config, symbols, wsManager);
     }
-
-    public formatSubscriptionRequest(symbols: string[]): BithumbSubscription {
-        return {
-            type: "orderbookdepth",
-            symbols: symbols.map((symbol) =>
-                convertBithumbSymbol.toBithumbSymbol(symbol)
-            ),
-            tickTypes: ["1H"],
-        }
+    protected pingMessage(): unknown {
+        return "";
+    }
+    protected formatPingMessage(data?: unknown): unknown {
+        return data;
+    }
+    public formatSubscriptionRequest(symbols: string[]): any {
+        //} BithumbSubscription {
+        return [
+            {
+                ticket: this.TICKET,
+            },
+            {
+                type: "orderbook",
+                codes: symbols.map((symbol) => symbol),
+                level: 1,
+            },
+            {
+                format: "DEFAULT",
+            },
+        ];
     }
 
     protected formatUnsubscriptionRequest(
         symbols: string[]
     ): BithumbSubscription {
         return {
-            type: "orderbookdepth",
-            symbols: symbols.map((symbol) =>
-                convertBithumbSymbol.toBithumbSymbol(symbol)
-            ),
+            type: "orderbook",
+            symbols: symbols.map((symbol) => symbol),
             tickTypes: [],
-        }
+        };
     }
 
     protected validateExchangeMessage(data: unknown): boolean {
         try {
-            const msg = data as BithumbOrderBookMessage
+            console.log("validateExchangeMessage", data);
+            const msg = data as BithumbOrderBookMessage;
             return (
                 typeof msg === "object" &&
                 msg !== null &&
@@ -60,19 +72,19 @@ export class BithumbConnector extends ExchangeConnector {
                 "timestamp" in msg.content &&
                 Array.isArray(msg.content.asks) &&
                 Array.isArray(msg.content.bids)
-            )
+            );
         } catch {
-            return false
+            return false;
         }
     }
 
     protected normalizeExchangeMessage(
         data: unknown
     ): WebSocketMessage<BookTickerData> {
-        const msg = data as BithumbOrderBookMessage
-        const bookTicker = BithumbBookTickerConverter.convert(this.config, msg)
+        const msg = data as BithumbOrderBookMessage;
+        const bookTicker = BithumbBookTickerConverter.convert(this.config, msg);
 
-        this.emit("bookTickerUpdate", bookTicker)
+        this.emit("bookTickerUpdate", bookTicker);
 
         return {
             type: "bookTicker",
@@ -80,7 +92,7 @@ export class BithumbConnector extends ExchangeConnector {
             exchangeType: this.config.exchangeType,
             symbol: bookTicker.symbol,
             data: bookTicker,
-        }
+        };
     }
 
     static async fetchSpotExchangeInfo(
@@ -89,19 +101,19 @@ export class BithumbConnector extends ExchangeConnector {
         try {
             const response = await axios.get<{
                 data: {
-                    market: string
-                    korean_name: string
-                    english_name: string
-                }[]
-            }>(`${config.url}/v1/market/all`)
+                    market: string;
+                    korean_name: string;
+                    english_name: string;
+                }[];
+            }>(`${config.url}/v1/market/all`);
 
             // 응답 데이터 변환
-            const data: any = response.data
+            const data: any = response.data;
 
             return data
                 .filter((item: any) => item.market.startsWith("KRW-")) // KRW 마켓만 필터링
                 .map((item: any) => {
-                    const [quoteSymbol, baseSymbol] = item.market.split("-")
+                    const [quoteSymbol, baseSymbol] = item.market.split("-");
 
                     return {
                         exchange: "bithumb",
@@ -121,8 +133,8 @@ export class BithumbConnector extends ExchangeConnector {
                             englishName: item.english_name,
                             timestamp: Date.now(),
                         },
-                    }
-                })
+                    };
+                });
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 429) {
@@ -131,27 +143,27 @@ export class BithumbConnector extends ExchangeConnector {
                         "Bithumb API rate limit exceeded",
                         error,
                         ErrorSeverity.HIGH
-                    )
+                    );
                 }
                 throw new WebSocketError(
                     ErrorCode.API_REQUEST_FAILED,
                     `Bithumb API request failed: ${error.message}`,
                     error,
                     ErrorSeverity.HIGH
-                )
+                );
             }
             throw new WebSocketError(
                 ErrorCode.API_ERROR,
                 "Unknown API error occurred",
                 error as Error,
                 ErrorSeverity.HIGH
-            )
+            );
         }
     }
     static fetchFuturesExchangeInfo(
         config: ExchangeConfig
     ): Promise<ExchangeInfo[]> {
-        throw new Error("Method not implemented.")
+        throw new Error("Method not implemented.");
     }
     protected handleError(error: unknown): void {
         const wsError =
@@ -162,12 +174,12 @@ export class BithumbConnector extends ExchangeConnector {
                       "Bithumb internal error",
                       error as Error,
                       ErrorSeverity.MEDIUM
-                  )
+                  );
 
-        super.handleError(wsError)
+        super.handleError(wsError);
     }
 
     onBookTickerUpdate(callback: (data: BookTickerData) => void): void {
-        this.on("bookTickerUpdate", callback)
+        this.on("bookTickerUpdate", callback);
     }
 }
